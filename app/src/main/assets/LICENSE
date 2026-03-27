@@ -1,19 +1,37 @@
-Copyright (C) 2021 by nekohasekai
-<contact-sagernet@sekai.icu>
+LvovFlow для Android
+Copyright (C) 2024 Lvov Studio
 
-This program is free software: you can
-redistribute it and/or modify it under
-the terms of the GNU General Public License
-as published by the Free Software Foundation,
-either version 3 of the License,
+Цей додаток є вільним програмним забезпеченням: ви можете
+розповсюджувати та/або модифікувати його відповідно до умов
+GNU General Public License, опублікованої Free Software Foundation,
+або версії 3 ліцензії, або (за вашим вибором) будь-якої пізнішої версії.
+
+Ця програма розповсюджується в надії, що вона буде корисною,
+але БЕЗ БУДЬ-ЯКИХ ГАРАНТІЙ; навіть без неявної гарантії
+ПРИДАТНОСТІ ДО ПРОДАЖУ або ВІДПОВІДНОСТІ ПЕВНОМУ ПРИЗНАЧЕННЮ.
+Детальнішу інформацію дивіться у GNU General Public License.
+
+Ви повинні були отримати копію GNU General Public License разом
+із цією програмою. Якщо ні, дивіться <http://www.gnu.org/licenses/>.
+
+---
+
+LvovFlow for Android
+Copyright (C) 2024 Lvov Studio
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License,
 or (at your option) any later version.
 
-This program is distributed in the hope
-that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
-You should have received a copy of the
-GNU General Public License along with this program.
-If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+Contact: support@lvovflow.com
+GitHub: https://github.com/Lvov-Studio/LvovFlowAndroid
+Telegram: https://t.me/LvovFlowBot
