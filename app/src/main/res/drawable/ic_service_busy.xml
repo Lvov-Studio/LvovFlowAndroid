@@ -6,30 +6,30 @@
         android:viewportHeight="24">
 
     <!--
-      LvovFlow Paw Print - connected/busy state (full white).
-      All paths wrapped in named group so animated-vector can target
-      it with scale animation instead of path morphing.
+      LvovFlow Paw Print — CONNECTED/busy state.
+      Full white (#FFFFFF). Same enlarged paths as idle.
+      Wrapped in named group for scale animation in ic_service_connected/stopping.
     -->
     <group
         android:name="paw_group"
         android:pivotX="12"
         android:pivotY="12">
 
-        <!-- Central pad -->
+        <!-- Central pad — large ellipse, center (12, 15) -->
         <path android:fillColor="#FFFFFF"
-            android:pathData="M8,15.5 A4,3 0 1 0 16,15.5 A4,3 0 1 0 8,15.5 Z"/>
+            android:pathData="M7,15 A5,3.8 0 1 0 17,15 A5,3.8 0 1 0 7,15 Z"/>
         <!-- Top-left toe -->
         <path android:fillColor="#FFFFFF"
-            android:pathData="M4,10 A2,2 0 1 0 8,10 A2,2 0 1 0 4,10 Z"/>
+            android:pathData="M2.5,9.5 A2.5,2.5 0 1 0 7.5,9.5 A2.5,2.5 0 1 0 2.5,9.5 Z"/>
         <!-- Center-left toe -->
         <path android:fillColor="#FFFFFF"
-            android:pathData="M7.7,7.5 A1.8,1.8 0 1 0 11.3,7.5 A1.8,1.8 0 1 0 7.7,7.5 Z"/>
+            android:pathData="M6.8,5.8 A2.2,2.2 0 1 0 11.2,5.8 A2.2,2.2 0 1 0 6.8,5.8 Z"/>
         <!-- Center-right toe -->
         <path android:fillColor="#FFFFFF"
-            android:pathData="M12.7,7.5 A1.8,1.8 0 1 0 16.3,7.5 A1.8,1.8 0 1 0 12.7,7.5 Z"/>
+            android:pathData="M12.8,5.8 A2.2,2.2 0 1 0 17.2,5.8 A2.2,2.2 0 1 0 12.8,5.8 Z"/>
         <!-- Top-right toe -->
         <path android:fillColor="#FFFFFF"
-            android:pathData="M16,10 A2,2 0 1 0 20,10 A2,2 0 1 0 16,10 Z"/>
+            android:pathData="M16.5,9.5 A2.5,2.5 0 1 0 21.5,9.5 A2.5,2.5 0 1 0 16.5,9.5 Z"/>
 
     </group>
 
