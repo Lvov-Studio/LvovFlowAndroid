@@ -3,25 +3,38 @@
         android:height="36dp"
         android:viewportWidth="24"
         android:viewportHeight="24">
-    <!-- Lion Paw Print (idle/disconnected state) -->
-    <!-- Main central pad -->
-    <path
-        android:fillColor="#80FFFFFF"
+
+    <!--
+      LvovFlow Paw Print (idle/disconnected state) — placed BEFORE the clip-path
+      so it is NOT affected by strike_thru_mask clipping.
+    -->
+    <path android:fillColor="#80FFFFFF"
         android:pathData="M8,15.5 A4,3 0 1 0 16,15.5 A4,3 0 1 0 8,15.5 Z"/>
-    <!-- Top-left toe -->
-    <path
-        android:fillColor="#80FFFFFF"
+    <path android:fillColor="#80FFFFFF"
         android:pathData="M4,10 A2,2 0 1 0 8,10 A2,2 0 1 0 4,10 Z"/>
-    <!-- Center-left toe -->
-    <path
-        android:fillColor="#80FFFFFF"
+    <path android:fillColor="#80FFFFFF"
         android:pathData="M7.7,7.5 A1.8,1.8 0 1 0 11.3,7.5 A1.8,1.8 0 1 0 7.7,7.5 Z"/>
-    <!-- Center-right toe -->
-    <path
-        android:fillColor="#80FFFFFF"
+    <path android:fillColor="#80FFFFFF"
         android:pathData="M12.7,7.5 A1.8,1.8 0 1 0 16.3,7.5 A1.8,1.8 0 1 0 12.7,7.5 Z"/>
-    <!-- Top-right toe -->
-    <path
-        android:fillColor="#80FFFFFF"
+    <path android:fillColor="#80FFFFFF"
         android:pathData="M16,10 A2,2 0 1 0 20,10 A2,2 0 1 0 16,10 Z"/>
+
+    <!--
+      The following named paths are REQUIRED by ic_service_stopped.xml animation.
+      They are kept invisible (transparent) to satisfy the animation system
+      without showing the original paper-plane graphics.
+    -->
+    <path
+        android:name="strike_thru_path"
+        android:pathData="M 2 4.27 L 3.27 3 L 3.27 3 L 2 4.27 Z"
+        android:fillColor="#00000000"
+        android:strokeWidth="1"/>
+    <clip-path
+        android:name="strike_thru_mask"
+        android:pathData="M 0 0 L 24 0 L 24 24 L 0 24 L 0 0 Z M 4.54 1.73 L 3.27 3 L 3.27 3 L 4.54 1.73 Z"/>
+    <path
+        android:name="holey_icon"
+        android:pathData="M17.68,9l-1.59,7L12.7,14.89l5-5.93M10,10.08l-3.57,3L5,12.55l5-2.47M21.25,2.28L0,12.8l6.83,2.57,9.76-8.21L9.26,15.89l8.29,2.67,3.7-16.27h0ZM 9.45 17.56 L 9.46 22 L 12.09 18.41 L 9.45 17.56 L 9.45 17.56 Z"
+        android:fillColor="#00000000"/>
+
 </vector>
