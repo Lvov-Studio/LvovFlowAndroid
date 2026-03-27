@@ -68,6 +68,16 @@
             android:textAlignment="center"
             android:alpha="0.7" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_paste_clipboard"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="📋  Вставить из буфера обмена"
+            android:textColor="#25C9EF"
+            app:strokeColor="#25C9EF" />
+
     </LinearLayout>
 
 </FrameLayout>

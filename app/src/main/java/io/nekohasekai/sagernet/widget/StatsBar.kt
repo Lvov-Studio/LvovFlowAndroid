@@ -14,11 +14,15 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.net.URL
 
 class StatsBar @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
@@ -93,6 +97,8 @@ class StatsBar @JvmOverloads constructor(
                 // LvovFlow: cyan color when connected
                 txText.setTextColor(0xFF25C9EF.toInt())
                 rxText.setTextColor(0xFF25C9EF.toInt())
+                // LvovFlow: load IP country + ping info
+                loadConnectionInfo(activity)
             }
         } else {
             postWhenStarted {
@@ -113,6 +119,41 @@ class StatsBar @JvmOverloads constructor(
             )
         }
     }
+
+    /** Fetch external IP country and show stored ping when connected. */
+    private fun loadConnectionInfo(activity: MainActivity) {
+        activity.lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                // Get ping from active profile (stored from last test)
+                val profileId = DataStore.selectedProxy
+                val ping = if (profileId > 0) {
+                    SagerDatabase.proxyDao.getById(profileId)?.ping ?: 0
+                } else 0
+
+                // Fetch IP country
+                val json = URL("http://ip-api.com/json/?fields=country,countryCode").readText()
+                val obj = JSONObject(json)
+                val country = obj.optString("country", "")
+                val code = obj.optString("countryCode", "")
+
+                // Build flag emoji from country code (e.g. UA → 🇺🇦)
+                val flag = if (code.length == 2) {
+                    code.uppercase().map { c ->
+                        String(Character.toChars(0x1F1E0 + (c - 'A')))
+                    }.joinToString("")
+                } else ""
+
+                withContext(Dispatchers.Main) {
+                    val pingStr = if (ping > 0) " • ${ping}ms" else ""
+                    val countryStr = if (country.isNotEmpty()) " • $flag $country" else ""
+                    setStatus("Подключено$countryStr$pingStr")
+                }
+            } catch (e: Exception) {
+                Logs.w("loadConnectionInfo: ${e.message}")
+            }
+        }
+    }
+
 
     @SuppressLint("SetTextI18n")
     fun updateSpeed(txRate: Long, rxRate: Long) {

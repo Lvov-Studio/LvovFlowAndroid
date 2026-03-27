@@ -1177,6 +1177,28 @@ class ConfigurationFragment @JvmOverloads constructor(
                 override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) = updateEmptyState()
             })
 
+            // LvovFlow: paste from clipboard button in empty state
+            view.findViewById<View>(R.id.btn_paste_clipboard)?.setOnClickListener {
+                val cf = parentFragment as? ConfigurationFragment ?: return@setOnClickListener
+                val text = SagerNet.getClipboardText()
+                if (text.isBlank()) {
+                    (activity as? MainActivity)?.snackbar(getString(R.string.clipboard_empty))?.show()
+                } else runOnDefaultDispatcher {
+                    try {
+                        val proxies = RawUpdater.parseRaw(text)
+                        if (proxies.isNullOrEmpty()) onMainDispatcher {
+                            (activity as? MainActivity)?.snackbar(getString(R.string.no_proxies_found_in_clipboard))?.show()
+                        } else cf.import(proxies)
+                    } catch (e: SubscriptionFoundException) {
+                        (activity as MainActivity).importSubscription(e.link.toUri())
+                    } catch (e: Exception) {
+                        Logs.w(e)
+                        onMainDispatcher {
+                            (activity as? MainActivity)?.snackbar(e.readableMessage)?.show()
+                        }
+                    }
+                }
+            }
 
             if (!select) {
 
