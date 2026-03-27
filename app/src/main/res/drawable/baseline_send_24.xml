@@ -3,9 +3,26 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24"
-    android:tint="?attr/colorControlNormal"
-    android:autoMirrored="true">
+    android:tint="?attr/colorControlNormal">
+  <!-- Lion Paw Print -->
+  <!-- Main central pad (large oval at bottom) -->
   <path
       android:fillColor="@android:color/white"
-      android:pathData="M2.01,21L23,12 2.01,3 2,10l15,2 -15,2z"/>
+      android:pathData="M8,15.5 A4,3 0 1 0 16,15.5 A4,3 0 1 0 8,15.5 Z"/>
+  <!-- Top-left toe -->
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M4,10 A2,2 0 1 0 8,10 A2,2 0 1 0 4,10 Z"/>
+  <!-- Center-left toe -->
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M7.7,7.5 A1.8,1.8 0 1 0 11.3,7.5 A1.8,1.8 0 1 0 7.7,7.5 Z"/>
+  <!-- Center-right toe -->
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M12.7,7.5 A1.8,1.8 0 1 0 16.3,7.5 A1.8,1.8 0 1 0 12.7,7.5 Z"/>
+  <!-- Top-right toe -->
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M16,10 A2,2 0 1 0 20,10 A2,2 0 1 0 16,10 Z"/>
 </vector>
