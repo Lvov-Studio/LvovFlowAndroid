@@ -10,11 +10,17 @@ import android.os.Bundle
 import android.os.RemoteException
 import android.view.KeyEvent
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.addCallback
 import androidx.annotation.IdRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceDataStore
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -357,6 +363,31 @@ class MainActivity : ThemedActivity(),
         return true
     }
 
+    // LvovFlow: connection timer
+    private var timerJob: Job? = null
+    private var connectTime: Long = 0L
+
+    private fun startConnectionTimer() {
+        connectTime = System.currentTimeMillis()
+        timerJob?.cancel()
+        timerJob = lifecycleScope.launch {
+            while (isActive) {
+                val elapsed = System.currentTimeMillis() - connectTime
+                val h = elapsed / 3_600_000L
+                val m = (elapsed / 60_000L) % 60
+                val s = (elapsed / 1_000L) % 60
+                binding.connTimer.text = "%02d:%02d:%02d".format(h, m, s)
+                delay(1_000L)
+            }
+        }
+    }
+
+    private fun stopConnectionTimer() {
+        timerJob?.cancel()
+        timerJob = null
+        if (::binding.isInitialized) binding.connTimer.text = "00:00:00"
+    }
+
     private fun changeState(
         state: BaseService.State,
         msg: String? = null,
@@ -367,7 +398,25 @@ class MainActivity : ThemedActivity(),
         binding.fab.changeState(state, DataStore.serviceState, animate)
         binding.stats.changeState(state)
         if (msg != null) snackbar(getString(R.string.vpn_error, msg)).show()
+
+        // LvovFlow: timer + status label
+        if (state == BaseService.State.Connected) {
+            binding.connTimerLabel.visibility = View.VISIBLE
+            binding.connTimer.visibility = View.VISIBLE
+            binding.connStatusLabel.text = "Подключено"
+            startConnectionTimer()
+        } else {
+            binding.connTimerLabel.visibility = View.GONE
+            binding.connTimer.visibility = View.GONE
+            binding.connStatusLabel.text = when (state) {
+                BaseService.State.Connecting -> "Подключение..."
+                BaseService.State.Stopping -> "Отключение..."
+                else -> "Нажмите для подключения"
+            }
+            stopConnectionTimer()
+        }
     }
+
 
     override fun snackbarInternal(text: CharSequence): Snackbar {
         return Snackbar.make(binding.coordinator, text, Snackbar.LENGTH_LONG).apply {

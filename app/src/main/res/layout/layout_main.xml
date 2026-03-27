@@ -32,6 +32,33 @@
             app:trackCornerRadius="@dimen/mtrl_progress_track_thickness"
             app:trackThickness="8dp" />
 
+        <!-- LvovFlow: Connection timer label (visible only when connected) -->
+        <TextView
+            android:id="@+id/conn_timer_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="72dp"
+            android:text="Время подключения"
+            android:textColor="?whiteOrTextPrimary"
+            android:textSize="13sp"
+            android:alpha="0.7"
+            android:visibility="gone" />
+
+        <!-- LvovFlow: Connection timer clock -->
+        <TextView
+            android:id="@+id/conn_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="90dp"
+            android:text="00:00:00"
+            android:textColor="?whiteOrTextPrimary"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:fontFamily="monospace"
+            android:visibility="gone" />
+
         <io.nekohasekai.sagernet.widget.ServiceButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
@@ -39,12 +66,24 @@
             android:elevation="8dp"
             android:nextFocusDown="@+id/stats"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="96dp"
+            android:layout_marginTop="155dp"
             app:backgroundTint="?fabColorBackground"
-            app:fabCustomSize="84dp"
-            app:iconSize="48dp"
+            app:fabCustomSize="100dp"
+            app:iconSize="56dp"
             app:pressedTranslationZ="6dp"
             app:srcCompat="@drawable/ic_service_idle" />
+
+        <!-- LvovFlow: Status text below FAB -->
+        <TextView
+            android:id="@+id/conn_status_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="265dp"
+            android:text="Нажмите для подключения"
+            android:textColor="?whiteOrTextPrimary"
+            android:textSize="14sp"
+            android:alpha="0.85" />
 
 
         <io.nekohasekai.sagernet.widget.StatsBar
