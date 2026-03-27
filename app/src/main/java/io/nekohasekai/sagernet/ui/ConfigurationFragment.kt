@@ -1166,6 +1166,18 @@ class ConfigurationFragment @JvmOverloads constructor(
             configurationListView.adapter = adapter
             configurationListView.setItemViewCacheSize(20)
 
+            // LvovFlow: show empty state when no profiles
+            val emptyState = view.findViewById<View>(R.id.empty_state)
+            adapter!!.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                private fun updateEmptyState() {
+                    emptyState?.visibility = if (adapter!!.itemCount == 0) View.VISIBLE else View.GONE
+                }
+                override fun onChanged() = updateEmptyState()
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) = updateEmptyState()
+                override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) = updateEmptyState()
+            })
+
+
             if (!select) {
 
                 undoManager = UndoSnackbarManager(activity as MainActivity, adapter!!)

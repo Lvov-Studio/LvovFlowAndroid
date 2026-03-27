@@ -90,10 +90,16 @@ class StatsBar @JvmOverloads constructor(
             postWhenStarted {
                 if (allowShow) performShow()
                 setStatus(app.getText(R.string.vpn_connected))
+                // LvovFlow: cyan color when connected
+                txText.setTextColor(0xFF25C9EF.toInt())
+                rxText.setTextColor(0xFF25C9EF.toInt())
             }
         } else {
             postWhenStarted {
                 performHide()
+                // LvovFlow: reset to white when disconnected
+                txText.setTextColor(0xFFFFFFFF.toInt())
+                rxText.setTextColor(0xFFFFFFFF.toInt())
             }
             updateSpeed(0, 0)
             setStatus(
