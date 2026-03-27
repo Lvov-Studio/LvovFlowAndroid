@@ -34,7 +34,7 @@
 <string name="alter_id">Изменить ID</string>
 <string name="always_show_address">Всегда показывать адрес</string>
 <string name="always_show_address_sum">Всегда отображать адрес сервера на карте конфигурации</string>
-<string name="app_desc">Универсальный набор инструментов прокси для Android, написанный на Kotlin.</string>
+<string name="app_desc">LvovFlow — быстрый и безопасный акселератор интернет-соединения для Android.</string>
 <string name="app_name">LvovFlow</string>
 <string name="app_name_long">LvovFlow для Android</string>
 <string name="app_tls_version">Минимальная версия TLS протокола</string>
@@ -442,7 +442,7 @@
 <string name="subscriptions">Подписки</string>
 <string name="tcp_connections">%d TCP-соединений</string>
 <string name="tcp_keep_alive_interval">Интервал доставки пакетов TCP keep-alive</string>
-<string name="telegram">Канал обновлений в Telegram</string>
+<string name="telegram">Поддержка в Telegram</string>
 <string name="test_concurrency">Число параллельных подключений</string>
 <string name="theme">Тема</string>
 <string name="tile_title">Переключатель</string>
