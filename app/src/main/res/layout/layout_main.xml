@@ -69,7 +69,7 @@
             android:layout_marginTop="155dp"
             app:backgroundTint="?fabColorBackground"
             app:fabCustomSize="100dp"
-            app:iconSize="56dp"
+            app:iconSize="72dp"
             app:pressedTranslationZ="6dp"
             app:srcCompat="@drawable/ic_service_idle" />
 

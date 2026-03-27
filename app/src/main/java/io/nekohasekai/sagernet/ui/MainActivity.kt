@@ -1,5 +1,6 @@
 package io.nekohasekai.sagernet.ui
 
+import android.content.res.ColorStateList
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -398,6 +399,16 @@ class MainActivity : ThemedActivity(),
         binding.fab.changeState(state, DataStore.serviceState, animate)
         binding.stats.changeState(state)
         if (msg != null) snackbar(getString(R.string.vpn_error, msg)).show()
+
+        // LvovFlow: FAB color — green when connected, indigo otherwise
+        val fabColor = if (state == BaseService.State.Connected) {
+            0xFF22C55E.toInt()  // bright green
+        } else {
+            com.google.android.material.color.MaterialColors.getColor(
+                binding.fab, com.google.android.material.R.attr.colorPrimary
+            )
+        }
+        binding.fab.backgroundTintList = ColorStateList.valueOf(fabColor)
 
         // LvovFlow: timer + status label
         if (state == BaseService.State.Connected) {
