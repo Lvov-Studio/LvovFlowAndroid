@@ -139,7 +139,7 @@ class StatsBar @JvmOverloads constructor(
                 // Build flag emoji from country code (e.g. UA → 🇺🇦)
                 val flag = if (code.length == 2) {
                     code.uppercase().map { c ->
-                        String(Character.toChars(0x1F1E0 + (c - 'A')))
+                        String(Character.toChars(0x1F1E6 + (c - 'A')))
                     }.joinToString("")
                 } else ""
 
