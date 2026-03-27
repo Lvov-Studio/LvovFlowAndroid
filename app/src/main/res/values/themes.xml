@@ -19,12 +19,14 @@
 
         <item name="fabColorBackground">?colorPrimary</item>
         <item name="selectedColorPrimary">#25C9EF</item>
+        <item name="android:windowBackground">@drawable/gradient_bg</item>
         <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="tabTextColor">#99FFFFFF</item>
         <item name="tabSelectedTextColor">@color/white</item>
         <item name="tabIndicatorColor">@color/white</item>
         <item name="tabRippleColor">@color/white</item>
         <item name="whiteOrTextPrimary">@color/white</item>
+
 
         <item name="windowActionModeOverlay">true</item>
 
