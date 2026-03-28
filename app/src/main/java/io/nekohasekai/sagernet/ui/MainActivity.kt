@@ -376,30 +376,74 @@ class MainActivity : ThemedActivity(),
             }
             R.id.nav_about -> displayFragment(AboutFragment())
             R.id.nav_refresh_subscription -> {
-                // LvovFlow: re-fetch subscription from Marzban
+                // LvovFlow: check subscription status, then re-fetch if active
                 binding.drawerLayout.closeDrawers()
+                val prefs = getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
+                val token = prefs.getString("session_token", "") ?: ""
+                if (token.isBlank()) {
+                    snackbar("Сессия не найдена. Войдите снова.").show()
+                    return false
+                }
+                snackbar("Проверяем подписку...").show()
                 runOnDefaultDispatcher {
                     try {
-                        val groups = SagerDatabase.groupDao.allGroups()
-                        val sub = groups.firstOrNull { it.type == GroupType.SUBSCRIPTION }
-                        if (sub != null) {
-                            GroupUpdater.startUpdate(sub, true)
+                        // Call API to check current status
+                        val url = java.net.URL("https://lvovflow.com/api/app/check_status.php")
+                        val conn = url.openConnection() as java.net.HttpURLConnection
+                        conn.requestMethod = "POST"
+                        conn.setRequestProperty("Content-Type", "application/json")
+                        conn.setRequestProperty("X-App-Client", "LvovFlow-Android")
+                        conn.connectTimeout = 10_000
+                        conn.readTimeout = 15_000
+                        conn.doOutput = true
+                        java.io.OutputStreamWriter(conn.outputStream).use {
+                            it.write("{\"token\":\"$token\"}")
+                        }
+                        val body = conn.inputStream.bufferedReader().readText()
+                        conn.disconnect()
+                        val json = org.json.JSONObject(body)
+                        val isExpired = json.optBoolean("is_expired", false)
+                        val expireDate = json.optString("expire_date", "")
+                        val newSubUrl = json.optString("subscription_url", "")
+
+                        if (isExpired) {
                             onMainDispatcher {
-                                snackbar("Обновление подключения...").show()
+                                val dateMsg = if (expireDate.isNotBlank()) "Срок действия истёк $expireDate." else "Срок действия вашей подписки истёк."
+                                androidx.appcompat.app.AlertDialog.Builder(this@MainActivity)
+                                    .setTitle("⏳ Подписка истекла")
+                                    .setMessage("$dateMsg\n\nДля продолжения работы продлите подписку на сайте LvovFlow.")
+                                    .setPositiveButton("Продлить подписку") { _, _ ->
+                                        startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW,
+                                            android.net.Uri.parse("https://lvovflow.com/#pricing")))
+                                    }
+                                    .setNegativeButton("Выйти из аккаунта") { _, _ ->
+                                        prefs.edit().clear().apply()
+                                        startActivity(android.content.Intent(this@MainActivity, ActivationActivity::class.java).apply {
+                                            flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        })
+                                        finish()
+                                    }
+                                    .setCancelable(false)
+                                    .show()
                             }
                         } else {
-                            onMainDispatcher {
-                                snackbar("Подписка не найдена. Попробуйте выйти и войти снова.").show()
+                            // Active — refresh subscription
+                            val groups = SagerDatabase.groupDao.allGroups()
+                            val sub = groups.firstOrNull { it.type == GroupType.SUBSCRIPTION }
+                            if (sub != null) {
+                                GroupUpdater.startUpdate(sub, true)
+                                onMainDispatcher { snackbar("Подключение обновлено ✓").show() }
+                            } else {
+                                onMainDispatcher { snackbar("Подписка не найдена. Войдите снова.").show() }
                             }
                         }
                     } catch (e: Exception) {
-                        onMainDispatcher {
-                            snackbar("Ошибка обновления. Проверьте сеть.").show()
-                        }
+                        onMainDispatcher { snackbar("Ошибка сети. Проверьте подключение.").show() }
                     }
                 }
                 return false
             }
+
 
             R.id.nav_logout -> {
                 // LvovFlow: clear session and go to activation screen

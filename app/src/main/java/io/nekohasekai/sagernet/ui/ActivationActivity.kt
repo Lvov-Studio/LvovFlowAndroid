@@ -236,6 +236,9 @@ class ActivationActivity : AppCompatActivity() {
                 if (ok) {
                     val token = result.optString("token", "")
                     val subUrl = result.optString("subscription_url", "")
+                    val isExpired = result.optBoolean("is_expired", false)
+                    val expireDate = result.optString("expire_date", "")
+                    val status = result.optString("status", "active")
 
                     if (token.isBlank() || subUrl.isBlank()) {
                         withContext(Dispatchers.Main) {
@@ -245,17 +248,26 @@ class ActivationActivity : AppCompatActivity() {
                         return@launch
                     }
 
-                    // 1) Persist session
+                    // Сохраняем сессию в любом случае (чтобы не просить OTP повторно)
                     saveSession(token, subUrl, currentEmail)
 
-                    // 2) Auto-import subscription
+                    if (isExpired) {
+                        // Подписка истекла — показываем экран с предложением продлить
+                        withContext(Dispatchers.Main) {
+                            setVerifyLoading(false)
+                            showExpiredScreen(expireDate)
+                        }
+                        return@launch
+                    }
+
+                    // Активная подписка — импортируем и переходим
                     importSubscription(subUrl)
 
-                    // 3) Go to main screen
                     withContext(Dispatchers.Main) {
                         setVerifyLoading(false)
                         goToMain()
                     }
+
                 } else {
                     val errorMsg = result.optString("error", "Неверный или истёкший код")
                     withContext(Dispatchers.Main) {
@@ -365,6 +377,36 @@ class ActivationActivity : AppCompatActivity() {
     private fun hideKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         currentFocus?.let { imm.hideSoftInputFromWindow(it.windowToken, 0) }
+    }
+
+    /**
+     * Shows a subscription-expired blocking screen.
+     * Called when Marzban returns status = expired/disabled.
+     */
+    private fun showExpiredScreen(expireDate: String) {
+        // Hide both login steps completely
+        stepEmail.visibility = View.GONE
+        stepOtp.visibility = View.GONE
+        hideError()
+
+        // Build and show a non-dismissible dialog
+        val dateText = if (expireDate.isNotBlank()) "Срок действия истёк $expireDate." else "Срок действия вашей подписки истёк."
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("⏳ Подписка истекла")
+            .setMessage("$dateText\n\nДля продолжения работы продлите подписку на сайте LvovFlow.")
+            .setPositiveButton("Продлить подписку") { _, _ ->
+                startActivity(
+                    Intent(Intent.ACTION_VIEW, Uri.parse("https://lvovflow.com/#pricing"))
+                )
+            }
+            .setNegativeButton("Выйти из аккаунта") { _, _ ->
+                getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().clear().apply()
+                stepEmail.visibility = View.VISIBLE
+                emailInput.text.clear()
+                otpInput.text.clear()
+            }
+            .setCancelable(false)
+            .show()
     }
 
     override fun onDestroy() {
