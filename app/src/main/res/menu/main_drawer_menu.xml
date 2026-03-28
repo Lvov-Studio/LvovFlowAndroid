@@ -9,10 +9,17 @@
             android:title="Ускорение" />
 
         <item
+            android:id="@+id/nav_refresh_subscription"
+            android:icon="@drawable/ic_action_done"
+            android:title="🔄 Обновить подключение" />
+
+
+        <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_action_settings"
             android:title="@string/settings" />
     </group>
+
 
     <group
         android:id="@+id/about"

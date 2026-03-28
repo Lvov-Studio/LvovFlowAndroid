@@ -41,6 +41,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.GroupManager
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.ProxyGroup
+import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.SubscriptionBean
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.databinding.LayoutMainBinding
@@ -374,6 +375,32 @@ class MainActivity : ThemedActivity(),
                 return false
             }
             R.id.nav_about -> displayFragment(AboutFragment())
+            R.id.nav_refresh_subscription -> {
+                // LvovFlow: re-fetch subscription from Marzban
+                binding.drawerLayout.closeDrawers()
+                runOnDefaultDispatcher {
+                    try {
+                        val groups = SagerDatabase.groupDao.allGroups()
+                        val sub = groups.firstOrNull { it.type == GroupType.SUBSCRIPTION }
+                        if (sub != null) {
+                            GroupUpdater.startUpdate(sub, true)
+                            onMainDispatcher {
+                                snackbar("Обновление подключения...").show()
+                            }
+                        } else {
+                            onMainDispatcher {
+                                snackbar("Подписка не найдена. Попробуйте выйти и войти снова.").show()
+                            }
+                        }
+                    } catch (e: Exception) {
+                        onMainDispatcher {
+                            snackbar("Ошибка обновления. Проверьте сеть.").show()
+                        }
+                    }
+                }
+                return false
+            }
+
             R.id.nav_logout -> {
                 // LvovFlow: clear session and go to activation screen
                 getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
