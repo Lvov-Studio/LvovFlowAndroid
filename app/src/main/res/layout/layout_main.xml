@@ -366,7 +366,23 @@
 
         </io.nekohasekai.sagernet.widget.StatsBar>
 
+        <!-- Bottom Navigation Bar -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_nav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:elevation="16dp"
+            android:paddingBottom="4dp"
+            app:backgroundTint="#0D1626"
+            app:itemIconTint="@color/bottom_nav_icon"
+            app:itemTextColor="@color/bottom_nav_icon"
+            app:itemActiveIndicatorColor="#1525C9EF"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_nav_menu" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
