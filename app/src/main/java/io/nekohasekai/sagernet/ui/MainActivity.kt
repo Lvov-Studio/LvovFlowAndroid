@@ -1,6 +1,8 @@
 package io.nekohasekai.sagernet.ui
 
 import android.content.res.ColorStateList
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -378,6 +380,26 @@ class MainActivity : ThemedActivity(),
     // LvovFlow: connection timer
     private var timerJob: Job? = null
     private var connectTime: Long = 0L
+    private var breathAnimator: AnimatorSet? = null
+
+    private fun startBreathAnimation() {
+        breathAnimator?.cancel()
+        val scaleX = ObjectAnimator.ofFloat(binding.fab, "scaleX", 1f, 1.08f, 1f)
+        val scaleY = ObjectAnimator.ofFloat(binding.fab, "scaleY", 1f, 1.08f, 1f)
+        breathAnimator = AnimatorSet().apply {
+            playTogether(scaleX, scaleY)
+            duration = 2000L
+            repeatCount = android.animation.ValueAnimator.INFINITE
+            start()
+        }
+    }
+
+    private fun stopBreathAnimation() {
+        breathAnimator?.cancel()
+        breathAnimator = null
+        binding.fab.scaleX = 1f
+        binding.fab.scaleY = 1f
+    }
 
     private fun startConnectionTimer() {
         connectTime = System.currentTimeMillis()
@@ -421,12 +443,13 @@ class MainActivity : ThemedActivity(),
         }
         binding.fab.backgroundTintList = ColorStateList.valueOf(fabColor)
 
-        // LvovFlow: timer + status label
+        // LvovFlow: timer + status label + breathing animation
         if (state == BaseService.State.Connected) {
             binding.connTimerLabel.visibility = View.VISIBLE
             binding.connTimer.visibility = View.VISIBLE
             binding.connStatusLabel.text = "Подключено"
             startConnectionTimer()
+            startBreathAnimation()
         } else {
             binding.connTimerLabel.visibility = View.GONE
             binding.connTimer.visibility = View.GONE
@@ -436,6 +459,7 @@ class MainActivity : ThemedActivity(),
                 else -> "Нажмите для подключения"
             }
             stopConnectionTimer()
+            stopBreathAnimation()
         }
     }
 

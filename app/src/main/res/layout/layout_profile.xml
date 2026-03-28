@@ -8,7 +8,9 @@
     android:layout_margin="4dp"
     android:clickable="true"
     android:focusable="true"
-    app:cardElevation="2dp">
+    app:cardBackgroundColor="#111E36"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="3dp">
 
     <LinearLayout
         android:id="@+id/content_lin"

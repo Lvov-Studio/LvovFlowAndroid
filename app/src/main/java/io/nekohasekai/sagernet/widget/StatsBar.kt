@@ -31,6 +31,7 @@ class StatsBar @JvmOverloads constructor(
     private lateinit var statusText: TextView
     private lateinit var txText: TextView
     private lateinit var rxText: TextView
+    private lateinit var speedGraph: SpeedGraphView
     private lateinit var behavior: YourBehavior
 
     var allowShow = true
@@ -76,6 +77,7 @@ class StatsBar @JvmOverloads constructor(
         statusText = findViewById(R.id.status)
         txText = findViewById(R.id.tx)
         rxText = findViewById(R.id.rx)
+        speedGraph = findViewById(R.id.speed_graph)
         super.setOnClickListener(l)
     }
 
@@ -167,6 +169,8 @@ class StatsBar @JvmOverloads constructor(
                 R.string.speed, Formatter.formatFileSize(context, rxRate)
             )
         }"
+        // LvovFlow: feed speed graph
+        if (::speedGraph.isInitialized) speedGraph.addSample(txRate, rxRate)
     }
 
     fun testConnection() {
