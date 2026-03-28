@@ -126,247 +126,41 @@
             android:textSize="15sp"
             android:alpha="0.85" />
 
-        <!-- Server name label (shown only when connected) -->
-        <TextView
-            android:id="@+id/conn_server_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="376dp"
-            android:text=""
-            android:textColor="#25C9EF"
-            android:textSize="12sp"
-            android:alpha="0.9"
-            android:visibility="gone" />
-
-        <!-- Server info card (flag, name, ping — shown when connected) -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/server_info_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_marginTop="408dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:visibility="gone"
-            app:cardBackgroundColor="#0F1E38"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/server_flag_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🌐 LvovFlow"
-                        android:textColor="#FFFFFF"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/server_status_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Соединение защищено 🔒"
-                        android:textColor="#25C9EF"
-                        android:textSize="12sp"
-                        android:layout_marginTop="2dp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <TextView
-                        android:id="@+id/server_ping"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="—"
-                        android:textColor="#25C9EF"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="пинг"
-                        android:textColor="#55FFFFFF"
-                        android:textSize="10sp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- Speed row (upload / download — shown when connected) -->
+        <!-- Server name label (shown when connected, now positioned under the button) -->
         <LinearLayout
-            android:id="@+id/speed_row"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_marginTop="510dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
+            android:id="@+id/server_button_container"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="400dp"
+            android:background="@drawable/bg_glass_card"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:visibility="gone">
 
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/conn_server_label"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="#0B25C9EF"
-                android:padding="14dp">
+                android:text="Оптимальный сервер: 🇩🇪"
+                android:textColor="#E2E8F0"
+                android:textSize="14sp" />
 
-                <TextView
-                    android:id="@+id/speed_up"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0 B/s"
-                    android:textColor="#25C9EF"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="↑ Исходящий"
-                    android:textColor="#55FFFFFF"
-                    android:textSize="11sp"
-                    android:layout_marginTop="2dp" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center_vertical"
-                android:background="#25FFFFFF" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="#0B25C9EF"
-                android:padding="14dp">
-
-                <TextView
-                    android:id="@+id/speed_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0 B/s"
-                    android:textColor="#25C9EF"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="↓ Входящий"
-                    android:textColor="#55FFFFFF"
-                    android:textSize="11sp"
-                    android:layout_marginTop="2dp" />
-
-            </LinearLayout>
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_chevron_right"
+                android:tint="#64748B" />
 
         </LinearLayout>
 
+    <!-- Removed legacy server info card and speed row for premium UI -->
+
         <!-- StatsBar (bottom) - hidden, speed shown in custom speed_row -->
-        <io.nekohasekai.sagernet.widget.StatsBar
-            android:id="@+id/stats"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="56dp"
-            android:visibility="gone"
-            android:nextFocusUp="@+id/fab"
-            app:backgroundTint="?colorMaterial300"
-            app:contentInsetStart="0dp"
-            app:hideOnScroll="true"
-            app:layout_scrollFlags="enterAlways|scroll">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackground"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <io.nekohasekai.sagernet.widget.SpeedGraphView
-                        android:id="@+id/speed_graph"
-                        android:layout_width="0dp"
-                        android:layout_height="36dp"
-                        android:layout_weight="1" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginStart="8dp">
-
-                        <TextView
-                            android:id="@+id/tx"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="marquee"
-                            android:singleLine="true"
-                            android:textColor="?whiteOrTextPrimary"
-                            android:textSize="12sp" />
-
-                        <TextView
-                            android:id="@+id/rx"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="marquee"
-                            android:singleLine="true"
-                            android:textColor="?whiteOrTextPrimary"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="fill_horizontal"
-                    android:layout_marginTop="4dp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="?whiteOrTextPrimary"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    tools:text="@string/connection_test_available" />
-
-            </LinearLayout>
-
-        </io.nekohasekai.sagernet.widget.StatsBar>
+    <!-- Removed StatsBar for premium UI -->
 
         <!-- Bottom Navigation Bar -->
         <com.google.android.material.bottomnavigation.BottomNavigationView

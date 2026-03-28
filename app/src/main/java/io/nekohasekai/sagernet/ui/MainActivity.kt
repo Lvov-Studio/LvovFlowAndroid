@@ -671,26 +671,22 @@ class MainActivity : ThemedActivity(),
             binding.connTimerLabel.visibility = View.VISIBLE
             binding.connTimer.visibility = View.VISIBLE
             binding.connStatusLabel.text = "Соединение активно"
-            // Server label small
-            binding.connServerLabel.visibility = View.GONE  // server name shown in card
+            // Server label small (now a button container)
+            binding.serverButtonContainer.visibility = View.VISIBLE
             val profileId = DataStore.selectedProxy
             val serverName = if (profileId > 0L) {
                 runCatching { ProfileManager.getProfile(profileId)?.displayName() }.getOrNull()
                     ?: "LvovFlow"
             } else "LvovFlow"
-            binding.serverInfoCard.visibility = View.VISIBLE
-            binding.serverFlagName.text = "🌐 $serverName"
-            // Speed row
-            binding.speedRow.visibility = View.VISIBLE
+            binding.connServerLabel.text = "Оптимальный сервер: $serverName"
+            
             startConnectionTimer()
             startBreathAnimation()
             startPulseAnimation()
         } else {
             binding.connTimerLabel.visibility = View.GONE
             binding.connTimer.visibility = View.GONE
-            binding.connServerLabel.visibility = View.GONE
-            binding.serverInfoCard.visibility = View.GONE
-            binding.speedRow.visibility = View.GONE
+            binding.serverButtonContainer.visibility = View.GONE
             binding.connStatusLabel.text = when (state) {
                 BaseService.State.Connecting -> "Подключение..."
                 BaseService.State.Stopping -> "Отключение..."
