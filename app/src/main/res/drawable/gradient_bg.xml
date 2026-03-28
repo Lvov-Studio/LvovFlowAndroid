@@ -1,13 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  LvovFlow gradient background — matches website design:
-  dark navy #09152B (top) → deeper midnight #131F42 (bottom)
+  LvovFlow subtle background overlay:
+  Cyan radial glow centered on the FAB button area (top 30% of screen)
+  plus a very faint linear vignette.
+  Placed on top of gradient_bg as a layer.
 -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <gradient
-        android:type="linear"
-        android:angle="270"
-        android:startColor="#09152B"
-        android:centerColor="#0F1B34"
-        android:endColor="#131F42" />
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Base dark navy gradient -->
+    <item>
+        <shape>
+            <gradient
+                android:type="linear"
+                android:angle="270"
+                android:startColor="#09152B"
+                android:centerColor="#0F1B34"
+                android:endColor="#131F42" />
+        </shape>
+    </item>
+
+    <!-- Subtle cyan radial glow near the FAB/center area -->
+    <item>
+        <shape>
+            <gradient
+                android:type="radial"
+                android:gradientRadius="280%"
+                android:startColor="#0C25C9EF"
+                android:endColor="#00000000"
+                android:centerX="0.5"
+                android:centerY="0.28" />
+        </shape>
+    </item>
+
+    <!-- Faint dot-like vignette at the edges (darker corners) -->
+    <item>
+        <shape>
+            <gradient
+                android:type="radial"
+                android:gradientRadius="120%"
+                android:startColor="#00000000"
+                android:endColor="#1A000000"
+                android:centerX="0.5"
+                android:centerY="0.5" />
+        </shape>
+    </item>
+
+</layer-list>

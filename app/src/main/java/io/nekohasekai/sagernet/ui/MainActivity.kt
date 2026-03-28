@@ -324,10 +324,21 @@ class MainActivity : ThemedActivity(),
         if (fragment is ConfigurationFragment) {
             binding.stats.allowShow = true
             binding.fab.show()
-        } else if (!DataStore.showBottomBar) {
-            binding.stats.allowShow = false
-            binding.stats.performHide()
-            binding.fab.hide()
+            // LvovFlow: restore connection panel on main screen
+            val isConnected = DataStore.serviceState == BaseService.State.Connected
+            binding.connTimerLabel.visibility = if (isConnected) View.VISIBLE else View.GONE
+            binding.connTimer.visibility = if (isConnected) View.VISIBLE else View.GONE
+            binding.connStatusLabel.visibility = View.VISIBLE
+        } else {
+            if (!DataStore.showBottomBar) {
+                binding.stats.allowShow = false
+                binding.stats.performHide()
+                binding.fab.hide()
+            }
+            // LvovFlow: ALWAYS hide connection panel on non-main screens
+            binding.connTimerLabel.visibility = View.GONE
+            binding.connTimer.visibility = View.GONE
+            binding.connStatusLabel.visibility = View.GONE
         }
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_holder, fragment)
