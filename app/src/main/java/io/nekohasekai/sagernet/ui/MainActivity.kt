@@ -50,10 +50,13 @@ import io.nekohasekai.sagernet.database.ProxyGroup
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.SubscriptionBean
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
+import io.nekohasekai.sagernet.ui.ServerBottomSheetAdapter
+import io.nekohasekai.sagernet.database.proxy.ProxyEntity
 import io.nekohasekai.sagernet.databinding.LayoutMainBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.PluginEntry
+import io.nekohasekai.sagernet.utils.ProfileManager
 import io.nekohasekai.sagernet.group.GroupInterfaceAdapter
 import io.nekohasekai.sagernet.group.GroupUpdater
 import io.nekohasekai.sagernet.ktx.alert
@@ -162,6 +165,11 @@ class MainActivity : ThemedActivity(),
         val lvovPrefs = getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
         val userEmail = lvovPrefs.getString("user_email", "") ?: ""
         val expireDate = lvovPrefs.getString("expire_date", "") ?: ""
+
+        // LvovFlow: Open server selection bottom sheet
+        binding.serverButtonContainer.setOnClickListener {
+            showServerSelectionBottomSheet()
+        }
 
         // LvovFlow: refresh subscription status from server in background
         val sessionToken = lvovPrefs.getString("session_token", "") ?: ""
@@ -587,6 +595,27 @@ class MainActivity : ThemedActivity(),
 
     // LvovFlow: pulsing ring animation (3 rings, staggered)
     private var pulseJob: Job? = null
+
+    // LvovFlow: Server selection bottom sheet
+    private fun showServerSelectionBottomSheet() {
+        val bottomSheetDialog = com.google.android.material.bottomsheet.BottomSheetDialog(this, R.style.Theme_LvovFlow_BottomSheetDialog)
+        val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_servers, null)
+        bottomSheetDialog.setContentView(view)
+
+        val recyclerView = view.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.recyclerViewServers)
+        val profiles = ProfileManager.getProfiles()
+        val adapter = ServerBottomSheetAdapter(profiles, DataStore.selectedProxy) { selectedProfile ->
+            // Switch profile logic
+            DataStore.selectedProxy = selectedProfile.id
+            if (DataStore.serviceState == BaseService.State.Connected) {
+                SagerNet.reloadService()
+            }
+            binding.connServerLabel.text = "Оптимальный сервер: " + selectedProfile.displayName()
+            bottomSheetDialog.dismiss()
+        }
+        recyclerView.adapter = adapter
+        bottomSheetDialog.show()
+    }
 
     private fun animateRing(ring: View, delay: Long) {
         ring.scaleX = 1f
