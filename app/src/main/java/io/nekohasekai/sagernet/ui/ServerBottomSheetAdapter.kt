@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.database.proxy.ProxyEntity
+import io.nekohasekai.sagernet.database.ProxyEntity
 
 class ServerBottomSheetAdapter(
     private val profiles: List<ProxyEntity>,

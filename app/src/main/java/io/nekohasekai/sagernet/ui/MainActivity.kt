@@ -51,12 +51,11 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.SubscriptionBean
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.ui.ServerBottomSheetAdapter
-import io.nekohasekai.sagernet.database.proxy.ProxyEntity
+import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.databinding.LayoutMainBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.PluginEntry
-import io.nekohasekai.sagernet.utils.ProfileManager
 import io.nekohasekai.sagernet.group.GroupInterfaceAdapter
 import io.nekohasekai.sagernet.group.GroupUpdater
 import io.nekohasekai.sagernet.ktx.alert
@@ -141,7 +140,7 @@ class MainActivity : ThemedActivity(),
             }
         }
 
-        binding.stats.setOnClickListener { if (DataStore.serviceState.connected) binding.stats.testConnection() }
+        // removed binding.stats.setOnClickListener
 
         setContentView(binding.root)
 
@@ -163,7 +162,12 @@ class MainActivity : ThemedActivity(),
 
         // LvovFlow: Open server selection bottom sheet
         binding.serverButtonContainer.setOnClickListener {
-            showServerSelectionBottomSheet()
+            lifecycleScope.launch(Dispatchers.IO) {
+                val profiles = SagerDatabase.proxyDao.getAll()
+                withContext(Dispatchers.Main) {
+                    showServerSelectionBottomSheet(profiles)
+                }
+            }
         }
 
         // LvovFlow: refresh subscription status from server in background
@@ -441,7 +445,6 @@ class MainActivity : ThemedActivity(),
     @SuppressLint("CommitTransaction")
     fun displayFragment(fragment: ToolbarFragment) {
         if (fragment is ConfigurationFragment) {
-            binding.stats.allowShow = true
             binding.fab.show()
             // LvovFlow: restore connection panel on main screen
             val isConnected = DataStore.serviceState == BaseService.State.Connected
@@ -450,8 +453,6 @@ class MainActivity : ThemedActivity(),
             binding.connStatusLabel.visibility = View.VISIBLE
         } else {
             if (!DataStore.showBottomBar) {
-                binding.stats.allowShow = false
-                binding.stats.performHide()
                 binding.fab.hide()
             }
             // LvovFlow: ALWAYS hide connection panel on non-main screens
@@ -601,13 +602,12 @@ class MainActivity : ThemedActivity(),
     private var pulseJob: Job? = null
 
     // LvovFlow: Server selection bottom sheet
-    private fun showServerSelectionBottomSheet() {
-        val bottomSheetDialog = com.google.android.material.bottomsheet.BottomSheetDialog(this, R.style.Theme_LvovFlow_BottomSheetDialog)
+    private fun showServerSelectionBottomSheet(profiles: List<ProxyEntity>) {
+        val bottomSheetDialog = com.google.android.material.bottomsheet.BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_servers, null)
         bottomSheetDialog.setContentView(view)
 
         val recyclerView = view.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.recyclerViewServers)
-        val profiles = ProfileManager.getProfiles()
         val adapter = ServerBottomSheetAdapter(profiles, DataStore.selectedProxy) { selectedProfile ->
             // Switch profile logic
             DataStore.selectedProxy = selectedProfile.id
@@ -686,7 +686,6 @@ class MainActivity : ThemedActivity(),
         DataStore.serviceState = state
 
         binding.fab.changeState(state, DataStore.serviceState, animate)
-        binding.stats.changeState(state)
         if (msg != null) snackbar(getString(R.string.vpn_error, msg)).show()
 
         // LvovFlow: FAB color — green when connected, indigo otherwise
@@ -765,9 +764,8 @@ class MainActivity : ThemedActivity(),
     }
 
     // may NOT called when app is in background
-    // ONLY do UI update here, write DB in bg process
     override fun cbSpeedUpdate(stats: SpeedDisplayData) {
-        binding.stats.updateSpeed(stats.txRateProxy, stats.rxRateProxy)
+        // Stats widget removed
     }
 
     override fun cbTrafficUpdate(data: TrafficData) {
