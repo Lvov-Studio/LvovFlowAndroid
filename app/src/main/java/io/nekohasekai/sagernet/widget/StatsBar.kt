@@ -171,6 +171,14 @@ class StatsBar @JvmOverloads constructor(
         }"
         // LvovFlow: feed speed graph
         if (::speedGraph.isInitialized) speedGraph.addSample(txRate, rxRate)
+        // LvovFlow: update premium speed row
+        val activity = context as? MainActivity ?: return
+        try {
+            val speedUp = activity.findViewById<android.widget.TextView>(R.id.speed_up)
+            val speedDown = activity.findViewById<android.widget.TextView>(R.id.speed_down)
+            speedUp?.text = Formatter.formatFileSize(context, txRate) + "/s"
+            speedDown?.text = Formatter.formatFileSize(context, rxRate) + "/s"
+        } catch (_: Exception) {}
     }
 
     fun testConnection() {

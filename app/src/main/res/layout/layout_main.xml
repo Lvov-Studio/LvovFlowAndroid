@@ -290,12 +290,13 @@
 
         </LinearLayout>
 
-        <!-- StatsBar (bottom) -->
+        <!-- StatsBar (bottom) - pushed above BottomNav -->
         <io.nekohasekai.sagernet.widget.StatsBar
             android:id="@+id/stats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:layout_marginBottom="56dp"
             android:nextFocusUp="@+id/fab"
             app:backgroundTint="?colorMaterial300"
             app:contentInsetStart="0dp"

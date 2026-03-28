@@ -624,14 +624,12 @@ class MainActivity : ThemedActivity(),
             binding.connTimer.visibility = View.VISIBLE
             binding.connStatusLabel.text = "Соединение активно"
             // Server label small
-            binding.connServerLabel.visibility = View.VISIBLE
+            binding.connServerLabel.visibility = View.GONE  // server name shown in card
             val profileId = DataStore.selectedProxy
             val serverName = if (profileId > 0L) {
                 runCatching { ProfileManager.getProfile(profileId)?.displayName() }.getOrNull()
                     ?: "LvovFlow"
             } else "LvovFlow"
-            binding.connServerLabel.text = "🚀 $serverName"
-            // Server info card
             binding.serverInfoCard.visibility = View.VISIBLE
             binding.serverFlagName.text = "🌐 $serverName"
             // Speed row
