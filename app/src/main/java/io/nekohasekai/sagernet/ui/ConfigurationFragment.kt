@@ -744,9 +744,9 @@ class ConfigurationFragment @JvmOverloads constructor(
             tabLayout.post {
                 groupList.add(group)
 
-                if (groupList.any { !it.ungrouped }) tabLayout.post {
-                    tabLayout.visibility = View.VISIBLE
-                }
+                // LvovFlow monolithic: tab bar always hidden — only one service group
+                // tabLayout.visibility = View.VISIBLE
+
 
                 notifyItemInserted(groupList.size - 1)
                 tabLayout.getTabAt(groupList.size - 1)?.select()

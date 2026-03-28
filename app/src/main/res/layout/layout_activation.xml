@@ -37,14 +37,14 @@
                 android:background="@drawable/bg_glow_circle"
                 android:layout_gravity="center" />
 
-            <!-- Lion paw icon -->
+            <!-- Lion logo (app icon) -->
             <ImageView
                 android:id="@+id/logo_icon"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_service_busy"
-                android:tint="#25C9EF" />
+                android:src="@mipmap/ic_launcher" />
+
         </FrameLayout>
 
         <!-- App Name -->

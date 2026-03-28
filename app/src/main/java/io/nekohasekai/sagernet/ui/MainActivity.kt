@@ -374,6 +374,18 @@ class MainActivity : ThemedActivity(),
                 return false
             }
             R.id.nav_about -> displayFragment(AboutFragment())
+            R.id.nav_logout -> {
+                // LvovFlow: clear session and go to activation screen
+                getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
+                    .edit().clear().apply()
+                startActivity(
+                    Intent(this, ActivationActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }
+                )
+                finish()
+                return false
+            }
             else -> return false
         }
         navigation.menu.findItem(id).isChecked = true
