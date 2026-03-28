@@ -3,15 +3,17 @@
     <item
         android:id="@+id/nav_bottom_lk"
         android:icon="@drawable/ic_home"
-        android:title="ЛК" />
+        android:title="Главная" />
     <item
         android:id="@+id/nav_bottom_tariffs"
         android:icon="@drawable/ic_card"
-        android:title="Тарифы" />
+        android:title="Тарифы"
+        android:enabled="false" />
     <item
         android:id="@+id/nav_bottom_bonuses"
         android:icon="@drawable/ic_bonuses"
-        android:title="Бонусы" />
+        android:title="Бонусы"
+        android:enabled="false" />
     <item
         android:id="@+id/nav_bottom_profile"
         android:icon="@drawable/ic_navigation_apps"
