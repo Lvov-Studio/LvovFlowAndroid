@@ -151,15 +151,10 @@ class MainActivity : ThemedActivity(),
             finish()
             return
         }
-
         changeState(BaseService.State.Idle)
         connection.connect(this, this)
         DataStore.configurationStore.registerChangeListener(this)
         GroupManager.userInterface = GroupInterfaceAdapter(this)
-
-        if (intent?.action == Intent.ACTION_VIEW) {
-            onNewIntent(intent)
-        }
 
         // LvovFlow: cache session data (UI no longer shows it here)
         val lvovPrefs = getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)

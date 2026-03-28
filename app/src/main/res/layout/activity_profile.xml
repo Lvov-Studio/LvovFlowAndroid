@@ -99,7 +99,7 @@
             android:orientation="vertical"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:background="#0D1A2E">
+            android:background="@drawable/bg_glass_card">
 
             <!-- Обновить подключение -->
             <LinearLayout
@@ -245,7 +245,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="12dp"
-            android:background="#0D1A2E"
+            android:background="@drawable/bg_glass_card"
             android:foreground="?attr/selectableItemBackground">
 
             <TextView
