@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_activation_gradient"
     android:fillViewport="true"
     android:overScrollMode="never">
+
 
     <LinearLayout
         android:id="@+id/activation_root"
@@ -123,16 +125,16 @@
             </LinearLayout>
 
             <!-- Send code button -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_send_code"
-                style="@style/Widget.AppCompat.Button"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:background="@drawable/bg_button_cyan"
                 android:text="Получить код"
                 android:textColor="#0A1628"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                app:backgroundTint="#25C9EF"
+                app:cornerRadius="16dp"
                 android:elevation="4dp" />
 
             <!-- Progress indicator row -->
@@ -235,16 +237,16 @@
             </LinearLayout>
 
             <!-- Verify button -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_verify"
-                style="@style/Widget.AppCompat.Button"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:background="@drawable/bg_button_cyan"
                 android:text="Войти"
                 android:textColor="#0A1628"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                app:backgroundTint="#25C9EF"
+                app:cornerRadius="16dp"
                 android:elevation="4dp" />
 
             <!-- Resend row -->

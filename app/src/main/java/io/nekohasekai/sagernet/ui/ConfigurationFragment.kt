@@ -703,9 +703,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                         groupList = newGroupList
                         notifyDataSetChanged()
                         if (set) groupPager.setCurrentItem(selectedGroupIndex, false)
-                        val hideTab = groupList.size < 2
-                        tabLayout.isGone = hideTab
-                        toolbar.elevation = if (hideTab) 0F else dp2px(4).toFloat()
+                        // LvovFlow monolithic: tab bar always hidden
+                        tabLayout.isGone = true
+                        toolbar.elevation = 0F
                         if (!select) {
                             groupPager.registerOnPageChangeCallback(updateSelectedCallback)
                         }
