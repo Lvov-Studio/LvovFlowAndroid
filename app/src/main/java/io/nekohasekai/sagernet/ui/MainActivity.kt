@@ -394,12 +394,18 @@ class MainActivity : ThemedActivity(),
 
     private fun startBreathAnimation() {
         breathAnimator?.cancel()
-        val scaleX = ObjectAnimator.ofFloat(binding.fab, "scaleX", 1f, 1.08f, 1f)
-        val scaleY = ObjectAnimator.ofFloat(binding.fab, "scaleY", 1f, 1.08f, 1f)
+        val scaleX = ObjectAnimator.ofFloat(binding.fab, "scaleX", 1f, 1.08f, 1f).apply {
+            duration = 2000L
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }
+        val scaleY = ObjectAnimator.ofFloat(binding.fab, "scaleY", 1f, 1.08f, 1f).apply {
+            duration = 2000L
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }
         breathAnimator = AnimatorSet().apply {
             playTogether(scaleX, scaleY)
-            duration = 2000L
-            repeatCount = android.animation.ValueAnimator.INFINITE
             start()
         }
     }
