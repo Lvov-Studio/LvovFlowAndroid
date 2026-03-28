@@ -211,7 +211,7 @@ class ActivationActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     setEmailLoading(false)
-                    showError("[${e.javaClass.simpleName}] ${e.message}")
+                    showError("Ошибка сети. Проверьте подключение.")
                 }
             }
         }
@@ -279,7 +279,7 @@ class ActivationActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     setVerifyLoading(false)
-                    showError("[${e.javaClass.simpleName}] ${e.message}")
+                    showError("Ошибка сети. Проверьте подключение.")
                 }
             }
         }
@@ -345,7 +345,13 @@ class ActivationActivity : AppCompatActivity() {
                     body.forEach { (k, v) -> put(k, v) }
                 }.toString()
                 OutputStreamWriter(connection.outputStream).use { it.write(json) }
-                val response = connection.inputStream.bufferedReader().readText()
+                // Read body from errorStream for 4xx/5xx, inputStream for 2xx
+                val stream = if (connection.responseCode in 200..299) {
+                    connection.inputStream
+                } else {
+                    connection.errorStream ?: connection.inputStream
+                }
+                val response = stream.bufferedReader().readText()
                 JSONObject(response)
             } finally {
                 connection.disconnect()
