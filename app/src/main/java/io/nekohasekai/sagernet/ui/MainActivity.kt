@@ -97,10 +97,41 @@ class MainActivity : ThemedActivity(),
         }
 
         binding.fab.setOnClickListener {
-            if (DataStore.serviceState.canStop) SagerNet.stopService() else connect.launch(
-                null
-            )
+            if (DataStore.serviceState.canStop) {
+                SagerNet.stopService()
+            } else {
+                // LvovFlow: auto-select first profile if none chosen (list is hidden from user)
+                if (DataStore.selectedProxy <= 0L) {
+                    runOnDefaultDispatcher {
+                        try {
+                            val groups = SagerDatabase.groupDao.allGroups()
+                            val sub = groups.firstOrNull { it.type == GroupType.SUBSCRIPTION }
+                            if (sub != null) {
+                                val profiles = SagerDatabase.proxyDao.getByGroup(sub.id)
+                                val first = profiles.firstOrNull()
+                                if (first != null) {
+                                    DataStore.selectedProxy = first.id
+                                    onMainDispatcher { connect.launch(null) }
+                                } else {
+                                    onMainDispatcher {
+                                        snackbar("Нет серверов. Нажмите «🔄 Обновить подключение» в меню.").show()
+                                    }
+                                }
+                            } else {
+                                onMainDispatcher {
+                                    snackbar("Подписка не найдена. Войдите снова.").show()
+                                }
+                            }
+                        } catch (e: Exception) {
+                            onMainDispatcher { connect.launch(null) }
+                        }
+                    }
+                } else {
+                    connect.launch(null)
+                }
+            }
         }
+
         binding.stats.setOnClickListener { if (DataStore.serviceState.connected) binding.stats.testConnection() }
 
         setContentView(binding.root)
