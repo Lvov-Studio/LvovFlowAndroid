@@ -1279,8 +1279,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
 
                 profileName.text = proxyEntity.displayName()
+                // LvovFlow: hide protocol type (VLESS/Trojan/etc) from UI
                 profileType.text = proxyEntity.displayType()
-                profileType.setTextColor(requireContext().getProtocolColor(proxyEntity.type))
+                profileType.isGone = true
 
                 var rx = proxyEntity.rx
                 var tx = proxyEntity.tx
