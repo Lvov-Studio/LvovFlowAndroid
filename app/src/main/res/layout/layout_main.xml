@@ -290,13 +290,14 @@
 
         </LinearLayout>
 
-        <!-- StatsBar (bottom) - pushed above BottomNav -->
+        <!-- StatsBar (bottom) - hidden, speed shown in custom speed_row -->
         <io.nekohasekai.sagernet.widget.StatsBar
             android:id="@+id/stats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginBottom="56dp"
+            android:visibility="gone"
             android:nextFocusUp="@+id/fab"
             app:backgroundTint="?colorMaterial300"
             app:contentInsetStart="0dp"
