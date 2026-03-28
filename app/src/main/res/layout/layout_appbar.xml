@@ -14,7 +14,7 @@
         android:background="?attr/colorPrimary"
         android:theme="?actionBarTheme"
         android:touchscreenBlocksFocus="false"
-        app:logo="@drawable/ic_service_idle"
+        app:logo="@mipmap/ic_launcher"
         app:logoDescription="LvovFlow"
         app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
         app:title="@string/app_name" />
