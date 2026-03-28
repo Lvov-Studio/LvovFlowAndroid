@@ -158,17 +158,10 @@ class MainActivity : ThemedActivity(),
             onNewIntent(intent)
         }
 
-        // LvovFlow: populate nav drawer header with user info from session
+        // LvovFlow: cache session data (UI no longer shows it here)
         val lvovPrefs = getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
-        val headerView = navigation.getHeaderView(0)
-        headerView?.let { hv ->
-            val emailTv = hv.findViewById<android.widget.TextView>(R.id.nav_header_email)
-            val expiryTv = hv.findViewById<android.widget.TextView>(R.id.nav_header_expiry)
-            val userEmail = lvovPrefs.getString("user_email", "") ?: ""
-            val expireDate = lvovPrefs.getString("expire_date", "") ?: ""
-            emailTv?.text = userEmail
-            expiryTv?.text = if (expireDate.isNotBlank()) "Подписка до $expireDate" else "Акселератор интернета"
-        }
+        val userEmail = lvovPrefs.getString("user_email", "") ?: ""
+        val expireDate = lvovPrefs.getString("expire_date", "") ?: ""
 
         // LvovFlow: refresh subscription status from server in background
         val sessionToken = lvovPrefs.getString("session_token", "") ?: ""
@@ -200,11 +193,9 @@ class MainActivity : ThemedActivity(),
                             if (newSubUrl.isNotBlank()) putString("subscription_url", newSubUrl)
                             apply()
                         }
-                        // Обновляем UI на главном потоке
+                        // Обновляем UI на главном потоке (раньше тут обновлялась шапка меню)
                         withContext(Dispatchers.Main) {
-                            val hv2 = navigation.getHeaderView(0)
-                            hv2?.findViewById<android.widget.TextView>(R.id.nav_header_expiry)
-                                ?.text = if (newExpire.isNotBlank()) "Подписка до $newExpire" else "Акселератор интернета"
+                            // Header is now just a logo, nothing to update here
                         }
                     }
                 } catch (_: Exception) {
