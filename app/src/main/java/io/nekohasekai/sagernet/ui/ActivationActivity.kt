@@ -111,10 +111,6 @@ class ActivationActivity : AppCompatActivity() {
         // Animate logo on enter
         animateLogo()
 
-        // Footer link
-        val footer = findViewById<TextView>(R.id.activation_root)
-        // (handled inline in layout)
-
         // Step 1: send OTP
         btnSendCode.setOnClickListener { sendCode() }
         emailInput.setOnEditorActionListener { _, actionId, _ ->
