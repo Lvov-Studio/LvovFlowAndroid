@@ -20,7 +20,7 @@
         <item name="fabColorBackground">?colorPrimary</item>
         <item name="selectedColorPrimary">#25C9EF</item>
         <item name="android:windowBackground">@drawable/gradient_bg</item>
-        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:fontFamily">sans-serif</item>
         <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="tabTextColor">#99FFFFFF</item>
         <item name="tabSelectedTextColor">@color/white</item>
