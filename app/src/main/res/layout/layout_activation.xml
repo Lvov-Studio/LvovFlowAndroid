@@ -125,6 +125,7 @@
             <!-- Send code button -->
             <Button
                 android:id="@+id/btn_send_code"
+                style="@style/Widget.AppCompat.Button"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:background="@drawable/bg_button_cyan"
@@ -236,6 +237,7 @@
             <!-- Verify button -->
             <Button
                 android:id="@+id/btn_verify"
+                style="@style/Widget.AppCompat.Button"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:background="@drawable/bg_button_cyan"
