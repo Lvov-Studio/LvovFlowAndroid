@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import io.nekohasekai.sagernet.database.GroupManager
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.GroupType
@@ -26,7 +28,15 @@ import kotlinx.coroutines.withContext
  * LvovFlow — Profile Screen Fragment
  * Accessible via bottom navigation "Профиль" tab.
  */
-class ProfileFragment : ToolbarFragment(R.layout.fragment_profile) {
+class ProfileFragment : ToolbarFragment() {
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_profile, container, false)
+    }
 
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
