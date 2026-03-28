@@ -474,6 +474,9 @@ class MainActivity : ThemedActivity(),
             R.id.nav_bottom_profile -> {
                 displayFragment(ProfileFragment())
             }
+            R.id.nav_bottom_tariffs -> {
+                displayFragment(TariffsFragment())
+            }
             R.id.nav_settings -> displayFragment(SettingsFragment())
             R.id.nav_faq -> {
                 launchCustomTab("https://lvovflow.com")

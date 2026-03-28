@@ -8,7 +8,7 @@
         android:id="@+id/nav_bottom_tariffs"
         android:icon="@drawable/ic_card"
         android:title="Тарифы"
-        android:enabled="false" />
+        android:enabled="true" />
     <item
         android:id="@+id/nav_bottom_bonuses"
         android:icon="@drawable/ic_bonuses"
