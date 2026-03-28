@@ -372,6 +372,6 @@ class ActivationActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        scope.coroutineContext[SupervisorJob()]?.cancel()
+        scope.cancel()
     }
 }

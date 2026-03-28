@@ -144,10 +144,7 @@ class MainActivity : ThemedActivity(),
     }
 
     fun refreshNavMenu(clashApi: Boolean) {
-        if (::navigation.isInitialized) {
-            navigation.menu.findItem(R.id.nav_traffic)?.isVisible = clashApi
-            navigation.menu.findItem(R.id.nav_tuiguang)?.isVisible = false
-        }
+        // LvovFlow monolithic: nav_traffic and nav_tuiguang removed from menu
     }
 
     override fun onNewIntent(intent: Intent) {
