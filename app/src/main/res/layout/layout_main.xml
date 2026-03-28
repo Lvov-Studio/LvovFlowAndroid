@@ -11,6 +11,7 @@
         android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#0A1628"
         android:clipChildren="false">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -18,7 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!-- We double trackThickness as half of it will be invisible -->
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/fabProgress"
             android:layout_width="wrap_content"
@@ -32,7 +32,47 @@
             app:trackCornerRadius="@dimen/mtrl_progress_track_thickness"
             app:trackThickness="8dp" />
 
-        <!-- LvovFlow: Connection timer label (visible only when connected) -->
+        <!-- Background glow (changes color on connect) -->
+        <View
+            android:id="@+id/glow_bg"
+            android:layout_width="320dp"
+            android:layout_height="320dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="72dp"
+            android:background="@drawable/bg_glow_circle"
+            android:alpha="0.45" />
+
+        <!-- Pulse ring 1 (innermost) -->
+        <View
+            android:id="@+id/pulse_ring_1"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="158dp"
+            android:background="@drawable/bg_pulse_ring"
+            android:alpha="0" />
+
+        <!-- Pulse ring 2 (middle) -->
+        <View
+            android:id="@+id/pulse_ring_2"
+            android:layout_width="185dp"
+            android:layout_height="185dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="135dp"
+            android:background="@drawable/bg_pulse_ring"
+            android:alpha="0" />
+
+        <!-- Pulse ring 3 (outermost) -->
+        <View
+            android:id="@+id/pulse_ring_3"
+            android:layout_width="230dp"
+            android:layout_height="230dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="113dp"
+            android:background="@drawable/bg_pulse_ring"
+            android:alpha="0" />
+
+        <!-- LvovFlow: Connection timer label -->
         <TextView
             android:id="@+id/conn_timer_label"
             android:layout_width="wrap_content"
@@ -41,8 +81,8 @@
             android:layout_marginTop="64dp"
             android:text="Время подключения"
             android:textColor="?whiteOrTextPrimary"
-            android:textSize="13sp"
-            android:alpha="0.7"
+            android:textSize="12sp"
+            android:alpha="0.6"
             android:visibility="gone" />
 
         <!-- LvovFlow: Connection timer clock -->
@@ -51,19 +91,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="82dp"
+            android:layout_marginTop="80dp"
             android:text="00:00:00"
             android:textColor="?whiteOrTextPrimary"
-            android:textSize="30sp"
+            android:textSize="28sp"
             android:textStyle="bold"
             android:fontFamily="monospace"
             android:visibility="gone" />
 
+        <!-- FAB (connect button) -->
         <io.nekohasekai.sagernet.widget.ServiceButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:elevation="8dp"
+            android:elevation="12dp"
             android:nextFocusDown="@+id/stats"
             android:layout_gravity="top|center_horizontal"
             android:layout_marginTop="172dp"
@@ -73,31 +114,183 @@
             app:pressedTranslationZ="6dp"
             app:srcCompat="@drawable/ic_service_idle" />
 
-        <!-- LvovFlow: Status text below FAB -->
+        <!-- Status text -->
         <TextView
             android:id="@+id/conn_status_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="294dp"
-            android:text="Нажмите для подключения"
+            android:layout_marginTop="296dp"
+            android:text="Активировать ускорение"
             android:textColor="?whiteOrTextPrimary"
-            android:textSize="14sp"
+            android:textSize="15sp"
             android:alpha="0.85" />
 
-        <!-- LvovFlow: Active server name (shown only when connected) -->
+        <!-- Server name label (shown only when connected) -->
         <TextView
             android:id="@+id/conn_server_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="316dp"
+            android:layout_marginTop="320dp"
             android:text=""
             android:textColor="#25C9EF"
             android:textSize="12sp"
             android:alpha="0.9"
             android:visibility="gone" />
 
+        <!-- Server info card (flag, name, ping — shown when connected) -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/server_info_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginTop="348dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="#0F1E38"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/server_flag_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🌐 LvovFlow"
+                        android:textColor="#FFFFFF"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/server_status_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Соединение защищено 🔒"
+                        android:textColor="#25C9EF"
+                        android:textSize="12sp"
+                        android:layout_marginTop="2dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/server_ping"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="—"
+                        android:textColor="#25C9EF"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="пинг"
+                        android:textColor="#55FFFFFF"
+                        android:textSize="10sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Speed row (upload / download — shown when connected) -->
+        <LinearLayout
+            android:id="@+id/speed_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginTop="452dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="#0B25C9EF"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/speed_up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 B/s"
+                    android:textColor="#25C9EF"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="↑ Исходящий"
+                    android:textColor="#55FFFFFF"
+                    android:textSize="11sp"
+                    android:layout_marginTop="2dp" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:background="#25FFFFFF" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="#0B25C9EF"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/speed_down"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 B/s"
+                    android:textColor="#25C9EF"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="↓ Входящий"
+                    android:textColor="#55FFFFFF"
+                    android:textSize="11sp"
+                    android:layout_marginTop="2dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- StatsBar (bottom) -->
         <io.nekohasekai.sagernet.widget.StatsBar
             android:id="@+id/stats"
             android:layout_width="match_parent"
@@ -116,7 +309,6 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Speed graph + compact TX/RX text side by side -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
@@ -171,7 +363,6 @@
                     tools:text="@string/connection_test_available" />
 
             </LinearLayout>
-
 
         </io.nekohasekai.sagernet.widget.StatsBar>
 

@@ -537,6 +537,45 @@ class MainActivity : ThemedActivity(),
         binding.fab.scaleY = 1f
     }
 
+    // LvovFlow: pulsing ring animation (3 rings, staggered)
+    private var pulseJob: Job? = null
+
+    private fun animateRing(ring: View, delay: Long) {
+        ring.scaleX = 1f
+        ring.scaleY = 1f
+        ring.alpha = 0.7f
+        val scaleX = ObjectAnimator.ofFloat(ring, "scaleX", 1f, 1.8f).apply { duration = 2000L }
+        val scaleY = ObjectAnimator.ofFloat(ring, "scaleY", 1f, 1.8f).apply { duration = 2000L }
+        val alpha  = ObjectAnimator.ofFloat(ring, "alpha", 0.7f, 0f).apply { duration = 2000L }
+        AnimatorSet().apply {
+            playTogether(scaleX, scaleY, alpha)
+            startDelay = delay
+            start()
+        }
+    }
+
+    private fun startPulseAnimation() {
+        stopPulseAnimation()
+        pulseJob = lifecycleScope.launch {
+            while (isActive) {
+                animateRing(binding.pulseRing1, 0L)
+                animateRing(binding.pulseRing2, 600L)
+                animateRing(binding.pulseRing3, 1200L)
+                delay(2800L)
+            }
+        }
+    }
+
+    private fun stopPulseAnimation() {
+        pulseJob?.cancel()
+        pulseJob = null
+        if (::binding.isInitialized) {
+            binding.pulseRing1.alpha = 0f
+            binding.pulseRing2.alpha = 0f
+            binding.pulseRing3.alpha = 0f
+        }
+    }
+
     private fun startConnectionTimer() {
         connectTime = System.currentTimeMillis()
         timerJob?.cancel()
@@ -579,12 +618,12 @@ class MainActivity : ThemedActivity(),
         }
         binding.fab.backgroundTintList = ColorStateList.valueOf(fabColor)
 
-        // LvovFlow: timer + status label + server label + breathing animation
+        // LvovFlow: timer + status + server card + speed row + pulse rings
         if (state == BaseService.State.Connected) {
             binding.connTimerLabel.visibility = View.VISIBLE
             binding.connTimer.visibility = View.VISIBLE
-            binding.connStatusLabel.text = "Подключено"
-            // Show server name label
+            binding.connStatusLabel.text = "Соединение активно"
+            // Server label small
             binding.connServerLabel.visibility = View.VISIBLE
             val profileId = DataStore.selectedProxy
             val serverName = if (profileId > 0L) {
@@ -592,19 +631,28 @@ class MainActivity : ThemedActivity(),
                     ?: "LvovFlow"
             } else "LvovFlow"
             binding.connServerLabel.text = "🚀 $serverName"
+            // Server info card
+            binding.serverInfoCard.visibility = View.VISIBLE
+            binding.serverFlagName.text = "🌐 $serverName"
+            // Speed row
+            binding.speedRow.visibility = View.VISIBLE
             startConnectionTimer()
             startBreathAnimation()
+            startPulseAnimation()
         } else {
             binding.connTimerLabel.visibility = View.GONE
             binding.connTimer.visibility = View.GONE
             binding.connServerLabel.visibility = View.GONE
+            binding.serverInfoCard.visibility = View.GONE
+            binding.speedRow.visibility = View.GONE
             binding.connStatusLabel.text = when (state) {
                 BaseService.State.Connecting -> "Подключение..."
                 BaseService.State.Stopping -> "Отключение..."
-                else -> "Нажмите для подключения"
+                else -> "Активировать ускорение"
             }
             stopConnectionTimer()
             stopBreathAnimation()
+            stopPulseAnimation()
         }
     }
 
