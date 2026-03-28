@@ -211,7 +211,7 @@ class ActivationActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     setEmailLoading(false)
-                    showError("Ошибка сети. Проверьте подключение.")
+                    showError("[${e.javaClass.simpleName}] ${e.message}")
                 }
             }
         }
@@ -279,7 +279,7 @@ class ActivationActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     setVerifyLoading(false)
-                    showError("Ошибка сети. Проверьте подключение.")
+                    showError("[${e.javaClass.simpleName}] ${e.message}")
                 }
             }
         }
