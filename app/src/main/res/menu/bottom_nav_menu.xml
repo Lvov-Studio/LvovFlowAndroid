@@ -13,7 +13,7 @@
         android:icon="@drawable/ic_bonuses"
         android:title="Бонусы" />
     <item
-        android:id="@+id/nav_bottom_settings"
-        android:icon="@drawable/ic_settings"
-        android:title="Настройки" />
+        android:id="@+id/nav_bottom_profile"
+        android:icon="@drawable/ic_navigation_apps"
+        android:title="Профиль" />
 </menu>

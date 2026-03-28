@@ -80,6 +80,12 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- LvovFlow: Profile screen (bottom nav) -->
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.ProfileActivity"
+            android:configChanges="uiMode"
+            android:exported="false" />
+
         <activity
             android:name="io.nekohasekai.sagernet.ui.MainActivity"
             android:configChanges="uiMode"

@@ -215,6 +215,14 @@ class MainActivity : ThemedActivity(),
 
         refreshNavMenu(DataStore.enableClashAPI)
 
+        // LvovFlow: wire Профиль tab in bottom navigation
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            if (item.itemId == R.id.nav_bottom_profile) {
+                startActivity(Intent(this, ProfileActivity::class.java))
+                binding.bottomNav.post { binding.bottomNav.selectedItemId = R.id.nav_bottom_lk }
+                false
+            } else true
+        }
 
         // sdk 33 notification
         if (Build.VERSION.SDK_INT >= 33) {
