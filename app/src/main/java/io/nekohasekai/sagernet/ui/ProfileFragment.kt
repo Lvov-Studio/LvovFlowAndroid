@@ -145,8 +145,18 @@ class ProfileFragment : ToolbarFragment() {
         Toast.makeText(requireContext(), "Промокод «$code» принят! Свяжитесь с поддержкой для активации.", Toast.LENGTH_LONG).show()
     }
 
+    @OptIn(kotlinx.coroutines.DelicateCoroutinesApi::class)
     private fun logout() {
         requireContext().getSharedPreferences("lvovflow", Context.MODE_PRIVATE).edit().clear().apply()
+        
+        // Clear all proxies and groups from local DB so the next login starts fresh
+        kotlinx.coroutines.GlobalScope.launch(Dispatchers.IO) {
+            val allGroups = io.nekohasekai.sagernet.database.SagerDatabase.groupDao.allGroups()
+            if (allGroups.isNotEmpty()) {
+                io.nekohasekai.sagernet.database.GroupManager.deleteGroup(allGroups)
+            }
+        }
+
         startActivity(Intent(requireContext(), ActivationActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         })
