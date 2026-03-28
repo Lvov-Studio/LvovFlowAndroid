@@ -38,7 +38,7 @@
             android:layout_width="320dp"
             android:layout_height="320dp"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="72dp"
+            android:layout_marginTop="128dp"
             android:background="@drawable/bg_glow_circle"
             android:alpha="0.45" />
 
@@ -48,7 +48,7 @@
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="158dp"
+            android:layout_marginTop="214dp"
             android:background="@drawable/bg_pulse_ring"
             android:alpha="0" />
 
@@ -58,7 +58,7 @@
             android:layout_width="185dp"
             android:layout_height="185dp"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="135dp"
+            android:layout_marginTop="191dp"
             android:background="@drawable/bg_pulse_ring"
             android:alpha="0" />
 
@@ -68,7 +68,7 @@
             android:layout_width="230dp"
             android:layout_height="230dp"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="113dp"
+            android:layout_marginTop="169dp"
             android:background="@drawable/bg_pulse_ring"
             android:alpha="0" />
 
@@ -78,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="120dp"
             android:text="Время подключения"
             android:textColor="?whiteOrTextPrimary"
             android:textSize="12sp"
@@ -91,7 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="138dp"
             android:text="00:00:00"
             android:textColor="?whiteOrTextPrimary"
             android:textSize="28sp"
@@ -107,7 +107,7 @@
             android:elevation="12dp"
             android:nextFocusDown="@+id/stats"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="172dp"
+            android:layout_marginTop="228dp"
             app:backgroundTint="?fabColorBackground"
             app:fabCustomSize="112dp"
             app:iconSize="84dp"
@@ -120,7 +120,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="296dp"
+            android:layout_marginTop="352dp"
             android:text="Активировать ускорение"
             android:textColor="?whiteOrTextPrimary"
             android:textSize="15sp"
@@ -132,7 +132,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="320dp"
+            android:layout_marginTop="376dp"
             android:text=""
             android:textColor="#25C9EF"
             android:textSize="12sp"
@@ -145,7 +145,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            android:layout_marginTop="348dp"
+            android:layout_marginTop="408dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:visibility="gone"
@@ -220,7 +220,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            android:layout_marginTop="452dp"
+            android:layout_marginTop="510dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:orientation="horizontal"
