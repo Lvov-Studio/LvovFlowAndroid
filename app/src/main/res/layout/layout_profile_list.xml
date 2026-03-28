@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <!-- Profile list -->
+    <!-- Profile list — hidden in monolithic LvovFlow mode (servers are auto-managed) -->
     <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
         android:id="@+id/configuration_list"
         android:layout_width="match_parent"
@@ -17,6 +18,7 @@
         android:paddingRight="4dp"
         android:paddingBottom="64dp"
         android:scrollbarSize="0dp"
+        android:visibility="gone"
         app:fastScrollAutoHide="true"
         app:fastScrollThumbColor="?colorPrimary"
         app:fastScrollThumbInactiveColor="?colorPrimary"

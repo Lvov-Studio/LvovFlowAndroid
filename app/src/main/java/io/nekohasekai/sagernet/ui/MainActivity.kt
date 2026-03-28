@@ -121,7 +121,20 @@ class MainActivity : ThemedActivity(),
             onNewIntent(intent)
         }
 
+        // LvovFlow: populate nav drawer header with user info from session
+        val lvovPrefs = getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
+        val headerView = navigation.getHeaderView(0)
+        headerView?.let { hv ->
+            val emailTv = hv.findViewById<android.widget.TextView>(R.id.nav_header_email)
+            val expiryTv = hv.findViewById<android.widget.TextView>(R.id.nav_header_expiry)
+            val userEmail = lvovPrefs.getString("user_email", "") ?: ""
+            val expireDate = lvovPrefs.getString("expire_date", "") ?: ""
+            emailTv?.text = userEmail
+            expiryTv?.text = if (expireDate.isNotBlank()) "Подписка до $expireDate" else "Акселератор интернета"
+        }
+
         refreshNavMenu(DataStore.enableClashAPI)
+
 
         // sdk 33 notification
         if (Build.VERSION.SDK_INT >= 33) {
@@ -535,16 +548,25 @@ class MainActivity : ThemedActivity(),
         }
         binding.fab.backgroundTintList = ColorStateList.valueOf(fabColor)
 
-        // LvovFlow: timer + status label + breathing animation
+        // LvovFlow: timer + status label + server label + breathing animation
         if (state == BaseService.State.Connected) {
             binding.connTimerLabel.visibility = View.VISIBLE
             binding.connTimer.visibility = View.VISIBLE
             binding.connStatusLabel.text = "Подключено"
+            // Show server name label
+            binding.connServerLabel.visibility = View.VISIBLE
+            val profileId = DataStore.selectedProxy
+            val serverName = if (profileId > 0L) {
+                runCatching { ProfileManager.getProfile(profileId)?.displayName() }.getOrNull()
+                    ?: "LvovFlow"
+            } else "LvovFlow"
+            binding.connServerLabel.text = "🚀 $serverName"
             startConnectionTimer()
             startBreathAnimation()
         } else {
             binding.connTimerLabel.visibility = View.GONE
             binding.connTimer.visibility = View.GONE
+            binding.connServerLabel.visibility = View.GONE
             binding.connStatusLabel.text = when (state) {
                 BaseService.State.Connecting -> "Подключение..."
                 BaseService.State.Stopping -> "Отключение..."

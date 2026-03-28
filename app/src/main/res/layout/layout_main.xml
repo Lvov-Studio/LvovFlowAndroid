@@ -85,6 +85,18 @@
             android:textSize="14sp"
             android:alpha="0.85" />
 
+        <!-- LvovFlow: Active server name (shown only when connected) -->
+        <TextView
+            android:id="@+id/conn_server_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="316dp"
+            android:text=""
+            android:textColor="#25C9EF"
+            android:textSize="12sp"
+            android:alpha="0.9"
+            android:visibility="gone" />
 
         <io.nekohasekai.sagernet.widget.StatsBar
             android:id="@+id/stats"

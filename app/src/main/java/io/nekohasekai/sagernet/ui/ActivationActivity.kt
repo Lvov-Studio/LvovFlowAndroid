@@ -45,6 +45,7 @@ class ActivationActivity : AppCompatActivity() {
         private const val KEY_TOKEN = "session_token"
         private const val KEY_SUB_URL = "subscription_url"
         private const val KEY_EMAIL = "user_email"
+        private const val KEY_EXPIRY = "expire_date"
         private const val API_BASE = "https://lvovflow.com/api/app"
 
         /**
@@ -249,7 +250,7 @@ class ActivationActivity : AppCompatActivity() {
                     }
 
                     // Сохраняем сессию в любом случае (чтобы не просить OTP повторно)
-                    saveSession(token, subUrl, currentEmail)
+                    saveSession(token, subUrl, currentEmail, expireDate)
 
                     if (isExpired) {
                         // Подписка истекла — показываем экран с предложением продлить
@@ -288,11 +289,12 @@ class ActivationActivity : AppCompatActivity() {
     // Session & subscription management
     // ─────────────────────────────────────────────────────────────────────────
 
-    private fun saveSession(token: String, subUrl: String, email: String) {
+    private fun saveSession(token: String, subUrl: String, email: String, expireDate: String = "") {
         getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().apply {
             putString(KEY_TOKEN, token)
             putString(KEY_SUB_URL, subUrl)
             putString(KEY_EMAIL, email)
+            if (expireDate.isNotBlank()) putString(KEY_EXPIRY, expireDate)
             apply()
         }
     }
