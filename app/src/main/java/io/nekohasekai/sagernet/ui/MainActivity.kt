@@ -103,6 +103,14 @@ class MainActivity : ThemedActivity(),
         binding.stats.setOnClickListener { if (DataStore.serviceState.connected) binding.stats.testConnection() }
 
         setContentView(binding.root)
+
+        // LvovFlow: If user is not authenticated, redirect to activation screen
+        if (!ActivationActivity.isAuthenticated(this)) {
+            startActivity(Intent(this, ActivationActivity::class.java))
+            finish()
+            return
+        }
+
         changeState(BaseService.State.Idle)
         connection.connect(this, this)
         DataStore.configurationStore.registerChangeListener(this)
@@ -363,24 +371,12 @@ class MainActivity : ThemedActivity(),
             R.id.nav_configuration -> {
                 displayFragment(ConfigurationFragment())
             }
-
-            R.id.nav_group -> displayFragment(GroupFragment())
-            R.id.nav_route -> displayFragment(RouteFragment())
             R.id.nav_settings -> displayFragment(SettingsFragment())
-            R.id.nav_traffic -> displayFragment(WebviewFragment())
-            R.id.nav_tools -> displayFragment(ToolsFragment())
-            R.id.nav_logcat -> displayFragment(LogcatFragment())
             R.id.nav_faq -> {
                 launchCustomTab("https://lvovflow.com")
                 return false
             }
-
             R.id.nav_about -> displayFragment(AboutFragment())
-            R.id.nav_tuiguang -> {
-                launchCustomTab("https://lvovflow.com")
-                return false
-            }
-
             else -> return false
         }
         navigation.menu.findItem(id).isChecked = true

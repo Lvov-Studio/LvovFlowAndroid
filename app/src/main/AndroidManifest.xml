@@ -72,6 +72,14 @@
             android:name="io.nekohasekai.sagernet.ui.BlankActivity"
             android:configChanges="uiMode" />
 
+        <!-- LvovFlow: Activation / onboarding screen -->
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.ActivationActivity"
+            android:configChanges="uiMode"
+            android:noHistory="true"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name="io.nekohasekai.sagernet.ui.MainActivity"
             android:configChanges="uiMode"
