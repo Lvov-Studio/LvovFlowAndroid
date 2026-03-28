@@ -20,10 +20,16 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceDataStore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -162,6 +168,49 @@ class MainActivity : ThemedActivity(),
             val expireDate = lvovPrefs.getString("expire_date", "") ?: ""
             emailTv?.text = userEmail
             expiryTv?.text = if (expireDate.isNotBlank()) "Подписка до $expireDate" else "Акселератор интернета"
+        }
+
+        // LvovFlow: refresh subscription status from server in background
+        val sessionToken = lvovPrefs.getString("session_token", "") ?: ""
+        if (sessionToken.isNotBlank()) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val conn = URL("https://lvovflow.com/api/app/status.php")
+                        .openConnection() as HttpURLConnection
+                    conn.apply {
+                        requestMethod = "POST"
+                        setRequestProperty("Content-Type", "application/json")
+                        setRequestProperty("X-App-Client", "LvovFlow-Android")
+                        setRequestProperty("X-Session-Token", sessionToken)
+                        connectTimeout = 8_000
+                        readTimeout = 8_000
+                        doOutput = true
+                    }
+                    OutputStreamWriter(conn.outputStream).use { it.write("{}") }
+                    val stream = if (conn.responseCode in 200..299) conn.inputStream
+                                 else conn.errorStream ?: conn.inputStream
+                    val json = JSONObject(stream.bufferedReader().readText())
+                    conn.disconnect()
+                    if (json.optBoolean("ok")) {
+                        val newExpire = json.optString("expire_date", "")
+                        val newSubUrl = json.optString("subscription_url", "")
+                        // Сохраняем свежие данные
+                        lvovPrefs.edit().apply {
+                            if (newExpire.isNotBlank()) putString("expire_date", newExpire)
+                            if (newSubUrl.isNotBlank()) putString("subscription_url", newSubUrl)
+                            apply()
+                        }
+                        // Обновляем UI на главном потоке
+                        withContext(Dispatchers.Main) {
+                            val hv2 = navigation.getHeaderView(0)
+                            hv2?.findViewById<android.widget.TextView>(R.id.nav_header_expiry)
+                                ?.text = if (newExpire.isNotBlank()) "Подписка до $newExpire" else "Акселератор интернета"
+                        }
+                    }
+                } catch (_: Exception) {
+                    // Без интернета — остаётся кэш
+                }
+            }
         }
 
         refreshNavMenu(DataStore.enableClashAPI)
