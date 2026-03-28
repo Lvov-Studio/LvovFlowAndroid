@@ -196,7 +196,17 @@ class MainActivity : ThemedActivity(),
         if (name.isNullOrBlank()) return
 
         group.name = group.name.takeIf { !it.isNullOrBlank() }
-            ?: ("Subscription #" + System.currentTimeMillis())
+            ?: runCatching {
+                // LvovFlow: use hostname as group name instead of "Subscription #timestamp"
+                val subUrl = group.subscription?.link ?: group.subscription?.token
+                if (!subUrl.isNullOrBlank()) {
+                    android.net.Uri.parse(subUrl).host?.let { host ->
+                        // Strip "www." prefix and use just the domain
+                        host.removePrefix("www.")
+                    }
+                } else null
+            }.getOrNull()
+            ?: ("LvovFlow #" + (System.currentTimeMillis() % 10000))
 
         onMainDispatcher {
 
