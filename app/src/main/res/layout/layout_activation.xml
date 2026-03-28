@@ -88,40 +88,6 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <!-- Method tabs -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:orientation="horizontal"
-                android:background="@drawable/bg_input_field"
-                android:layout_marginBottom="16dp">
-
-                <!-- Email tab (active) -->
-                <TextView
-                    android:id="@+id/tab_email"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="✉ Код на почту"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:background="@drawable/bg_tab_active" />
-
-                <!-- SMS tab (visual only, not yet implemented) -->
-                <TextView
-                    android:id="@+id/tab_sms"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="📱 SMS код"
-                    android:textColor="#50FFFFFF"
-                    android:textSize="13sp"
-                    android:background="@android:color/transparent" />
-
-            </LinearLayout>
 
             <!-- =================== STEP 1: Email =================== -->
             <LinearLayout
