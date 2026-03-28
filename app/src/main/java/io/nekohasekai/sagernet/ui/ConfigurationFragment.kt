@@ -176,8 +176,12 @@ class ConfigurationFragment @JvmOverloads constructor(
         super.onViewCreated(view, savedInstanceState)
 
         if (!select) {
-            toolbar.inflateMenu(R.menu.add_profile_menu)
-            toolbar.setOnMenuItemClickListener(this)
+            // toolbar.inflateMenu(R.menu.add_profile_menu) // LvovFlow: Hide manual group add button
+            // toolbar.setOnMenuItemClickListener(this)
+            
+            // LvovFlow: Override default toolbar items for our custom main header
+            toolbar.navigationIcon = null
+            toolbar.title = null
         } else {
             toolbar.setTitle(titleRes)
             toolbar.setNavigationIcon(R.drawable.ic_navigation_close)
@@ -231,6 +235,42 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
 
         DataStore.profileCacheStore.registerChangeListener(this)
+
+        // LvovFlow: Custom main header bindings
+        val prefs = requireContext().getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
+        val userEmail = prefs.getString("user_email", "") ?: ""
+        
+        val tvAvatarLetter = view.findViewById<android.widget.TextView>(R.id.tv_avatar_letter)
+        val tvGreetingName = view.findViewById<android.widget.TextView>(R.id.tv_greeting_name)
+        val tvStatusText = view.findViewById<android.widget.TextView>(R.id.tv_status_text)
+        val statusDot = view.findViewById<android.view.View>(R.id.status_dot)
+        
+        if (tvAvatarLetter != null && tvGreetingName != null) {
+            val displayName = if (userEmail.contains("@")) userEmail.substringBefore("@") else userEmail
+            val firstLetter = if (displayName.isNotEmpty()) displayName.substring(0, 1).uppercase() else "L"
+            val displayGreeting = if (displayName.isNotEmpty()) displayName else "LvovFlow"
+            
+            tvAvatarLetter.text = firstLetter
+            tvGreetingName.text = "Привет, $displayGreeting! 👋"
+            
+            val isExpired = prefs.getBoolean("is_expired", false)
+            if (isExpired) {
+                tvStatusText.text = "Неактивен"
+                tvStatusText.setTextColor(0xFFEF4444.toInt()) // Red
+                statusDot.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFFEF4444.toInt())
+            } else {
+                tvStatusText.text = "Активен"
+                tvStatusText.setTextColor(0xFF22C55E.toInt()) // Green
+                statusDot.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF22C55E.toInt())
+            }
+
+            view.findViewById<android.view.View>(R.id.btn_chat)?.setOnClickListener {
+                startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://t.me/lvovflow")))
+            }
+            view.findViewById<android.view.View>(R.id.btn_help)?.setOnClickListener {
+                startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://lvovflow.com/#faq")))
+            }
+        }
     }
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
