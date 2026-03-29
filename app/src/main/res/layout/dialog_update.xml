@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/bg_bottom_sheet"
+    android:padding="24dp">
+
+    <!-- Иконка или бейдж -->
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_baseline_update_24"
+        android:layout_gravity="center_horizontal"
+        app:tint="#22d3ee"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Заголовок -->
+    <TextView
+        android:id="@+id/update_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Доступно Обновление"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="20sp"
+        android:fontFamily="sans-serif-bold"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Описание изменений -->
+    <TextView
+        android:id="@+id/update_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Вышла новая версия приложения с критически важными исправлениями стабильности работы алгоритмов."
+        android:textColor="@color/textColorSecondary"
+        android:textSize="14sp"
+        android:lineSpacingExtra="4dp"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Кнопка Скачать -->
+    <TextView
+        android:id="@+id/btn_update"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_connect_button_active"
+        android:text="Скачать Обновление"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Кнопка Позже -->
+    <TextView
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Напомнить позже"
+        android:textColor="@color/textColorSecondary"
+        android:textSize="14sp"
+        android:gravity="center" />
+
+</LinearLayout>

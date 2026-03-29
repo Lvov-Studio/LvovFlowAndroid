@@ -27,6 +27,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import libcore.Libcore
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
@@ -150,6 +151,10 @@ class MainActivity : ThemedActivity(),
             finish()
             return
         }
+
+        // Check for updates silently
+        checkAppUpdate()
+
         changeState(BaseService.State.Idle)
         connection.connect(this, this)
         DataStore.configurationStore.registerChangeListener(this)
@@ -861,6 +866,60 @@ class MainActivity : ThemedActivity(),
         val fragment =
             supportFragmentManager.findFragmentById(R.id.fragment_holder) as? ToolbarFragment
         return fragment != null && fragment.onKeyDown(keyCode, event)
+    private fun checkAppUpdate() {
+        runOnDefaultDispatcher {
+            try {
+                val client = Libcore.newHttpClient().apply { modernTLS() }
+                val response = client.newRequest().apply {
+                    setURL("https://lvovflow.com/app/version.json")
+                }.execute()
+
+                val content = Util.getStringBox(response.contentString)
+                if (content.isNullOrBlank()) return@runOnDefaultDispatcher
+
+                val release = JSONObject(content)
+                val serverVersionCode = release.optInt("versionCode", 0)
+                val serverVersionName = release.optString("versionName", "")
+                val releaseUrl = release.optString("url", "https://lvovflow.com/app/LvovFlow-latest.apk")
+                val changelog = release.optString("changelog", "Оптимизация скорости и повышение стабильности работы.")
+
+                if (serverVersionCode > BuildConfig.VERSION_CODE) {
+                    onMainDispatcher {
+                        showUpdateDialog(serverVersionName, changelog, releaseUrl)
+                    }
+                }
+            } catch (e: Exception) {
+                // Ignore silent update errors
+            }
+        }
     }
 
+    private fun showUpdateDialog(version: String, changelog: String, url: String) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_update, null)
+        val titleView = dialogView.findViewById<android.widget.TextView>(R.id.update_title)
+        val descView = dialogView.findViewById<android.widget.TextView>(R.id.update_desc)
+        val btnUpdate = dialogView.findViewById<android.widget.TextView>(R.id.btn_update)
+        val btnCancel = dialogView.findViewById<android.widget.TextView>(R.id.btn_cancel)
+
+        titleView.text = "Новая версия: $version"
+        descView.text = changelog
+
+        val dialog = com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        btnUpdate.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
+        }
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
 }
