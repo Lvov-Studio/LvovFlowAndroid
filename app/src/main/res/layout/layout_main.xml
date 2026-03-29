@@ -32,99 +32,111 @@
             app:trackCornerRadius="@dimen/mtrl_progress_track_thickness"
             app:trackThickness="8dp" />
 
-        <!-- Background glow (changes color on connect) -->
-        <View
-            android:id="@+id/glow_bg"
-            android:layout_width="320dp"
-            android:layout_height="320dp"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="128dp"
-            android:background="@drawable/bg_glow_circle"
-            android:alpha="0.45" />
-
-        <!-- Pulse ring 1 (innermost) -->
-        <View
-            android:id="@+id/pulse_ring_1"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="214dp"
-            android:background="@drawable/bg_pulse_ring"
-            android:alpha="0" />
-
-        <!-- Pulse ring 2 (middle) -->
-        <View
-            android:id="@+id/pulse_ring_2"
-            android:layout_width="185dp"
-            android:layout_height="185dp"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="191dp"
-            android:background="@drawable/bg_pulse_ring"
-            android:alpha="0" />
-
-        <!-- Pulse ring 3 (outermost) -->
-        <View
-            android:id="@+id/pulse_ring_3"
-            android:layout_width="230dp"
-            android:layout_height="230dp"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="169dp"
-            android:background="@drawable/bg_pulse_ring"
-            android:alpha="0" />
-
-        <!-- LvovFlow: Connection timer label -->
-        <TextView
-            android:id="@+id/conn_timer_label"
-            android:layout_width="wrap_content"
+        <!-- Main Centered Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="120dp"
-            android:text="Время подключения"
-            android:textColor="?whiteOrTextPrimary"
-            android:textSize="12sp"
-            android:alpha="0.6"
-            android:visibility="gone" />
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingBottom="60dp">
 
-        <!-- LvovFlow: Connection timer clock -->
-        <TextView
-            android:id="@+id/conn_timer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="138dp"
-            android:text="00:00:00"
-            android:textColor="?whiteOrTextPrimary"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:fontFamily="monospace"
-            android:visibility="gone" />
+            <!-- Timer Label -->
+            <TextView
+                android:id="@+id/conn_timer_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Время подключения"
+                android:textColor="#94A3B8"
+                android:textSize="13sp"
+                android:visibility="gone" />
 
-        <!-- FAB (connect button) -->
-        <io.nekohasekai.sagernet.widget.ServiceButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="12dp"
-            android:nextFocusDown="@+id/stats"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="228dp"
-            app:backgroundTint="?fabColorBackground"
-            app:fabCustomSize="112dp"
-            app:iconSize="84dp"
-            app:pressedTranslationZ="6dp"
-            app:srcCompat="@drawable/ic_service_idle" />
+            <!-- Timer Clock -->
+            <TextView
+                android:id="@+id/conn_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="00:00:00"
+                android:textColor="#F8FAFC"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:visibility="gone" />
 
-        <!-- Status text -->
-        <TextView
-            android:id="@+id/conn_status_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="352dp"
-            android:text="Активировать ускорение"
-            android:textColor="?whiteOrTextPrimary"
-            android:textSize="15sp"
-            android:alpha="0.85" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="32dp" />
+
+            <!-- Circular Button and Glows -->
+            <FrameLayout
+                android:layout_width="320dp"
+                android:layout_height="320dp"
+                android:clipChildren="false">
+
+                <View
+                    android:id="@+id/glow_bg"
+                    android:layout_width="320dp"
+                    android:layout_height="320dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_glow_circle"
+                    android:alpha="0.45" />
+
+                <View
+                    android:id="@+id/pulse_ring_3"
+                    android:layout_width="230dp"
+                    android:layout_height="230dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_pulse_ring"
+                    android:alpha="0" />
+
+                <View
+                    android:id="@+id/pulse_ring_2"
+                    android:layout_width="185dp"
+                    android:layout_height="185dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_pulse_ring"
+                    android:alpha="0" />
+
+                <View
+                    android:id="@+id/pulse_ring_1"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_pulse_ring"
+                    android:alpha="0" />
+
+                <io.nekohasekai.sagernet.widget.ServiceButton
+                    android:id="@+id/fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:elevation="12dp"
+                    android:layout_gravity="center"
+                    app:backgroundTint="?fabColorBackground"
+                    app:fabCustomSize="112dp"
+                    app:iconSize="56dp"
+                    app:pressedTranslationZ="6dp"
+                    app:srcCompat="@drawable/ic_service_idle" />
+
+            </FrameLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <!-- Status text -->
+            <TextView
+                android:id="@+id/conn_status_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Активировать ускорение"
+                android:textColor="#E2E8F0"
+                android:textSize="16sp"
+                android:letterSpacing="0.02" />
+
+        </LinearLayout>
 
         <!-- Server name label (shown when connected, now positioned under the button) -->
         <LinearLayout
