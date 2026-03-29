@@ -94,6 +94,7 @@
                 android:background="@drawable/bg_icon_button"
                 android:src="@drawable/ic_chat_bubble"
                 android:layout_marginEnd="12dp"
+                android:onClick="onChatClicked"
                 app:tint="#8B9BB4"/>
                 
             <ImageButton

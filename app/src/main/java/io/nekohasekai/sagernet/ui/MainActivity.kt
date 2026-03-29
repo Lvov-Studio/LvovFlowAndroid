@@ -915,18 +915,17 @@ class MainActivity : ThemedActivity(),
                     }
                 }
                 
-                // 2. Process Notification
-                if (response.has("notification") && !response.isNull("notification")) {
-                    val notifObj = response.getJSONObject("notification")
-                    val notifId = notifObj.optInt("id", 0)
-                    val title = notifObj.optString("title", "")
-                    val message = notifObj.optString("message", "")
+                // 2. Process Notifications Array
+                if (response.has("notifications")) {
+                    val notifsArr = response.getJSONArray("notifications")
+                    prefs.edit().putString("notifications_json", notifsArr.toString()).apply()
                     
-                    val lastNotifId = prefs.getInt("last_notif_id", 0)
-                    if (notifId > lastNotifId && title.isNotEmpty()) {
-                        onMainDispatcher {
-                            showNotificationDialog(notifId, title, message)
-                        }
+                    if (notifsArr.length() > 0) {
+                        val latestId = notifsArr.getJSONObject(0).optInt("id", 0)
+                        prefs.edit().putInt("pending_notif_id", latestId).apply()
+                    }
+                    onMainDispatcher {
+                        updateChatIconColor()
                     }
                 }
             } catch (e: Exception) {
@@ -964,28 +963,25 @@ class MainActivity : ThemedActivity(),
         dialog.show()
     }
 
-    private fun showNotificationDialog(notifId: Int, title: String, message: String) {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_notification, null)
-        val titleView = dialogView.findViewById<android.widget.TextView>(R.id.notification_title)
-        val descView = dialogView.findViewById<android.widget.TextView>(R.id.notification_desc)
-        val btnOk = dialogView.findViewById<android.widget.TextView>(R.id.btn_notification_ok)
+    override fun onResume() {
+        super.onResume()
+        updateChatIconColor()
+    }
 
-        titleView.text = title
-        descView.text = message
+    fun onChatClicked(v: android.view.View?) {
+        startActivity(Intent(this, NotificationsActivity::class.java))
+    }
 
-        val dialog = com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
-            .setView(dialogView)
-            .create()
+    private fun updateChatIconColor() {
+        val btnChat = findViewById<android.widget.ImageButton>(R.id.btn_chat) ?: return
+        val prefs = getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
+        val pendingId = prefs.getInt("pending_notif_id", 0)
+        val lastId = prefs.getInt("last_notif_id", 0)
 
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        btnOk.setOnClickListener {
-            // Save as seen
-            getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE).edit()
-                .putInt("last_notif_id", notifId).apply()
-            dialog.dismiss()
+        if (pendingId > lastId) {
+            btnChat.setColorFilter(android.graphics.Color.parseColor("#EF4444")) // RED
+        } else {
+            btnChat.setColorFilter(android.graphics.Color.parseColor("#8B9BB4")) // DEFAULT GRAY
         }
-
-        dialog.show()
     }
 }

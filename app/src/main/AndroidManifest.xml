@@ -80,6 +80,10 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.NotificationsActivity"
+            android:configChanges="uiMode"
+            android:exported="false" />
 
         <activity
             android:name="io.nekohasekai.sagernet.ui.SplashActivity"
