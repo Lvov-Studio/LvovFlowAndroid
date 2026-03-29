@@ -53,7 +53,7 @@
         android:id="@+id/splash_subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Высокоскоростной VPN"
+        android:text="Ускорение интернета"
         android:textColor="#5B8FD4"
         android:textSize="15sp"
         android:letterSpacing="0.08"
