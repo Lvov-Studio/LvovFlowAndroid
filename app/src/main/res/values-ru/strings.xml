@@ -163,8 +163,8 @@
 <string name="follow_system">Использовать системную тему</string>
 <string name="force_resolve">Принудительно разрешать доменные имена</string>
 <string name="force_resolve_sum">При обновлении преобразовать все доменные имена в IP-адреса. Хост и SNI будут добавлены автоматически, если это возможно</string>
-<string name="forward_success">Прокси запустился.</string>
-<string name="front_proxy">Прямой прокси</string>
+<string name="forward_success">Ускорение запущено.</string>
+<string name="front_proxy">Прямое подключение</string>
 <string name="general_settings">Настройки приложения</string>
 <string name="generating">Создание…</string>
 <string name="github">Исходный код</string>
@@ -198,8 +198,8 @@
 <string name="group_show_diff">Сравнить группы</string>
 <string name="group_status_empty">Пустая группа</string>
 <string name="group_status_empty_subscription">Еще не обновлено</string>
-<string name="group_status_proxies">%d прокси</string>
-<string name="group_status_proxies_subscription" formatted="false">%d прокси | Обновлено %s</string>
+<string name="group_status_proxies">%d серверов</string>
+<string name="group_status_proxies_subscription" formatted="false">%d серверов | Обновлено %s</string>
 <string name="group_subscription_link">Ссылка для подписки</string>
 <string name="group_type">Тип группы</string>
 <string name="group_update">Обновить</string>
@@ -476,11 +476,11 @@
 <string name="v7_preference_off">ВЫКЛ.</string>
 <string name="v7_preference_on">ВКЛ.</string>
 <string name="version_x">Версия (%s)</string>
-<string name="vpn_connected">Соединение установлено, проверка сети доступна</string>
-<string name="vpn_permission_denied">Отказано в разрешении на создание службы защиты</string>
+<string name="vpn_connected">Ускорение активно. Подключение защищено.</string>
+<string name="vpn_permission_denied">Отказано в разрешении на создание службы ускорения</string>
 <string name="wake_reset_connections">Сбросить исходящие соединения при выходе из спящего режима</string>
 <string name="warp_generate">Создать конфигурацию</string>
-<string name="warp_license">CloudFlare Warp - это бесплатный VPN-провайдер WireGuard. Используя его, вы соглашаетесь с условиями использования.</string>
+<string name="warp_license">CloudFlare Warp - это бесплатный провайдер ускорения WireGuard. Используя его, вы соглашаетесь с условиями использования.</string>
 <string name="wireguard_local_address">Частный адрес</string>
 <string name="wireguard_psk">Пароль сервера</string>
 <string name="wireguard_public_key">Открытый ключ сервера</string>
