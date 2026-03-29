@@ -903,6 +903,10 @@ class MainActivity : ThemedActivity(),
                 // 0a. Check remote logout (device was removed from cabinet)
                 if (!response.optBoolean("ok", true) && response.optBoolean("logged_out", false)) {
                     onMainDispatcher {
+                        // Stop VPN on THIS device immediately
+                        if (DataStore.serviceState.started) {
+                            SagerNet.stopService()
+                        }
                         // Clear all session data
                         prefs.edit().clear().apply()
                         com.google.android.material.dialog.MaterialAlertDialogBuilder(this@MainActivity)
