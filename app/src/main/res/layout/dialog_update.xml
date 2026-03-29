@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@drawable/bg_bottom_sheet"
+    android:background="@drawable/bg_glass_card"
     android:padding="24dp">
 
     <!-- Иконка или бейдж -->
@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Доступно Обновление"
-        android:textColor="@color/textColorPrimary"
+        android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:fontFamily="sans-serif-bold"
         android:textStyle="bold"
@@ -35,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Вышла новая версия приложения с критически важными исправлениями стабильности работы алгоритмов."
-        android:textColor="@color/textColorSecondary"
+        android:textColor="#A0A0A0"
         android:textSize="14sp"
         android:lineSpacingExtra="4dp"
         android:gravity="center"
@@ -46,7 +46,7 @@
         android:id="@+id/btn_update"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@drawable/bg_connect_button_active"
+        android:background="#25C9EF"
         android:text="Скачать Обновление"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
@@ -60,7 +60,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:text="Напомнить позже"
-        android:textColor="@color/textColorSecondary"
+        android:textColor="#A0A0A0"
         android:textSize="14sp"
         android:gravity="center" />
 
