@@ -115,11 +115,11 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp">
 
-                    <TextView
+                    <ImageView
                         android:layout_width="24dp"
-                        android:layout_height="wrap_content"
-                        android:text="🔄"
-                        android:textSize="18sp" />
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_baseline_refresh_24"
+                        app:tint="#64748B" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -151,11 +151,11 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp">
 
-                    <TextView
+                    <ImageView
                         android:layout_width="24dp"
-                        android:layout_height="wrap_content"
-                        android:text="⭐"
-                        android:textSize="18sp" />
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_action_done"
+                        app:tint="#64748B" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -199,11 +199,11 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp">
 
-                    <TextView
+                    <ImageView
                         android:layout_width="24dp"
-                        android:layout_height="wrap_content"
-                        android:text="💬"
-                        android:textSize="18sp" />
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_help_outline"
+                        app:tint="#64748B" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -234,11 +234,11 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp">
 
-                    <TextView
+                    <ImageView
                         android:layout_width="24dp"
-                        android:layout_height="wrap_content"
-                        android:text="🎟"
-                        android:textSize="18sp" />
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_baseline_card_giftcard_24"
+                        app:tint="#64748B" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -280,11 +280,11 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp">
 
-                    <TextView
+                    <ImageView
                         android:layout_width="24dp"
-                        android:layout_height="wrap_content"
-                        android:text="🚪"
-                        android:textSize="18sp" />
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_navigation_close"
+                        app:tint="#EF4444" />
 
                     <TextView
                         android:layout_width="0dp"
