@@ -447,7 +447,7 @@ class MainActivity : ThemedActivity(),
 
 
     @SuppressLint("CommitTransaction")
-    fun displayFragment(fragment: ToolbarFragment) {
+    fun displayFragment(fragment: androidx.fragment.app.Fragment) {
         val isMain = fragment is ConfigurationFragment
         val isConnected = DataStore.serviceState == BaseService.State.Connected
 

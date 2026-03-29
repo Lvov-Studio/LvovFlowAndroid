@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import io.nekohasekai.sagernet.R
 
-class TariffsFragment : ToolbarFragment() {
+class TariffsFragment : androidx.fragment.app.Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
