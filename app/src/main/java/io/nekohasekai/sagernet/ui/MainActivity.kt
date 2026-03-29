@@ -871,29 +871,66 @@ class MainActivity : ThemedActivity(),
     private fun checkAppUpdate() {
         runOnDefaultDispatcher {
             try {
-                val url = java.net.URL("https://lvovflow.com/app/version.json")
+                val prefs = getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
+                val email = prefs.getString("user_email", "") ?: ""
+                val deviceId = android.provider.Settings.Secure.getString(contentResolver, android.provider.Settings.Secure.ANDROID_ID) ?: "unknown_device"
+                val model = android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL
+                
+                val url = java.net.URL("https://lvovflow.com/api/app/app_sync.php")
                 val connection = url.openConnection() as java.net.HttpURLConnection
+                connection.requestMethod = "POST"
+                connection.setRequestProperty("Content-Type", "application/json")
                 connection.connectTimeout = 5000
                 connection.readTimeout = 5000
-                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Android; Mobile) LvovFlow/1.0")
+                connection.doOutput = true
+                
+                val jsonPayload = JSONObject().apply {
+                    put("email", email)
+                    put("device_id", deviceId)
+                    put("device_model", model)
+                    put("app_version", BuildConfig.VERSION_NAME)
+                }.toString()
+
+                java.io.OutputStreamWriter(connection.outputStream).use { it.write(jsonPayload) }
                 
                 if (connection.responseCode != 200) return@runOnDefaultDispatcher
                 
                 val content = connection.inputStream.bufferedReader().readText()
                 if (content.isBlank()) return@runOnDefaultDispatcher
 
-                val release = JSONObject(content)
-                val serverVersionName = release.optString("versionName", "")
-                val releaseUrl = release.optString("url", "https://lvovflow.com/app/LvovFlow-latest.apk")
-                val changelog = release.optString("changelog", "Оптимизация скорости и повышение стабильности работы.")
-
-                if (serverVersionName.isNotBlank() && serverVersionName != BuildConfig.VERSION_NAME) {
-                    onMainDispatcher {
-                        showUpdateDialog(serverVersionName, changelog, releaseUrl)
+                val response = JSONObject(content)
+                
+                // 1. Process Update
+                if (response.has("update") && !response.isNull("update")) {
+                    val updateObj = response.getJSONObject("update")
+                    val serverVersionName = updateObj.optString("versionName", "")
+                    val releaseUrl = updateObj.optString("url", "https://lvovflow.com/app/LvovFlow-latest.apk")
+                    val changelog = updateObj.optString("changelog", "Оптимизация скорости и повышение стабильности работы.")
+                    
+                    if (serverVersionName.isNotBlank() && serverVersionName != BuildConfig.VERSION_NAME) {
+                        onMainDispatcher {
+                            showUpdateDialog(serverVersionName, changelog, releaseUrl)
+                        }
+                        return@runOnDefaultDispatcher // Don't stack notifications with update dialog
+                    }
+                }
+                
+                // 2. Process Notification
+                if (response.has("notification") && !response.isNull("notification")) {
+                    val notifObj = response.getJSONObject("notification")
+                    val notifId = notifObj.optInt("id", 0)
+                    val title = notifObj.optString("title", "")
+                    val message = notifObj.optString("message", "")
+                    
+                    val lastNotifId = prefs.getInt("last_notif_id", 0)
+                    if (notifId > lastNotifId && title.isNotEmpty()) {
+                        onMainDispatcher {
+                            showNotificationDialog(notifId, title, message)
+                        }
                     }
                 }
             } catch (e: Exception) {
-                // Ignore silent update errors
+                // Ignore silent update/sync errors
             }
         }
     }
@@ -921,6 +958,31 @@ class MainActivity : ThemedActivity(),
         }
 
         btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun showNotificationDialog(notifId: Int, title: String, message: String) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_notification, null)
+        val titleView = dialogView.findViewById<android.widget.TextView>(R.id.notification_title)
+        val descView = dialogView.findViewById<android.widget.TextView>(R.id.notification_desc)
+        val btnOk = dialogView.findViewById<android.widget.TextView>(R.id.btn_notification_ok)
+
+        titleView.text = title
+        descView.text = message
+
+        val dialog = com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+            .setView(dialogView)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        btnOk.setOnClickListener {
+            // Save as seen
+            getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE).edit()
+                .putInt("last_notif_id", notifId).apply()
             dialog.dismiss()
         }
 
