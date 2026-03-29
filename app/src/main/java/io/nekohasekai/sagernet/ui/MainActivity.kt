@@ -566,8 +566,8 @@ class MainActivity : ThemedActivity(),
                 return false
             }
             else -> return false
-        }
-        navigation.menu.findItem(id).isChecked = true
+        navigation.menu.findItem(id)?.isChecked = true
+        binding.bottomNav.menu.findItem(id)?.isChecked = true
         return true
     }
 
