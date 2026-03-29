@@ -900,7 +900,25 @@ class MainActivity : ThemedActivity(),
 
                 val response = JSONObject(content)
                 
-                // 0. Check device limit rejection
+                // 0a. Check remote logout (device was removed from cabinet)
+                if (!response.optBoolean("ok", true) && response.optBoolean("logged_out", false)) {
+                    onMainDispatcher {
+                        // Clear all session data
+                        prefs.edit().clear().apply()
+                        com.google.android.material.dialog.MaterialAlertDialogBuilder(this@MainActivity)
+                            .setTitle("Выход с устройства")
+                            .setMessage("Это устройство было удалено из вашего аккаунта. Войдите снова для продолжения.")
+                            .setPositiveButton("Войти") { _, _ ->
+                                startActivity(android.content.Intent(this@MainActivity, ActivationActivity::class.java))
+                                finishAffinity()
+                            }
+                            .setCancelable(false)
+                            .show()
+                    }
+                    return@runOnDefaultDispatcher
+                }
+
+                // 0b. Check device limit rejection
                 if (!response.optBoolean("ok", true) && response.optString("error") == "device_limit") {
                     val limitMsg = response.optString("message", "Достигнут лимит устройств (3). Удалите одно из старых устройств на сайте lvovflow.com")
                     onMainDispatcher {
