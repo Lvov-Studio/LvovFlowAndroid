@@ -448,22 +448,39 @@ class MainActivity : ThemedActivity(),
 
     @SuppressLint("CommitTransaction")
     fun displayFragment(fragment: ToolbarFragment) {
-        if (fragment is ConfigurationFragment) {
+        val isMain = fragment is ConfigurationFragment
+        val isConnected = DataStore.serviceState == BaseService.State.Connected
+
+        if (isMain) {
             binding.fab.show()
-            // LvovFlow: restore connection panel on main screen
-            val isConnected = DataStore.serviceState == BaseService.State.Connected
             binding.connTimerLabel.visibility = if (isConnected) View.VISIBLE else View.GONE
             binding.connTimer.visibility = if (isConnected) View.VISIBLE else View.GONE
             binding.connStatusLabel.visibility = View.VISIBLE
-        } else {
-            if (!DataStore.showBottomBar) {
-                binding.fab.hide()
+            binding.serverButtonContainer.visibility = if (isConnected) View.VISIBLE else View.GONE
+
+            if (isConnected) {
+                binding.glowBg.visibility = View.VISIBLE
+                binding.pulseRing1.visibility = View.VISIBLE
+                binding.pulseRing2.visibility = View.VISIBLE
+                binding.pulseRing3.visibility = View.VISIBLE
+                startPulseAnimation()
+                startBreathAnimation()
             }
-            // LvovFlow: ALWAYS hide connection panel on non-main screens
+        } else {
+            if (!DataStore.showBottomBar) binding.fab.hide()
             binding.connTimerLabel.visibility = View.GONE
             binding.connTimer.visibility = View.GONE
             binding.connStatusLabel.visibility = View.GONE
+            binding.serverButtonContainer.visibility = View.GONE
+
+            binding.glowBg.visibility = View.GONE
+            binding.pulseRing1.visibility = View.GONE
+            binding.pulseRing2.visibility = View.GONE
+            binding.pulseRing3.visibility = View.GONE
+            stopPulseAnimation()
+            stopBreathAnimation()
         }
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_holder, fragment)
             .commitAllowingStateLoss()
