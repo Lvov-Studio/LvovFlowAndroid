@@ -900,6 +900,26 @@ class MainActivity : ThemedActivity(),
 
                 val response = JSONObject(content)
                 
+                // 0. Check device limit rejection
+                if (!response.optBoolean("ok", true) && response.optString("error") == "device_limit") {
+                    val limitMsg = response.optString("message", "Достигнут лимит устройств (3). Удалите одно из старых устройств на сайте lvovflow.com")
+                    onMainDispatcher {
+                        val shownKey = "device_limit_shown"
+                        if (!prefs.getBoolean(shownKey, false)) {
+                            prefs.edit().putBoolean(shownKey, true).apply()
+                            com.google.android.material.dialog.MaterialAlertDialogBuilder(this@MainActivity)
+                                .setTitle("⚠️ Лимит устройств")
+                                .setMessage(limitMsg)
+                                .setPositiveButton("Перейти на сайт") { _, _ ->
+                                    startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://lvovflow.com/cabinet.php")))
+                                }
+                                .setNegativeButton("Закрыть", null)
+                                .show()
+                        }
+                    }
+                    return@runOnDefaultDispatcher
+                }
+
                 // 1. Process Update
                 if (response.has("update") && !response.isNull("update")) {
                     val updateObj = response.getJSONObject("update")
