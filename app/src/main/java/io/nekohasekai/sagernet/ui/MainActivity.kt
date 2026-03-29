@@ -871,13 +871,16 @@ class MainActivity : ThemedActivity(),
     private fun checkAppUpdate() {
         runOnDefaultDispatcher {
             try {
-                val client = Libcore.newHttpClient().apply { modernTLS() }
-                val response = client.newRequest().apply {
-                    setURL("https://lvovflow.com/app/version.json")
-                }.execute()
-
-                val content = Util.getStringBox(response.contentString)
-                if (content.isNullOrBlank()) return@runOnDefaultDispatcher
+                val url = java.net.URL("https://lvovflow.com/app/version.json")
+                val connection = url.openConnection() as java.net.HttpURLConnection
+                connection.connectTimeout = 5000
+                connection.readTimeout = 5000
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Android; Mobile) LvovFlow/1.0")
+                
+                if (connection.responseCode != 200) return@runOnDefaultDispatcher
+                
+                val content = connection.inputStream.bufferedReader().readText()
+                if (content.isBlank()) return@runOnDefaultDispatcher
 
                 val release = JSONObject(content)
                 val serverVersionCode = release.optInt("versionCode", 0)
