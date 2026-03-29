@@ -883,12 +883,11 @@ class MainActivity : ThemedActivity(),
                 if (content.isBlank()) return@runOnDefaultDispatcher
 
                 val release = JSONObject(content)
-                val serverVersionCode = release.optInt("versionCode", 0)
                 val serverVersionName = release.optString("versionName", "")
                 val releaseUrl = release.optString("url", "https://lvovflow.com/app/LvovFlow-latest.apk")
                 val changelog = release.optString("changelog", "Оптимизация скорости и повышение стабильности работы.")
 
-                if (serverVersionCode > BuildConfig.VERSION_CODE) {
+                if (serverVersionName.isNotBlank() && serverVersionName != BuildConfig.VERSION_NAME) {
                     onMainDispatcher {
                         showUpdateDialog(serverVersionName, changelog, releaseUrl)
                     }
