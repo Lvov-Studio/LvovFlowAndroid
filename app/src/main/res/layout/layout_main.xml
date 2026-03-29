@@ -20,47 +20,23 @@
             android:layout_height="match_parent" />
 
         <!-- Main Centered Container -->
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:gravity="center"
+            android:layout_height="match_parent"
             android:clipChildren="false"
             android:clipToPadding="false">
 
-            <!-- Timer Label -->
-            <TextView
-                android:id="@+id/conn_timer_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Время подключения"
-                android:textColor="#94A3B8"
-                android:textSize="13sp"
-                android:visibility="gone" />
-
-            <!-- Timer Clock -->
-            <TextView
-                android:id="@+id/conn_timer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="00:00:00"
-                android:textColor="#F8FAFC"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-medium"
-                android:visibility="gone" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="32dp" />
-
             <!-- Circular Button and Glows -->
             <FrameLayout
+                android:id="@+id/button_container"
                 android:layout_width="320dp"
                 android:layout_height="320dp"
-                android:clipChildren="false">
+                android:clipChildren="false"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintVertical_bias="0.45">
 
                 <View
                     android:id="@+id/glow_bg"
@@ -120,21 +96,51 @@
 
             </FrameLayout>
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="16dp" />
+            <!-- Timer Clock -->
+            <TextView
+                android:id="@+id/conn_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:text="00:00:00"
+                android:textColor="#F8FAFC"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/button_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Timer Label -->
+            <TextView
+                android:id="@+id/conn_timer_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:text="Время подключения"
+                android:textColor="#94A3B8"
+                android:textSize="13sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/conn_timer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <!-- Status text -->
             <TextView
                 android:id="@+id/conn_status_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="Активировать ускорение"
                 android:textColor="#E2E8F0"
                 android:textSize="16sp"
-                android:letterSpacing="0.02" />
+                android:letterSpacing="0.02"
+                app:layout_constraintTop_toBottomOf="@id/button_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Server name label (shown when connected, now positioned under the button) -->
         <LinearLayout
