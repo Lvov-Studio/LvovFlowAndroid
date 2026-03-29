@@ -224,6 +224,10 @@ class MainActivity : ThemedActivity(),
                     displayFragmentWithId(R.id.nav_bottom_profile)
                     true
                 }
+                R.id.nav_bottom_tariffs -> {
+                    displayFragmentWithId(R.id.nav_bottom_tariffs)
+                    true
+                }
                 else -> true
             }
         }
