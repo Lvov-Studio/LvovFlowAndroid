@@ -265,7 +265,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
             view.findViewById<android.view.View>(R.id.btn_chat)?.setOnClickListener {
-                startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://t.me/lvovflow")))
+                startActivity(android.content.Intent(requireContext(), NotificationsActivity::class.java))
             }
             view.findViewById<android.view.View>(R.id.btn_help)?.setOnClickListener {
                 startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://lvovflow.com/#faq")))
