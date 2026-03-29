@@ -16,6 +16,8 @@ class NotificationsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Remove default ActionBar since we have a custom header
+        supportActionBar?.hide()
         setContentView(R.layout.activity_notifications)
 
         findViewById<ImageButton>(R.id.btn_back).setOnClickListener { finish() }
