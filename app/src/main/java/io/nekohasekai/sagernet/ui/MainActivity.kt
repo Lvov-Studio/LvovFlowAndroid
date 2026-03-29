@@ -918,22 +918,23 @@ class MainActivity : ThemedActivity(),
                     return@runOnDefaultDispatcher
                 }
 
-                // 0b. Check device limit rejection
+                // 0b. Check device limit rejection — force user to choose
                 if (!response.optBoolean("ok", true) && response.optString("error") == "device_limit") {
-                    val limitMsg = response.optString("message", "Достигнут лимит устройств (3). Удалите одно из старых устройств на сайте lvovflow.com")
                     onMainDispatcher {
-                        val shownKey = "device_limit_shown"
-                        if (!prefs.getBoolean(shownKey, false)) {
-                            prefs.edit().putBoolean(shownKey, true).apply()
-                            com.google.android.material.dialog.MaterialAlertDialogBuilder(this@MainActivity)
-                                .setTitle("⚠️ Лимит устройств")
-                                .setMessage(limitMsg)
-                                .setPositiveButton("Перейти на сайт") { _, _ ->
-                                    startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://lvovflow.com/cabinet.php")))
-                                }
-                                .setNegativeButton("Закрыть", null)
-                                .show()
-                        }
+                        com.google.android.material.dialog.MaterialAlertDialogBuilder(this@MainActivity)
+                            .setTitle("⚠️ Достигнут лимит устройств")
+                            .setMessage("Ваша подписка позволяет использовать не более 3 устройств одновременно.\n\nЧтобы добавить это устройство, улучшите подписку или выйдите с другого устройства в личном кабинете.")
+                            .setCancelable(false)
+                            .setPositiveButton("Улучшить подписку") { _, _ ->
+                                startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://lvovflow.com/cabinet.php")))
+                                finishAffinity()
+                            }
+                            .setNegativeButton("Выйти с устройства") { _, _ ->
+                                prefs.edit().clear().apply()
+                                startActivity(android.content.Intent(this@MainActivity, ActivationActivity::class.java))
+                                finishAffinity()
+                            }
+                            .show()
                     }
                     return@runOnDefaultDispatcher
                 }
