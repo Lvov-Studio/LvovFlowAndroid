@@ -61,11 +61,11 @@
                 android:id="@+id/speed_row"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:gravity="center"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/button_container"
+                app:layout_constraintBottom_toTopOf="@id/speed_sparkline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
@@ -97,6 +97,17 @@
                     android:fontFamily="sans-serif-medium" />
 
             </LinearLayout>
+
+            <!-- Speed Sparkline Graph -->
+            <io.nekohasekai.sagernet.widget.SpeedSparklineView
+                android:id="@+id/speed_sparkline"
+                android:layout_width="240dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/button_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <!-- Circular Button and Glows -->
             <FrameLayout
