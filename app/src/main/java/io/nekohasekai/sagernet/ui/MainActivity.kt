@@ -465,7 +465,9 @@ class MainActivity : ThemedActivity(),
             binding.fab.show()
             binding.connTimerLabel.visibility = if (isConnected) View.VISIBLE else View.GONE
             binding.connTimer.visibility = if (isConnected) View.VISIBLE else View.GONE
+            binding.speedRow.visibility = if (isConnected) View.VISIBLE else View.GONE
             binding.connStatusLabel.visibility = View.VISIBLE
+            binding.tvIpInfo.visibility = if (isConnected && binding.tvIpInfo.text.isNotEmpty()) View.VISIBLE else View.GONE
             binding.serverButtonContainer.visibility = if (isConnected) View.VISIBLE else View.GONE
 
             if (isConnected) {
@@ -480,7 +482,9 @@ class MainActivity : ThemedActivity(),
             if (!DataStore.showBottomBar) binding.fab.hide()
             binding.connTimerLabel.visibility = View.GONE
             binding.connTimer.visibility = View.GONE
+            binding.speedRow.visibility = View.GONE
             binding.connStatusLabel.visibility = View.GONE
+            binding.tvIpInfo.visibility = View.GONE
             binding.serverButtonContainer.visibility = View.GONE
 
             binding.glowBg.visibility = View.GONE
