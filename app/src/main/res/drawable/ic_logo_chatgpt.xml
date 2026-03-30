@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <!-- ChatGPT green circle -->
+    <path
+        android:pathData="M20,3C10.61,3 3,10.61 3,20C3,29.39 10.61,37 20,37C29.39,37 37,29.39 37,20C37,10.61 29.39,3 20,3Z"
+        android:fillColor="#10A37F" />
+    <!-- Simplified GPT bolt -->
+    <path
+        android:pathData="M22,10L14,22H19L18,30L26,18H21Z"
+        android:fillColor="#FFFFFF" />
+</vector>

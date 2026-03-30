@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <!-- TikTok music note shape -->
+    <path
+        android:pathData="M3,8C3,5.24 5.24,3 8,3H32C34.76,3 37,5.24 37,8V32C37,34.76 34.76,37 32,37H8C5.24,37 3,34.76 3,32V8Z"
+        android:fillColor="#000000" />
+    <path
+        android:pathData="M27,16.5V24C27,27.31 24.31,30 21,30C17.69,30 15,27.31 15,24C15,20.69 17.69,18 21,18C21.7,18 22.37,18.12 23,18.35V10H25V16C25.7,16.2 26.37,16.35 27,16.5Z"
+        android:fillColor="#25F4EE" />
+    <path
+        android:pathData="M25,15.5V23C25,26.31 22.31,29 19,29C15.69,29 13,26.31 13,23C13,19.69 15.69,17 19,17C19.7,17 20.37,17.12 21,17.35V9H23V15C23.7,15.2 24.37,15.35 25,15.5Z"
+        android:fillColor="#FE2C55" />
+</vector>

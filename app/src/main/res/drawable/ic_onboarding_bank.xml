@@ -1,0 +1,24 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Bank building -->
+    <path
+        android:pathData="M12,2L2,7V9H22V7L12,2Z"
+        android:fillColor="#22D3EE" />
+    <path
+        android:pathData="M4,10V18H6V10ZM9,10V18H11V10ZM13,10V18H15V10ZM18,10V18H20V10Z"
+        android:fillColor="#22D3EE" />
+    <path
+        android:pathData="M2,19H22V22H2V19Z"
+        android:fillColor="#22D3EE" />
+    <!-- Checkmark overlay -->
+    <path
+        android:pathData="M16,13L18,15L22,9"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeColor="#22C55E"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

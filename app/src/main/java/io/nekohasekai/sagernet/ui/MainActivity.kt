@@ -83,6 +83,12 @@ class MainActivity : ThemedActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // LvovFlow: show onboarding on first launch
+        val prefs = getSharedPreferences("lvovflow", MODE_PRIVATE)
+        if (!prefs.getBoolean("onboarding_shown", false)) {
+            startActivity(Intent(this, OnboardingActivity::class.java))
+        }
+
         binding = LayoutMainBinding.inflate(layoutInflater)
         binding.fab.initProgress(binding.fabProgress)
         if (themeResId !in intArrayOf(

@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <!-- Instagram gradient square -->
+    <path
+        android:pathData="M3,12C3,6.48 6.48,3 12,3H28C33.52,3 37,6.48 37,12V28C37,33.52 33.52,37 28,37H12C6.48,37 3,33.52 3,28V12Z"
+        android:fillColor="#E1306C" />
+    <!-- Camera circle -->
+    <path
+        android:pathData="M20,13C16.13,13 13,16.13 13,20C13,23.87 16.13,27 20,27C23.87,27 27,23.87 27,20C27,16.13 23.87,13 20,13ZM20,25C17.24,25 15,22.76 15,20C15,17.24 17.24,15 20,15C22.76,15 25,17.24 25,20C25,22.76 22.76,25 20,25Z"
+        android:fillColor="#FFFFFF" />
+    <!-- Flash dot -->
+    <path
+        android:pathData="M29,13A2,2 0,1 1,29 9A2,2 0,1 1,29 13Z"
+        android:fillColor="#FFFFFF" />
+</vector>

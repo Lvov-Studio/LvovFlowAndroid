@@ -80,6 +80,12 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
+            android:name="io.nekohasekai.sagernet.ui.OnboardingActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:theme="@style/Theme.SagerNet.Black" />
+
+        <activity
             android:name="io.nekohasekai.sagernet.ui.NotificationsActivity"
             android:configChanges="uiMode"
             android:exported="false" />

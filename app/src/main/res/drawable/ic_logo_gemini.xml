@@ -1,0 +1,10 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <!-- Gemini star shape -->
+    <path
+        android:pathData="M20,4L23.5,15.5L35,15.5L25.5,22.5L29,34L20,27L11,34L14.5,22.5L5,15.5L16.5,15.5Z"
+        android:fillColor="#4285F4" />
+</vector>
