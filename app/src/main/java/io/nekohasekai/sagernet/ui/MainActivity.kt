@@ -821,8 +821,10 @@ class MainActivity : ThemedActivity(),
 
     // may NOT called when app is in background
     override fun cbSpeedUpdate(stats: SpeedDisplayData) {
-        binding.tvSpeedDown.text = "↓ ${formatSpeed(stats.rxRateProxy)}"
-        binding.tvSpeedUp.text = "↑ ${formatSpeed(stats.txRateProxy)}"
+        runOnUiThread {
+            binding.tvSpeedDown.text = "↓ ${formatSpeed(stats.rxRateProxy)}"
+            binding.tvSpeedUp.text = "↑ ${formatSpeed(stats.txRateProxy)}"
+        }
     }
 
     private fun formatSpeed(bytesPerSec: Long): String {
