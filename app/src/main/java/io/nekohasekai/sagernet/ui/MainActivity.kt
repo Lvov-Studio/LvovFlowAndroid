@@ -120,8 +120,10 @@ class MainActivity : ThemedActivity(),
             if (DataStore.serviceState.canStop) {
                 SagerNet.stopService()
             } else {
-                // LvovFlow: auto-select first profile if none chosen (list is hidden from user)
-                if (DataStore.selectedProxy <= 0L) {
+                // LvovFlow: auto-select first profile if none chosen or profile was deleted
+                val needAutoSelect = DataStore.selectedProxy <= 0L ||
+                    SagerDatabase.proxyDao.getById(DataStore.selectedProxy) == null
+                if (needAutoSelect) {
                     runOnDefaultDispatcher {
                         try {
                             val groups = SagerDatabase.groupDao.allGroups()
@@ -133,9 +135,11 @@ class MainActivity : ThemedActivity(),
                                     DataStore.selectedProxy = first.id
                                     onMainDispatcher { connect.launch(null) }
                                 } else {
+                                    // No profiles in subscription — try auto-refresh
                                     onMainDispatcher {
-                                        snackbar("Нет серверов. Нажмите «🔄 Обновить подключение» в меню.").show()
+                                        snackbar("Обновляем серверы...").show()
                                     }
+                                    refreshSubscriptionAndConnect()
                                 }
                             } else {
                                 onMainDispatcher {
@@ -849,6 +853,32 @@ class MainActivity : ThemedActivity(),
             bytesPerSec >= 1_000_000L -> String.format("%.1f Мб/с", bytesPerSec / 1_000_000.0)
             bytesPerSec >= 1_000L -> String.format("%.0f Кб/с", bytesPerSec / 1_000.0)
             else -> "$bytesPerSec Б/с"
+        }
+    }
+
+    private suspend fun refreshSubscriptionAndConnect() {
+        try {
+            val groups = SagerDatabase.groupDao.allGroups()
+            val sub = groups.firstOrNull { it.type == GroupType.SUBSCRIPTION }
+            if (sub != null) {
+                GroupUpdater.startUpdate(sub, true)
+                // Wait a bit for refresh to complete
+                kotlinx.coroutines.delay(3000)
+                val profiles = SagerDatabase.proxyDao.getByGroup(sub.id)
+                val first = profiles.firstOrNull()
+                if (first != null) {
+                    DataStore.selectedProxy = first.id
+                    onMainDispatcher { connect.launch(null) }
+                } else {
+                    onMainDispatcher {
+                        snackbar("Не удалось загрузить серверы. Попробуйте «Обновить подключение» в меню.").show()
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            onMainDispatcher {
+                snackbar("Ошибка обновления: ${e.message}").show()
+            }
         }
     }
 
