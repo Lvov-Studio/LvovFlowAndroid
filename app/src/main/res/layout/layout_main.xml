@@ -229,36 +229,16 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Server name label (shown when connected, now positioned under the button) -->
-        <LinearLayout
-            android:id="@+id/server_button_container"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
+        <!-- Connection Route Map (replaces server button) -->
+        <io.nekohasekai.sagernet.widget.ConnectionMapView
+            android:id="@+id/connection_map"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="130dp"
-            android:background="@drawable/bg_glass_card"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/conn_server_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Оптимальный сервер: 🇩🇪"
-                android:textColor="#E2E8F0"
-                android:textSize="14sp" />
-
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/ic_chevron_right"
-                android:tint="#64748B" />
-
-        </LinearLayout>
+            android:layout_marginBottom="110dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:visibility="gone" />
 
     <!-- Removed legacy server info card and speed row for premium UI -->
 

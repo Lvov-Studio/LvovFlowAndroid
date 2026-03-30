@@ -804,17 +804,10 @@ class MainActivity : ThemedActivity(),
             binding.connTimer.visibility = View.VISIBLE
             binding.speedRow.visibility = View.VISIBLE
             binding.speedSparkline.visibility = View.VISIBLE
-            binding.connStatusLabel.text = "Соединение активно"
-            // Server label — parse flag from profile name
-            binding.serverButtonContainer.visibility = View.VISIBLE
-            val profileId = DataStore.selectedProxy
-            val serverName = if (profileId > 0L) {
-                runCatching { ProfileManager.getProfile(profileId)?.displayName() }.getOrNull()
-                    ?: "LvovFlow"
-            } else "LvovFlow"
-            // If name already has flag emoji, show directly; otherwise prefix
-            val hasFlag = serverName.any { Character.getType(it).toByte() == Character.OTHER_SYMBOL.toByte() }
-            binding.connServerLabel.text = if (hasFlag) serverName else "Сервер: $serverName"
+            binding.connStatusLabel.text = "Ускорение активно"
+            // Connection map — show animated route
+            binding.connectionMap.visibility = View.VISIBLE
+            binding.connectionMap.setActive(true)
 
             // LvovFlow: glow green when connected
             binding.glowBg.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF22C55E.toInt())
@@ -837,7 +830,8 @@ class MainActivity : ThemedActivity(),
             binding.speedSparkline.visibility = View.GONE
             binding.speedSparkline.clear()
             binding.tvIpInfo.visibility = View.GONE
-            binding.serverButtonContainer.visibility = View.GONE
+            binding.connectionMap.setActive(false)
+            binding.connectionMap.visibility = View.GONE
             binding.connStatusLabel.text = when (state) {
                 BaseService.State.Connecting -> "Подключение..."
                 BaseService.State.Stopping -> "Отключение..."
