@@ -713,6 +713,41 @@ class MainActivity : ThemedActivity(),
         }
     }
 
+    /**
+     * LvovFlow: Shockwave animation — two rings expand outward from the FAB
+     * when VPN connects. Creates a "sonar pulse" effect.
+     */
+    private fun playShockwaveAnimation() {
+        if (!::binding.isInitialized) return
+        val ring1 = binding.shockwave1
+        val ring2 = binding.shockwave2
+
+        fun animateShockwaveRing(ring: View, delayMs: Long) {
+            ring.scaleX = 1f
+            ring.scaleY = 1f
+            ring.alpha = 0f
+            ring.animate()
+                .setStartDelay(delayMs)
+                .scaleX(3.5f)
+                .scaleY(3.5f)
+                .alpha(0.7f)
+                .setDuration(200)
+                .withEndAction {
+                    ring.animate()
+                        .scaleX(5f)
+                        .scaleY(5f)
+                        .alpha(0f)
+                        .setDuration(600)
+                        .setInterpolator(android.view.animation.DecelerateInterpolator())
+                        .start()
+                }
+                .start()
+        }
+
+        animateShockwaveRing(ring1, 0L)
+        animateShockwaveRing(ring2, 250L)
+    }
+
     private fun startConnectionTimer() {
         connectTime = System.currentTimeMillis()
         timerJob?.cancel()
@@ -789,6 +824,7 @@ class MainActivity : ThemedActivity(),
             startConnectionTimer()
             startBreathAnimation()
             startPulseAnimation()
+            playShockwaveAnimation()
         } else {
             binding.connTimerLabel.visibility = View.GONE
             binding.connTimer.visibility = View.GONE

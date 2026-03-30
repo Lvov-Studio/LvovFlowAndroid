@@ -166,6 +166,25 @@
                     app:trackCornerRadius="@dimen/mtrl_progress_track_thickness"
                     app:trackThickness="8dp" />
 
+                <!-- Shockwave rings for connection animation -->
+                <View
+                    android:id="@+id/shockwave_1"
+                    android:layout_width="112dp"
+                    android:layout_height="112dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_shockwave_ring"
+                    android:alpha="0"
+                    android:elevation="0dp" />
+
+                <View
+                    android:id="@+id/shockwave_2"
+                    android:layout_width="112dp"
+                    android:layout_height="112dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_shockwave_ring"
+                    android:alpha="0"
+                    android:elevation="0dp" />
+
             </FrameLayout>
 
             <!-- Status text -->
