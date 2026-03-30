@@ -721,7 +721,7 @@ class MainActivity : ThemedActivity(),
 
     /**
      * LvovFlow: Shockwave animation — two rings expand outward from the FAB
-     * when VPN connects. Creates a "sonar pulse" effect.
+     * when VPN connects. Creates a smooth "sonar pulse" effect.
      */
     private fun playShockwaveAnimation() {
         if (!::binding.isInitialized) return
@@ -731,27 +731,19 @@ class MainActivity : ThemedActivity(),
         fun animateShockwaveRing(ring: View, delayMs: Long) {
             ring.scaleX = 1f
             ring.scaleY = 1f
-            ring.alpha = 0f
+            ring.alpha = 0.5f
             ring.animate()
                 .setStartDelay(delayMs)
-                .scaleX(3.5f)
-                .scaleY(3.5f)
-                .alpha(0.7f)
-                .setDuration(200)
-                .withEndAction {
-                    ring.animate()
-                        .scaleX(5f)
-                        .scaleY(5f)
-                        .alpha(0f)
-                        .setDuration(600)
-                        .setInterpolator(android.view.animation.DecelerateInterpolator())
-                        .start()
-                }
+                .scaleX(4.5f)
+                .scaleY(4.5f)
+                .alpha(0f)
+                .setDuration(1200)
+                .setInterpolator(android.view.animation.DecelerateInterpolator(2f))
                 .start()
         }
 
         animateShockwaveRing(ring1, 0L)
-        animateShockwaveRing(ring2, 250L)
+        animateShockwaveRing(ring2, 400L)
     }
 
     private fun startConnectionTimer() {
