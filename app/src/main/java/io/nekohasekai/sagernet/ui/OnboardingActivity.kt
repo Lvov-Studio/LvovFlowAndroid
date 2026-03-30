@@ -82,7 +82,7 @@ class OnboardingActivity : AppCompatActivity() {
                 updateDots(position)
                 if (position == pages.size - 1) {
                     btnNext.text = "Начать"
-                    btnSkip.visibility = View.GONE
+                    btnSkip.visibility = View.INVISIBLE
                 } else {
                     btnNext.text = "Далее"
                     btnSkip.visibility = View.VISIBLE
