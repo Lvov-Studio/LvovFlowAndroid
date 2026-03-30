@@ -180,15 +180,7 @@ class MainActivity : ThemedActivity(),
         val userEmail = lvovPrefs.getString("user_email", "") ?: ""
         val expireDate = lvovPrefs.getString("expire_date", "") ?: ""
 
-        // LvovFlow: Open server selection bottom sheet
-        binding.serverButtonContainer.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                val profiles = SagerDatabase.proxyDao.getAll()
-                withContext(Dispatchers.Main) {
-                    showServerSelectionBottomSheet(profiles)
-                }
-            }
-        }
+        // LvovFlow: server selection removed — using connection map instead
 
         // LvovFlow: refresh subscription status from server in background
         val sessionToken = lvovPrefs.getString("session_token", "") ?: ""
@@ -482,7 +474,8 @@ class MainActivity : ThemedActivity(),
             binding.speedRow.visibility = if (isConnected) View.VISIBLE else View.GONE
             binding.connStatusLabel.visibility = View.VISIBLE
             binding.tvIpInfo.visibility = if (isConnected && binding.tvIpInfo.text.isNotEmpty()) View.VISIBLE else View.GONE
-            binding.serverButtonContainer.visibility = if (isConnected) View.VISIBLE else View.GONE
+            binding.connectionMap.visibility = if (isConnected) View.VISIBLE else View.GONE
+            binding.connectionMap.setActive(isConnected)
 
             if (isConnected) {
                 binding.glowBg.visibility = View.VISIBLE
@@ -499,7 +492,8 @@ class MainActivity : ThemedActivity(),
             binding.speedRow.visibility = View.GONE
             binding.connStatusLabel.visibility = View.GONE
             binding.tvIpInfo.visibility = View.GONE
-            binding.serverButtonContainer.visibility = View.GONE
+            binding.connectionMap.visibility = View.GONE
+            binding.connectionMap.setActive(false)
 
             binding.glowBg.visibility = View.GONE
             binding.pulseRing1.visibility = View.GONE
@@ -676,7 +670,7 @@ class MainActivity : ThemedActivity(),
             if (DataStore.serviceState == BaseService.State.Connected) {
                 SagerNet.reloadService()
             }
-            binding.connServerLabel.text = "Оптимальный сервер: " + selectedProfile.displayName()
+            // Server label removed — using connection map
             bottomSheetDialog.dismiss()
         }
         recyclerView.adapter = adapter
