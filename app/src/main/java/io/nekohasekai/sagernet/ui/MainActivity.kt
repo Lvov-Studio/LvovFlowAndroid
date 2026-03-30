@@ -238,6 +238,10 @@ class MainActivity : ThemedActivity(),
                     displayFragmentWithId(R.id.nav_bottom_tariffs)
                     true
                 }
+                R.id.nav_bottom_ai -> {
+                    displayFragmentWithId(R.id.nav_bottom_ai)
+                    true
+                }
                 else -> true
             }
         }
@@ -511,6 +515,9 @@ class MainActivity : ThemedActivity(),
             }
             R.id.nav_bottom_tariffs -> {
                 displayFragment(TariffsFragment())
+            }
+            R.id.nav_bottom_ai -> {
+                displayFragment(AiFragment())
             }
             R.id.nav_settings -> displayFragment(SettingsFragment())
             R.id.nav_faq -> {
