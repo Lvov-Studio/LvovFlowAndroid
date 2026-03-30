@@ -516,6 +516,10 @@ class MainActivity : ThemedActivity(),
     }
 
     fun displayFragmentWithId(@IdRes id: Int): Boolean {
+        // LvovFlow: hide main home UI (FAB, speed, sparkline) on non-home tabs
+        val isHome = id == R.id.nav_configuration
+        binding.mainHomeContainer.visibility = if (isHome) View.VISIBLE else View.GONE
+
         when (id) {
             R.id.nav_configuration -> {
                 displayFragment(ConfigurationFragment())
