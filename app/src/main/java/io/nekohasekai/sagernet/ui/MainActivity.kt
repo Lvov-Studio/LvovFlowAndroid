@@ -519,6 +519,8 @@ class MainActivity : ThemedActivity(),
         // LvovFlow: hide main home UI (FAB, speed, sparkline) on non-home tabs
         val isHome = id == R.id.nav_configuration
         binding.mainHomeContainer.visibility = if (isHome) View.VISIBLE else View.GONE
+        // Connection map is outside mainHomeContainer, hide separately
+        if (!isHome) binding.connectionMap.visibility = View.GONE
 
         when (id) {
             R.id.nav_configuration -> {
