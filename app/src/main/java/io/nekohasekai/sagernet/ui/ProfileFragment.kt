@@ -51,8 +51,14 @@ class ProfileFragment : ToolbarFragment() {
         val email     = prefs.getString("user_email", "") ?: ""
         val expireDate = prefs.getString("expire_date", "") ?: ""
 
-        // Populate header
-        view.findViewById<TextView>(R.id.tv_email).text = email
+        // LvovFlow: mask email for privacy — show first 3 chars + ***
+        val maskedEmail = if (email.contains("@")) {
+            val local = email.substringBefore("@")
+            val domain = email.substringAfter("@")
+            val visible = local.take(3)
+            "${visible}***@${domain}"
+        } else email
+        view.findViewById<TextView>(R.id.tv_email).text = maskedEmail
         view.findViewById<TextView>(R.id.tv_expire).text =
             if (expireDate.isNotBlank()) "Подписка до $expireDate" else "Активная подписка"
 
