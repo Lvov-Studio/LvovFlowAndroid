@@ -51,7 +51,7 @@
         android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Интеллектуальный помощник на базе ИИ. Автоматический выбор лучшего сервера, умный анализ скорости и персональные рекомендации."
+        android:text="Все нейросети в одном месте. Gemini, ChatGPT, Claude и другие — общайся с лучшими ИИ напрямую из приложения без ограничений."
         android:textColor="#64748B"
         android:textSize="14sp"
         android:textAlignment="center"
