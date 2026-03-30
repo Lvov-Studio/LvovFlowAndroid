@@ -103,6 +103,9 @@ class MainActivity : ThemedActivity(),
         }
         navigation.setNavigationItemSelectedListener(this)
 
+        // LvovFlow: completely lock the navigation drawer — all nav is via bottom bar
+        binding.drawerLayout.setDrawerLockMode(androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
         if (savedInstanceState == null) {
             displayFragmentWithId(R.id.nav_configuration)
         }
@@ -455,7 +458,7 @@ class MainActivity : ThemedActivity(),
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        if (item.isChecked) binding.drawerLayout.closeDrawers() else {
+        if (!item.isChecked) {
             return displayFragmentWithId(item.itemId)
         }
         return true
@@ -506,7 +509,7 @@ class MainActivity : ThemedActivity(),
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_holder, fragment)
             .commitAllowingStateLoss()
-        binding.drawerLayout.closeDrawers()
+        // LvovFlow: drawer disabled, no need to close
     }
 
     fun displayFragmentWithId(@IdRes id: Int): Boolean {
@@ -537,7 +540,7 @@ class MainActivity : ThemedActivity(),
             R.id.nav_about -> displayFragment(AboutFragment())
             R.id.nav_refresh_subscription -> {
                 // LvovFlow: check subscription status, then re-fetch if active
-                binding.drawerLayout.closeDrawers()
+                // LvovFlow: drawer disabled
                 val prefs = getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
                 val token = prefs.getString("session_token", "") ?: ""
                 if (token.isBlank()) {
@@ -1003,23 +1006,7 @@ class MainActivity : ThemedActivity(),
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_DPAD_LEFT -> {
-                if (super.onKeyDown(keyCode, event)) return true
-                binding.drawerLayout.open()
-                navigation.requestFocus()
-            }
-
-            KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                if (binding.drawerLayout.isOpen) {
-                    binding.drawerLayout.close()
-                    return true
-                }
-            }
-        }
-
         if (super.onKeyDown(keyCode, event)) return true
-        if (binding.drawerLayout.isOpen) return false
 
         val fragment =
             supportFragmentManager.findFragmentById(R.id.fragment_holder) as? ToolbarFragment
