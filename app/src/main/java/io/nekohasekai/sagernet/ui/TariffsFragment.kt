@@ -22,12 +22,19 @@ class TariffsFragment : androidx.fragment.app.Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Find the active buy button and set a click listener to open the website
         val btnBuy1Month = view.findViewById<Button>(R.id.btn_buy_1_month)
         btnBuy1Month.setOnClickListener {
-            val url = "https://lvovflow.com"
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            startActivity(intent)
+            // LvovFlow: open YuKassa payment via server-side redirect
+            val prefs = requireContext().getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
+            val token = prefs.getString("session_token", "") ?: ""
+
+            val url = if (token.isNotBlank()) {
+                "https://lvovflow.com/api/payment/create.php?token=$token"
+            } else {
+                "https://lvovflow.com/#pricing"
+            }
+
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         }
     }
 }
