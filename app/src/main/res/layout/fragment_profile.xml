@@ -169,14 +169,27 @@
                             android:text="Подписка"
                             android:textColor="#E2E8F0"
                             android:textSize="16sp" />
-                        <TextView
-                            android:id="@+id/tv_sub_status"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Активна"
-                            android:textColor="#64748B"
-                            android:textSize="12sp"
-                            android:layout_marginTop="2dp"/>
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="2dp">
+                            <View
+                                android:id="@+id/sub_status_dot"
+                                android:layout_width="6dp"
+                                android:layout_height="6dp"
+                                android:background="@drawable/bg_circle_green"
+                                android:backgroundTint="#22C55E" />
+                            <TextView
+                                android:id="@+id/tv_sub_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Активна"
+                                android:textColor="#22C55E"
+                                android:textSize="12sp"
+                                android:layout_marginStart="5dp" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <ImageView
@@ -258,58 +271,42 @@
 
             </LinearLayout>
 
-            <!-- Logout card -->
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Logout — subtle, not scary -->
+            <TextView
+                android:id="@+id/item_logout"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_glass_card"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="32dp"
+                android:padding="12dp"
+                android:text="Выйти из аккаунта"
+                android:textColor="#475569"
+                android:textSize="14sp"
+                android:background="?attr/selectableItemBackgroundBorderless" />
 
-                <LinearLayout
-                    android:id="@+id/item_logout"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="?attr/selectableItemBackground"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_navigation_close"
-                        app:tint="#EF4444" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="16dp"
-                        android:text="Выйти из аккаунта"
-                        android:textColor="#EF4444"
-                        android:textSize="16sp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Version label -->
+            <!-- Version label + update check -->
             <TextView
                 android:id="@+id/tv_version"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:text="LvovFlow v1.0.0"
                 android:textColor="#475569"
                 android:textSize="12sp"
                 android:gravity="center"
                 android:fontFamily="sans-serif-medium" />
+
+            <TextView
+                android:id="@+id/tv_check_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:padding="8dp"
+                android:text="Проверить обновления"
+                android:textColor="#3B82F6"
+                android:textSize="12sp"
+                android:background="?attr/selectableItemBackgroundBorderless" />
 
         </LinearLayout>
     </ScrollView>

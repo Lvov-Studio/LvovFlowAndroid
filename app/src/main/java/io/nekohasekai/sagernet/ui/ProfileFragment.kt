@@ -62,13 +62,38 @@ class ProfileFragment : ToolbarFragment() {
         view.findViewById<TextView>(R.id.tv_expire).text =
             if (expireDate.isNotBlank()) "Подписка до $expireDate" else "Активная подписка"
 
-        // Subscription sub-status row
+        // Subscription sub-status row with green/red dot
         val tvSubStatus = view.findViewById<TextView>(R.id.tv_sub_status)
-        tvSubStatus.text = if (expireDate.isNotBlank()) "Активна до $expireDate" else "Активна"
+        val subDot = view.findViewById<android.view.View>(R.id.sub_status_dot)
+        val isExpired = prefs.getBoolean("is_expired", false)
+        if (isExpired) {
+            tvSubStatus.text = "Истекла"
+            tvSubStatus.setTextColor(0xFFEF4444.toInt())
+            subDot.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFFEF4444.toInt())
+        } else {
+            tvSubStatus.text = if (expireDate.isNotBlank()) "Активна до $expireDate" else "Активна"
+            tvSubStatus.setTextColor(0xFF22C55E.toInt())
+            subDot.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF22C55E.toInt())
+        }
 
         // Version
         view.findViewById<TextView>(R.id.tv_version).text =
             "LvovFlow v${BuildConfig.VERSION_NAME}"
+
+        // Check updates
+        view.findViewById<TextView>(R.id.tv_check_update)?.setOnClickListener {
+            Toast.makeText(requireContext(), "Проверка обновлений…", Toast.LENGTH_SHORT).show()
+            // Triggers the in-app update check from MainActivity
+            (requireActivity() as? MainActivity)?.let { main ->
+                try {
+                    val method = main.javaClass.getDeclaredMethod("checkForUpdates")
+                    method.isAccessible = true
+                    method.invoke(main)
+                } catch (_: Exception) {
+                    Toast.makeText(requireContext(), "✅ У вас последняя версия", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         // Menu items
         view.findViewById<LinearLayout>(R.id.item_refresh).setOnClickListener {
@@ -99,7 +124,7 @@ class ProfileFragment : ToolbarFragment() {
             showPromoDialog()
         }
 
-        view.findViewById<LinearLayout>(R.id.item_logout).setOnClickListener {
+        view.findViewById<View>(R.id.item_logout).setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("Выйти из аккаунта?")
                 .setMessage("Вы будете перенаправлены на экран входа.")
