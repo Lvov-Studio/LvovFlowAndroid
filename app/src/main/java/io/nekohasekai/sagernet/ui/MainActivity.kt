@@ -780,6 +780,9 @@ class MainActivity : ThemedActivity(),
             binding.glowBg.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF22C55E.toInt())
             binding.glowBg.alpha = 0.35f
 
+            // LvovFlow: navigation bar → dark green
+            animateNavBarColor(0xFF0D3320.toInt())
+
             // LvovFlow: fetch external IP in background
             fetchExternalIp()
             
@@ -800,6 +803,9 @@ class MainActivity : ThemedActivity(),
             // LvovFlow: glow back to cyan/blue when idle
             binding.glowBg.backgroundTintList = null
             binding.glowBg.alpha = 0.45f
+
+            // LvovFlow: navigation bar → dark navy
+            animateNavBarColor(0xFF0A1628.toInt())
 
             stopConnectionTimer()
             stopBreathAnimation()
@@ -853,6 +859,16 @@ class MainActivity : ThemedActivity(),
             bytesPerSec >= 1_000_000L -> String.format("%.1f Мб/с", bytesPerSec / 1_000_000.0)
             bytesPerSec >= 1_000L -> String.format("%.0f Кб/с", bytesPerSec / 1_000.0)
             else -> "$bytesPerSec Б/с"
+        }
+    }
+
+    private fun animateNavBarColor(targetColor: Int) {
+        val from = window.navigationBarColor
+        if (from == targetColor) return
+        android.animation.ValueAnimator.ofArgb(from, targetColor).apply {
+            duration = 400
+            addUpdateListener { window.navigationBarColor = it.animatedValue as Int }
+            start()
         }
     }
 
