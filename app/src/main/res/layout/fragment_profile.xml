@@ -63,12 +63,25 @@
                         android:background="@drawable/bg_glow_circle"
                         android:alpha="0.35" />
 
-                    <ImageView
+                    <!-- Gradient circle with first letter -->
+                    <FrameLayout
                         android:layout_width="72dp"
                         android:layout_height="72dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_toolbar_logo"
-                        android:contentDescription="LvovFlow" />
+                        android:background="@drawable/bg_circle_avatar">
+
+                        <TextView
+                            android:id="@+id/tv_profile_letter"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="L"
+                            android:textColor="#FFFFFF"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium" />
+
+                    </FrameLayout>
 
                 </FrameLayout>
 
@@ -259,6 +272,41 @@
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
                         android:text="Промокод"
+                        android:textColor="#E2E8F0"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="#64748B" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#1A2C46" android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
+
+                <!-- Пригласить друга -->
+                <LinearLayout
+                    android:id="@+id/item_share"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_social_share"
+                        app:tint="#64748B" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:text="Пригласить друга"
                         android:textColor="#E2E8F0"
                         android:textSize="16sp" />
 

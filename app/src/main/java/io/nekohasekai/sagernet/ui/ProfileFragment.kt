@@ -59,6 +59,9 @@ class ProfileFragment : ToolbarFragment() {
             "${visible}***@${domain}"
         } else email
         view.findViewById<TextView>(R.id.tv_email).text = maskedEmail
+        // Set profile avatar letter
+        val profileLetter = if (email.isNotBlank()) email.substring(0, 1).uppercase() else "L"
+        view.findViewById<TextView>(R.id.tv_profile_letter)?.text = profileLetter
         view.findViewById<TextView>(R.id.tv_expire).text =
             if (expireDate.isNotBlank()) "Подписка до $expireDate" else "Активная подписка"
 
@@ -122,6 +125,16 @@ class ProfileFragment : ToolbarFragment() {
 
         view.findViewById<LinearLayout>(R.id.item_promo).setOnClickListener {
             showPromoDialog()
+        }
+
+        // Share / invite friend
+        view.findViewById<LinearLayout>(R.id.item_share).setOnClickListener {
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_SUBJECT, "LvovFlow — YouTube без тормозов")
+                putExtra(Intent.EXTRA_TEXT, "Попробуй LvovFlow — YouTube, Instagram и Netflix без лагов! Бесплатно 7 дней \uD83D\uDE80\nhttps://lvovflow.com")
+            }
+            startActivity(Intent.createChooser(shareIntent, "Поделиться"))
         }
 
         view.findViewById<View>(R.id.item_logout).setOnClickListener {
