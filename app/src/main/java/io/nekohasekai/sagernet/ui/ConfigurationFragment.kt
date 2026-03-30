@@ -248,10 +248,16 @@ class ConfigurationFragment @JvmOverloads constructor(
         if (tvAvatarLetter != null && tvGreetingName != null) {
             val displayName = if (userEmail.contains("@")) userEmail.substringBefore("@") else userEmail
             val firstLetter = if (displayName.isNotEmpty()) displayName.substring(0, 1).uppercase() else "L"
-            val displayGreeting = if (displayName.isNotEmpty()) displayName else "LvovFlow"
+            // LvovFlow: if name is all digits or too short, show generic greeting
+            val isReadableName = displayName.length >= 2 && !displayName.all { it.isDigit() }
+            val greetingText = if (isReadableName) {
+                "Привет, ${displayName.replaceFirstChar { it.uppercase() }}! 👋"
+            } else {
+                "Привет! 👋"
+            }
             
             tvAvatarLetter.text = firstLetter
-            tvGreetingName.text = "Привет, $displayGreeting! 👋"
+            tvGreetingName.text = greetingText
             
             val isExpired = prefs.getBoolean("is_expired", false)
             if (isExpired) {

@@ -26,46 +26,118 @@
             android:clipChildren="false"
             android:clipToPadding="false">
 
+            <!-- Timer Label -->
+            <TextView
+                android:id="@+id/conn_timer_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:text="Время подключения"
+                android:textColor="#94A3B8"
+                android:textSize="13sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/conn_timer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Timer Clock -->
+            <TextView
+                android:id="@+id/conn_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="00:00:00"
+                android:textColor="#F8FAFC"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/speed_row"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Speed Row (download / upload) -->
+            <LinearLayout
+                android:id="@+id/speed_row"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/button_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_speed_down"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="↓ 0 Б/с"
+                    android:textColor="#22C55E"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="14dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="#2E3A50" />
+
+                <TextView
+                    android:id="@+id/tv_speed_up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="↑ 0 Б/с"
+                    android:textColor="#22D3EE"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium" />
+
+            </LinearLayout>
+
             <!-- Circular Button and Glows -->
             <FrameLayout
                 android:id="@+id/button_container"
-                android:layout_width="320dp"
-                android:layout_height="320dp"
+                android:layout_width="280dp"
+                android:layout_height="280dp"
                 android:clipChildren="false"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintVertical_bias="0.45">
+                app:layout_constraintVertical_bias="0.47">
 
                 <View
                     android:id="@+id/glow_bg"
-                    android:layout_width="320dp"
-                    android:layout_height="320dp"
+                    android:layout_width="280dp"
+                    android:layout_height="280dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_glow_circle"
                     android:alpha="0.45" />
 
                 <View
                     android:id="@+id/pulse_ring_3"
-                    android:layout_width="230dp"
-                    android:layout_height="230dp"
+                    android:layout_width="210dp"
+                    android:layout_height="210dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_pulse_ring"
                     android:alpha="0" />
 
                 <View
                     android:id="@+id/pulse_ring_2"
-                    android:layout_width="185dp"
-                    android:layout_height="185dp"
+                    android:layout_width="170dp"
+                    android:layout_height="170dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_pulse_ring"
                     android:alpha="0" />
 
                 <View
                     android:id="@+id/pulse_ring_1"
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
+                    android:layout_width="135dp"
+                    android:layout_height="135dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_pulse_ring"
                     android:alpha="0" />
@@ -96,47 +168,31 @@
 
             </FrameLayout>
 
-            <!-- Timer Clock -->
-            <TextView
-                android:id="@+id/conn_timer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                android:text="00:00:00"
-                android:textColor="#F8FAFC"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-medium"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/button_container"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <!-- Timer Label -->
-            <TextView
-                android:id="@+id/conn_timer_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:text="Время подключения"
-                android:textColor="#94A3B8"
-                android:textSize="13sp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/conn_timer"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
             <!-- Status text -->
             <TextView
                 android:id="@+id/conn_status_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:text="Активировать ускорение"
                 android:textColor="#E2E8F0"
                 android:textSize="16sp"
                 android:letterSpacing="0.02"
                 app:layout_constraintTop_toBottomOf="@id/button_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- IP info (shown when connected) -->
+            <TextView
+                android:id="@+id/tv_ip_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text=""
+                android:textColor="#64748B"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/conn_status_label"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 

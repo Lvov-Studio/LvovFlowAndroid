@@ -11,6 +11,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.RemoteException
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
@@ -106,6 +109,8 @@ class MainActivity : ThemedActivity(),
         }
 
         binding.fab.setOnClickListener {
+            // LvovFlow: premium haptic feedback on tap (light pulse)
+            performLionHaptic(light = true)
             if (DataStore.serviceState.canStop) {
                 SagerNet.stopService()
             } else {
@@ -728,19 +733,34 @@ class MainActivity : ThemedActivity(),
         }
         binding.fab.backgroundTintList = ColorStateList.valueOf(fabColor)
 
-        // LvovFlow: timer + status + server card + speed row + pulse rings
+        // LvovFlow: haptic feedback on successful connection (strong pulse)
+        if (state == BaseService.State.Connected && animate) {
+            performLionHaptic(light = false)
+        }
+
+        // LvovFlow: timer + status + speed + server card + glow + pulse rings
         if (state == BaseService.State.Connected) {
             binding.connTimerLabel.visibility = View.VISIBLE
             binding.connTimer.visibility = View.VISIBLE
+            binding.speedRow.visibility = View.VISIBLE
             binding.connStatusLabel.text = "Соединение активно"
-            // Server label small (now a button container)
+            // Server label — parse flag from profile name
             binding.serverButtonContainer.visibility = View.VISIBLE
             val profileId = DataStore.selectedProxy
             val serverName = if (profileId > 0L) {
                 runCatching { ProfileManager.getProfile(profileId)?.displayName() }.getOrNull()
                     ?: "LvovFlow"
             } else "LvovFlow"
-            binding.connServerLabel.text = "Оптимальный сервер: $serverName"
+            // If name already has flag emoji, show directly; otherwise prefix
+            val hasFlag = serverName.any { Character.getType(it).toByte() == Character.OTHER_SYMBOL.toByte() }
+            binding.connServerLabel.text = if (hasFlag) serverName else "Сервер: $serverName"
+
+            // LvovFlow: glow green when connected
+            binding.glowBg.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF22C55E.toInt())
+            binding.glowBg.alpha = 0.35f
+
+            // LvovFlow: fetch external IP in background
+            fetchExternalIp()
             
             startConnectionTimer()
             startBreathAnimation()
@@ -748,12 +768,18 @@ class MainActivity : ThemedActivity(),
         } else {
             binding.connTimerLabel.visibility = View.GONE
             binding.connTimer.visibility = View.GONE
+            binding.speedRow.visibility = View.GONE
+            binding.tvIpInfo.visibility = View.GONE
             binding.serverButtonContainer.visibility = View.GONE
             binding.connStatusLabel.text = when (state) {
                 BaseService.State.Connecting -> "Подключение..."
                 BaseService.State.Stopping -> "Отключение..."
                 else -> "Активировать ускорение"
             }
+            // LvovFlow: glow back to cyan/blue when idle
+            binding.glowBg.backgroundTintList = null
+            binding.glowBg.alpha = 0.45f
+
             stopConnectionTimer()
             stopBreathAnimation()
             stopPulseAnimation()
@@ -795,7 +821,47 @@ class MainActivity : ThemedActivity(),
 
     // may NOT called when app is in background
     override fun cbSpeedUpdate(stats: SpeedDisplayData) {
-        // Stats widget removed
+        binding.tvSpeedDown.text = "↓ ${formatSpeed(stats.rxRateProxy)}"
+        binding.tvSpeedUp.text = "↑ ${formatSpeed(stats.txRateProxy)}"
+    }
+
+    private fun formatSpeed(bytesPerSec: Long): String {
+        return when {
+            bytesPerSec >= 1_000_000L -> String.format("%.1f Мб/с", bytesPerSec / 1_000_000.0)
+            bytesPerSec >= 1_000L -> String.format("%.0f Кб/с", bytesPerSec / 1_000.0)
+            else -> "$bytesPerSec Б/с"
+        }
+    }
+
+    private fun fetchExternalIp() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val url = URL("http://ip-api.com/json?fields=query,countryCode")
+                val conn = url.openConnection() as HttpURLConnection
+                conn.connectTimeout = 5000
+                conn.readTimeout = 5000
+                conn.setRequestProperty("User-Agent", "LvovFlow-Android")
+                val body = conn.inputStream.bufferedReader().readText()
+                conn.disconnect()
+                val json = JSONObject(body)
+                val ip = json.optString("query", "")
+                val cc = json.optString("countryCode", "")
+                val flag = countryCodeToFlag(cc)
+                if (ip.isNotEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        binding.tvIpInfo.text = "IP: $ip  •  $flag $cc"
+                        binding.tvIpInfo.visibility = View.VISIBLE
+                    }
+                }
+            } catch (_: Exception) { }
+        }
+    }
+
+    private fun countryCodeToFlag(cc: String): String {
+        if (cc.length != 2) return ""
+        val first = Character.toChars(0x1F1E6 - 'A'.code + cc[0].uppercaseChar().code)
+        val second = Character.toChars(0x1F1E6 - 'A'.code + cc[1].uppercaseChar().code)
+        return String(first) + String(second)
     }
 
     override fun cbTrafficUpdate(data: TrafficData) {
@@ -1025,6 +1091,47 @@ class MainActivity : ThemedActivity(),
             btnChat.setColorFilter(android.graphics.Color.parseColor("#EF4444")) // RED
         } else {
             btnChat.setColorFilter(android.graphics.Color.parseColor("#8B9BB4")) // DEFAULT GRAY
+        }
+    }
+
+    // ── LvovFlow: Premium "Lion Heartbeat" haptic feedback ──────────────
+    @Suppress("DEPRECATION")
+    private fun performLionHaptic(light: Boolean) {
+        try {
+            val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val mgr = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
+                mgr.defaultVibrator
+            } else {
+                getSystemService(VIBRATOR_SERVICE) as Vibrator
+            }
+
+            if (!vibrator.hasVibrator()) return
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Double-pulse "heartbeat" pattern
+                // timings:  wait, vib1, pause, vib2
+                // amplitudes: 0,  low,  0,    medium
+                val timings: LongArray
+                val amplitudes: IntArray
+                if (light) {
+                    // Light tap — button press
+                    timings    = longArrayOf(0, 30, 50, 40)
+                    amplitudes = intArrayOf(0, 40, 0, 80)
+                } else {
+                    // Strong tap — successful connection
+                    timings    = longArrayOf(0, 40, 60, 50)
+                    amplitudes = intArrayOf(0, 80, 0, 140)
+                }
+                vibrator.vibrate(
+                    VibrationEffect.createWaveform(timings, amplitudes, -1)
+                )
+            } else {
+                // Fallback for older devices (< API 26)
+                val duration = if (light) 50L else 100L
+                vibrator.vibrate(duration)
+            }
+        } catch (_: Exception) {
+            // Silently ignore — haptics are non-critical
         }
     }
 }
