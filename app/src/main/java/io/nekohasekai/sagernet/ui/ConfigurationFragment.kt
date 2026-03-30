@@ -251,14 +251,8 @@ class ConfigurationFragment @JvmOverloads constructor(
             // LvovFlow: if name is mostly digits or too short, show generic greeting
             val digitCount = displayName.count { it.isDigit() }
             val isReadableName = displayName.length >= 2 && digitCount < displayName.length / 2
-            val greetingText = if (isReadableName) {
-                "Привет, ${displayName.replaceFirstChar { it.uppercase() }}! 👋"
-            } else {
-                "Привет! 👋"
-            }
-            
             tvAvatarLetter.text = firstLetter
-            tvGreetingName.text = greetingText
+            tvGreetingName.text = "Привет! 👋"
             
             val isExpired = prefs.getBoolean("is_expired", false)
             if (isExpired) {
