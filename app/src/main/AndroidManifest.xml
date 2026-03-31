@@ -95,6 +95,20 @@
             android:configChanges="uiMode"
             android:exported="false" />
 
+        <!-- LvovFlow: TV-optimized activities -->
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.TvMainActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.TvActivationActivity"
+            android:configChanges="uiMode"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name="io.nekohasekai.sagernet.ui.SplashActivity"
             android:configChanges="uiMode"

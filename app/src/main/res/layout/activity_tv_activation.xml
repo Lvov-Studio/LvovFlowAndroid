@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_activation_gradient">
+
+    <!-- Safe area with TV overscan margins -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingStart="48dp"
+        android:paddingEnd="48dp"
+        android:paddingTop="27dp"
+        android:paddingBottom="27dp"
+        android:gravity="center">
+
+        <!-- ===== LEFT: Branding ===== -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp">
+
+            <!-- Logo -->
+            <FrameLayout
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginBottom="16dp">
+                <View
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:background="@drawable/bg_glow_circle"
+                    android:layout_gravity="center" />
+                <ImageView
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ic_launcher" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LvovFlow"
+                android:textColor="#FFFFFF"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Акселератор интернета"
+                android:textColor="#7099C0"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_trial"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="★  7 дней бесплатно"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- ===== RIGHT: Login Form ===== -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_dark"
+            android:padding="32dp"
+            android:maxWidth="480dp">
+
+            <!-- ===== STEP 1: Email ===== -->
+            <LinearLayout
+                android:id="@+id/tv_step_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Введите email — пришлём код"
+                    android:textColor="#7099C0"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <EditText
+                    android:id="@+id/tv_email_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Ваш Email"
+                    android:textColorHint="#40FFFFFF"
+                    android:inputType="textEmailAddress"
+                    android:imeOptions="actionDone"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:singleLine="true"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:focusable="true"
+                    android:nextFocusDown="@+id/tv_btn_send_code" />
+
+                <Button
+                    android:id="@+id/tv_btn_send_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Получить код →"
+                    android:textColor="#0A1628"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#25C9EF"
+                    android:focusable="true"
+                    android:nextFocusUp="@id/tv_email_input" />
+
+                <!-- Progress -->
+                <LinearLayout
+                    android:id="@+id/tv_email_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone"
+                    android:orientation="horizontal">
+                    <ProgressBar
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:indeterminateTint="#25C9EF"
+                        android:layout_marginEnd="10dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Отправляем код..."
+                        android:textColor="#7099C0"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ===== STEP 2: OTP ===== -->
+            <LinearLayout
+                android:id="@+id/tv_step_otp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+                    <Button
+                        android:id="@+id/tv_btn_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:text="←"
+                        android:textColor="#25C9EF"
+                        android:textSize="24sp"
+                        android:background="@android:color/transparent"
+                        android:focusable="true"
+                        android:minWidth="48dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Введите код из письма"
+                        android:textColor="#FFFFFFCC"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_otp_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Код отправлен на you@example.com"
+                    android:textColor="#7099C0"
+                    android:textSize="14sp"
+                    android:gravity="center" />
+
+                <EditText
+                    android:id="@+id/tv_otp_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="— — — — — —"
+                    android:textColorHint="#30FFFFFF"
+                    android:inputType="numberPassword"
+                    android:imeOptions="actionDone"
+                    android:textColor="#25C9EF"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.35"
+                    android:gravity="center"
+                    android:maxLength="6"
+                    android:fontFamily="monospace"
+                    android:focusable="true"
+                    android:nextFocusDown="@+id/tv_btn_verify" />
+
+                <Button
+                    android:id="@+id/tv_btn_verify"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Войти →"
+                    android:textColor="#0A1628"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#25C9EF"
+                    android:focusable="true"
+                    android:nextFocusUp="@id/tv_otp_input" />
+
+                <!-- Resend row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Не пришло? "
+                        android:textColor="#50FFFFFF"
+                        android:textSize="14sp" />
+                    <Button
+                        android:id="@+id/tv_btn_resend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Отправить ещё раз"
+                        android:textColor="#25C9EF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textAllCaps="false"
+                        android:background="@android:color/transparent"
+                        android:focusable="true"
+                        android:minWidth="48dp"
+                        android:minHeight="48dp" />
+                </LinearLayout>
+
+                <!-- Progress -->
+                <LinearLayout
+                    android:id="@+id/tv_verify_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone"
+                    android:orientation="horizontal">
+                    <ProgressBar
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:indeterminateTint="#25C9EF"
+                        android:layout_marginEnd="10dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Проверяем код..."
+                        android:textColor="#7099C0"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Error label (full width at bottom) -->
+    <TextView
+        android:id="@+id/tv_error_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="48dp"
+        android:layout_marginEnd="48dp"
+        android:layout_marginBottom="27dp"
+        android:background="#22FF4444"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="24dp"
+        android:textColor="#FF6B6B"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:visibility="gone" />
+
+</FrameLayout>

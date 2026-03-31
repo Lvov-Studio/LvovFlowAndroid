@@ -41,10 +41,13 @@ class SplashActivity : AppCompatActivity() {
             val prefs = getSharedPreferences("lvovflow", MODE_PRIVATE)
             val token = prefs.getString("session_token", "") ?: ""
 
+            val isTv = TvUtils.isTv(this@SplashActivity)
             val nextIntent = if (token.isBlank()) {
-                Intent(this@SplashActivity, ActivationActivity::class.java)
+                if (isTv) Intent(this@SplashActivity, TvActivationActivity::class.java)
+                else Intent(this@SplashActivity, ActivationActivity::class.java)
             } else {
-                Intent(this@SplashActivity, MainActivity::class.java)
+                if (isTv) Intent(this@SplashActivity, TvMainActivity::class.java)
+                else Intent(this@SplashActivity, MainActivity::class.java)
             }
 
             // Add smooth fade transition flags
