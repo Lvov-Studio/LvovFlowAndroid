@@ -930,25 +930,38 @@ class MainActivity : ThemedActivity(),
 
     private fun fetchExternalIp() {
         lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val url = URL("http://ip-api.com/json?fields=query,countryCode")
-                val conn = url.openConnection() as HttpURLConnection
-                conn.connectTimeout = 5000
-                conn.readTimeout = 5000
-                conn.setRequestProperty("User-Agent", "LvovFlow-Android")
-                val body = conn.inputStream.bufferedReader().readText()
-                conn.disconnect()
-                val json = JSONObject(body)
-                val ip = json.optString("query", "")
-                val cc = json.optString("countryCode", "")
-                val flag = countryCodeToFlag(cc)
-                if (ip.isNotEmpty()) {
-                    withContext(Dispatchers.Main) {
-                        binding.tvIpInfo.text = "IP: $ip  •  $flag $cc"
-                        binding.tvIpInfo.visibility = View.VISIBLE
+            // Wait for VPN tunnel to fully initialize before making the request
+            kotlinx.coroutines.delay(2000)
+            
+            var success = false
+            for (attempt in 1..2) {
+                try {
+                    val url = URL("http://ip-api.com/json?fields=query,countryCode")
+                    val conn = url.openConnection() as HttpURLConnection
+                    conn.connectTimeout = 5000
+                    conn.readTimeout = 5000
+                    conn.setRequestProperty("User-Agent", "LvovFlow-Android")
+                    val body = conn.inputStream.bufferedReader().readText()
+                    conn.disconnect()
+                    val json = JSONObject(body)
+                    val ip = json.optString("query", "")
+                    val cc = json.optString("countryCode", "")
+                    val flag = countryCodeToFlag(cc)
+                    if (ip.isNotEmpty()) {
+                        withContext(Dispatchers.Main) {
+                            binding.tvIpInfo.text = "IP: $ip  •  $flag $cc"
+                            binding.tvIpInfo.visibility = View.VISIBLE
+                        }
+                        success = true
+                        break
                     }
+                } catch (_: Exception) { }
+                
+                // If first attempt failed, wait and retry
+                if (!success && attempt < 2) {
+                    kotlinx.coroutines.delay(3000)
                 }
-            } catch (_: Exception) { }
+            }
         }
     }
 
