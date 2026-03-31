@@ -79,36 +79,17 @@ class DevicesActivity : AppCompatActivity() {
 
     private fun setupQrLogin() {
         findViewById<LinearLayout>(R.id.card_qr_login).setOnClickListener {
-            // Launch ZXing barcode scanner
-            try {
-                val intent = Intent("com.google.zxing.client.android.SCAN")
-                intent.putExtra("SCAN_MODE", "QR_CODE_MODE")
-                intent.putExtra("PROMPT_MESSAGE", "Наведите на QR-код на экране ТВ")
-                startActivityForResult(intent, 1001)
-            } catch (e: Exception) {
-                // ZXing scanner activity not available, use our own simple approach
-                // Try using zxing-lite's CaptureActivity 
-                try {
-                    val intent = Intent(this, Class.forName("com.king.zxing.CaptureActivity"))
-                    startActivityForResult(intent, 1001)
-                } catch (e2: Exception) {
-                    Toast.makeText(this, "Камера недоступна", Toast.LENGTH_SHORT).show()
-                }
-            }
+            val intent = Intent(this, TvQrScannerActivity::class.java)
+            startActivityForResult(intent, 1001)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
-            // ZXing returns the scanned content in "SCAN_RESULT"
-            val scannedUrl = data.getStringExtra("SCAN_RESULT")
-                ?: data.getStringExtra("codedContent")
-                ?: data.getStringExtra("result")
-                ?: ""
+            val scannedUrl = data.getStringExtra(TvQrScannerActivity.RESULT_QR_CONTENT) ?: ""
 
-            if (scannedUrl.contains("tv-pair.php") || scannedUrl.contains("pair_code") || scannedUrl.contains("code=")) {
-                // Extract pair code from URL
+            if (scannedUrl.contains("tv-pair") || scannedUrl.contains("code=")) {
                 val code = extractPairCode(scannedUrl)
                 if (code.isNotBlank()) {
                     confirmTvPairing(code)
