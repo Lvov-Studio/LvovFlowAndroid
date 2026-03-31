@@ -104,15 +104,7 @@ class ProfileFragment : ToolbarFragment() {
         }
 
         view.findViewById<LinearLayout>(R.id.item_subscription).setOnClickListener {
-            val msg = if (expireDate.isNotBlank())
-                "Ваша подписка активна до $expireDate.\n\nДля продления свяжитесь с поддержкой или введите промокод."
-            else
-                "Ваша подписка активна."
-            AlertDialog.Builder(requireContext())
-                .setTitle("⭐ Подписка")
-                .setMessage(msg)
-                .setPositiveButton("OK", null)
-                .show()
+            startActivity(Intent(requireContext(), SubscriptionActivity::class.java))
         }
 
         view.findViewById<LinearLayout>(R.id.item_support).setOnClickListener {

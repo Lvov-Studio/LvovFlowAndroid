@@ -91,6 +91,11 @@
             android:exported="false" />
 
         <activity
+            android:name="io.nekohasekai.sagernet.ui.SubscriptionActivity"
+            android:configChanges="uiMode"
+            android:exported="false" />
+
+        <activity
             android:name="io.nekohasekai.sagernet.ui.SplashActivity"
             android:configChanges="uiMode"
             android:exported="true"
