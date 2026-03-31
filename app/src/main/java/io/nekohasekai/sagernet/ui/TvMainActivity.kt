@@ -1,5 +1,7 @@
 package io.nekohasekai.sagernet.ui
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.net.Uri
@@ -8,7 +10,9 @@ import android.os.Bundle
 import android.os.RemoteException
 import android.view.KeyEvent
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
@@ -32,6 +36,7 @@ import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeLi
 import io.nekohasekai.sagernet.group.GroupUpdater
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.widget.ConnectionMapView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -44,9 +49,9 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 /**
- * LvovFlow — TV Main Activity
+ * LvovFlow — TV Main Activity (v2)
  * Landscape VPN control screen optimized for D-Pad navigation.
- * Reuses the same VPN service layer as mobile MainActivity.
+ * Features: SVG icons, pulse animation, live stats, connection map, focus effects.
  */
 class TvMainActivity : ThemedActivity(),
     SagerConnection.Callback,
@@ -55,13 +60,11 @@ class TvMainActivity : ThemedActivity(),
     // VPN connection
     val connection = SagerConnection(SagerConnection.CONNECTION_ID_MAIN_ACTIVITY_FOREGROUND, true)
     private val connect = registerForActivityResult(VpnRequestActivity.StartService()) {
-        if (it) {
-            Toast("VPN permission denied")
-        }
+        if (it) showToast("Разрешите VPN для работы ускорителя")
     }
 
     // UI views
-    private lateinit var btnConnect: Button
+    private lateinit var btnConnect: ImageButton
     private lateinit var statusText: TextView
     private lateinit var timerText: TextView
     private lateinit var speedRow: LinearLayout
@@ -71,10 +74,25 @@ class TvMainActivity : ThemedActivity(),
     private lateinit var tvGlow: View
     private lateinit var subBadge: TextView
     private lateinit var versionText: TextView
+    private lateinit var connectionMap: ConnectionMapView
+    private lateinit var statsRow: LinearLayout
+    private lateinit var statDownload: TextView
+    private lateinit var statUpload: TextView
+    private lateinit var statSession: TextView
+    private lateinit var pulseRing1: View
+    private lateinit var pulseRing2: View
 
     // Timer
     private var timerJob: Job? = null
     private var connectTime: Long = 0L
+
+    // Pulse animation
+    private var pulseJob: Job? = null
+    private var breathAnimator: AnimatorSet? = null
+
+    // Session traffic counters
+    private var sessionDownloadBytes: Long = 0L
+    private var sessionUploadBytes: Long = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,6 +117,13 @@ class TvMainActivity : ThemedActivity(),
         tvGlow = findViewById(R.id.tv_glow)
         subBadge = findViewById(R.id.tv_sub_badge)
         versionText = findViewById(R.id.tv_version)
+        connectionMap = findViewById(R.id.tv_connection_map)
+        statsRow = findViewById(R.id.tv_stats_row)
+        statDownload = findViewById(R.id.tv_stat_download)
+        statUpload = findViewById(R.id.tv_stat_upload)
+        statSession = findViewById(R.id.tv_stat_session)
+        pulseRing1 = findViewById(R.id.tv_pulse_ring1)
+        pulseRing2 = findViewById(R.id.tv_pulse_ring2)
 
         versionText.text = "v${BuildConfig.VERSION_NAME}"
 
@@ -111,7 +136,7 @@ class TvMainActivity : ThemedActivity(),
             }
         }
 
-        // Request initial focus on the connect button
+        // Request initial focus
         btnConnect.requestFocus()
 
         // Subscription button
@@ -144,6 +169,9 @@ class TvMainActivity : ThemedActivity(),
                 .show()
         }
 
+        // ── D-Pad focus animations ──
+        setupFocusAnimations()
+
         // Force-stop stale VPN after update
         val prefs = getSharedPreferences("lvovflow", MODE_PRIVATE)
         val lastVersion = prefs.getString("last_app_version", "")
@@ -160,6 +188,42 @@ class TvMainActivity : ThemedActivity(),
         // Background checks
         checkAppUpdate()
         refreshSubscriptionStatus()
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // D-Pad focus animations (scale + glow)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun setupFocusAnimations() {
+        val focusViews = listOf(
+            findViewById<Button>(R.id.tv_btn_subscription),
+            findViewById<Button>(R.id.tv_btn_about),
+            findViewById<Button>(R.id.tv_btn_logout)
+        )
+        for (view in focusViews) {
+            view.setOnFocusChangeListener { v, hasFocus ->
+                val scale = if (hasFocus) 1.05f else 1.0f
+                val elevation = if (hasFocus) 8f else 0f
+                v.animate()
+                    .scaleX(scale)
+                    .scaleY(scale)
+                    .translationZ(elevation)
+                    .setDuration(150)
+                    .setInterpolator(DecelerateInterpolator())
+                    .start()
+            }
+        }
+
+        // Connect button — bigger scale effect
+        btnConnect.setOnFocusChangeListener { v, hasFocus ->
+            val scale = if (hasFocus) 1.08f else 1.0f
+            v.animate()
+                .scaleX(scale)
+                .scaleY(scale)
+                .setDuration(200)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -181,11 +245,11 @@ class TvMainActivity : ThemedActivity(),
                             DataStore.selectedProxy = first.id
                             onMainDispatcher { connect.launch(null) }
                         } else {
-                            onMainDispatcher { Toast("Обновляем серверы...") }
+                            onMainDispatcher { showToast("Обновляем серверы...") }
                             refreshSubscriptionAndConnect()
                         }
                     } else {
-                        onMainDispatcher { Toast("Подписка не найдена. Войдите снова.") }
+                        onMainDispatcher { showToast("Подписка не найдена. Войдите снова.") }
                     }
                 } catch (e: Exception) {
                     onMainDispatcher { connect.launch(null) }
@@ -209,11 +273,11 @@ class TvMainActivity : ThemedActivity(),
                     DataStore.selectedProxy = first.id
                     onMainDispatcher { connect.launch(null) }
                 } else {
-                    onMainDispatcher { Toast("Не удалось загрузить серверы.") }
+                    onMainDispatcher { showToast("Не удалось загрузить серверы.") }
                 }
             }
         } catch (e: Exception) {
-            onMainDispatcher { Toast("Ошибка обновления: ${e.message}") }
+            onMainDispatcher { showToast("Ошибка обновления: ${e.message}") }
         }
     }
 
@@ -224,9 +288,9 @@ class TvMainActivity : ThemedActivity(),
     private fun changeState(state: BaseService.State, msg: String? = null) {
         DataStore.serviceState = state
 
-        // Button appearance
         if (state == BaseService.State.Connected) {
-            btnConnect.text = "⏸"
+            // Button → pause icon, green
+            btnConnect.setImageResource(R.drawable.ic_tv_pause)
             btnConnect.backgroundTintList = ColorStateList.valueOf(0xFF22C55E.toInt())
             tvGlow.backgroundTintList = ColorStateList.valueOf(0xFF22C55E.toInt())
             tvGlow.alpha = 0.5f
@@ -235,11 +299,20 @@ class TvMainActivity : ThemedActivity(),
 
             timerText.visibility = View.VISIBLE
             speedRow.visibility = View.VISIBLE
+            connectionMap.visibility = View.VISIBLE
+            connectionMap.setActive(true)
+
+            // Reset session counters
+            sessionDownloadBytes = 0L
+            sessionUploadBytes = 0L
 
             startConnectionTimer()
+            startBreathAnimation()
+            startPulseAnimation()
             fetchExternalIp()
         } else {
-            btnConnect.text = "⚡"
+            // Button → bolt icon, cyan
+            btnConnect.setImageResource(R.drawable.ic_tv_bolt)
             btnConnect.backgroundTintList = ColorStateList.valueOf(0xFF25C9EF.toInt())
             tvGlow.backgroundTintList = null
             tvGlow.alpha = 0.4f
@@ -253,9 +326,74 @@ class TvMainActivity : ThemedActivity(),
             timerText.visibility = View.GONE
             speedRow.visibility = View.GONE
             tvIpInfo.visibility = View.GONE
+            connectionMap.setActive(false)
+            connectionMap.visibility = View.GONE
 
             stopConnectionTimer()
+            stopBreathAnimation()
+            stopPulseAnimation()
         }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Pulse & breath animations (same as mobile)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun startBreathAnimation() {
+        breathAnimator?.cancel()
+        val scaleX = ObjectAnimator.ofFloat(btnConnect, "scaleX", 1f, 1.08f, 1f).apply {
+            duration = 2000L
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }
+        val scaleY = ObjectAnimator.ofFloat(btnConnect, "scaleY", 1f, 1.08f, 1f).apply {
+            duration = 2000L
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }
+        breathAnimator = AnimatorSet().apply {
+            playTogether(scaleX, scaleY)
+            start()
+        }
+    }
+
+    private fun stopBreathAnimation() {
+        breathAnimator?.cancel()
+        breathAnimator = null
+        btnConnect.scaleX = 1f
+        btnConnect.scaleY = 1f
+    }
+
+    private fun animateRing(ring: View, delayMs: Long) {
+        ring.scaleX = 1f
+        ring.scaleY = 1f
+        ring.alpha = 0.5f
+        val scaleX = ObjectAnimator.ofFloat(ring, "scaleX", 1f, 2.0f).apply { duration = 2000L }
+        val scaleY = ObjectAnimator.ofFloat(ring, "scaleY", 1f, 2.0f).apply { duration = 2000L }
+        val alpha = ObjectAnimator.ofFloat(ring, "alpha", 0.5f, 0f).apply { duration = 2000L }
+        AnimatorSet().apply {
+            playTogether(scaleX, scaleY, alpha)
+            startDelay = delayMs
+            start()
+        }
+    }
+
+    private fun startPulseAnimation() {
+        stopPulseAnimation()
+        pulseJob = lifecycleScope.launch {
+            while (isActive) {
+                animateRing(pulseRing1, 0L)
+                animateRing(pulseRing2, 800L)
+                delay(2500L)
+            }
+        }
+    }
+
+    private fun stopPulseAnimation() {
+        pulseJob?.cancel()
+        pulseJob = null
+        pulseRing1.alpha = 0f
+        pulseRing2.alpha = 0f
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -285,6 +423,12 @@ class TvMainActivity : ThemedActivity(),
         runOnUiThread {
             tvSpeedDown.text = "↓ ${formatSpeed(stats.rxRateProxy)}"
             tvSpeedUp.text = "↑ ${formatSpeed(stats.txRateProxy)}"
+
+            // Accumulate session traffic (speed updates ~every 500ms)
+            sessionDownloadBytes += stats.rxRateProxy / 2
+            sessionUploadBytes += stats.txRateProxy / 2
+            statDownload.text = formatBytes(sessionDownloadBytes)
+            statUpload.text = formatBytes(sessionUploadBytes)
         }
     }
 
@@ -305,7 +449,7 @@ class TvMainActivity : ThemedActivity(),
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Timer & Speed
+    // Timer & formatting
     // ─────────────────────────────────────────────────────────────────────────
 
     private fun startConnectionTimer() {
@@ -318,6 +462,9 @@ class TvMainActivity : ThemedActivity(),
                 val m = (elapsed / 60_000L) % 60
                 val s = (elapsed / 1_000L) % 60
                 timerText.text = "%02d:%02d:%02d".format(h, m, s)
+                // Update session card too
+                statSession.text = if (h > 0) "%d:%02d:%02d".format(h, m, s)
+                                   else "%02d:%02d".format(m, s)
                 delay(1_000L)
             }
         }
@@ -327,6 +474,7 @@ class TvMainActivity : ThemedActivity(),
         timerJob?.cancel()
         timerJob = null
         timerText.text = "00:00:00"
+        statSession.text = "00:00"
     }
 
     private fun formatSpeed(bytesPerSec: Long): String {
@@ -337,13 +485,22 @@ class TvMainActivity : ThemedActivity(),
         }
     }
 
+    private fun formatBytes(bytes: Long): String {
+        return when {
+            bytes >= 1_073_741_824L -> String.format("%.1f ГБ", bytes / 1_073_741_824.0)
+            bytes >= 1_048_576L -> String.format("%.1f МБ", bytes / 1_048_576.0)
+            bytes >= 1_024L -> String.format("%.0f КБ", bytes / 1_024.0)
+            else -> "$bytes Б"
+        }
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // IP detection
     // ─────────────────────────────────────────────────────────────────────────
 
     private fun fetchExternalIp() {
         lifecycleScope.launch(Dispatchers.IO) {
-            delay(2000) // Wait for VPN tunnel to stabilize
+            delay(2000)
             for (attempt in 1..2) {
                 try {
                     val url = URL("http://ip-api.com/json?fields=query,countryCode")
@@ -378,7 +535,7 @@ class TvMainActivity : ThemedActivity(),
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // App update & sync (same as MainActivity)
+    // App update & sync
     // ─────────────────────────────────────────────────────────────────────────
 
     private fun checkAppUpdate() {
@@ -412,7 +569,7 @@ class TvMainActivity : ThemedActivity(),
                 if (content.isBlank()) return@runOnDefaultDispatcher
                 val response = JSONObject(content)
 
-                // Remote logout check
+                // Remote logout
                 if (!response.optBoolean("ok", true) && response.optBoolean("logged_out", false)) {
                     onMainDispatcher {
                         if (DataStore.serviceState.started) SagerNet.stopService()
@@ -434,7 +591,7 @@ class TvMainActivity : ThemedActivity(),
                 if (!response.optBoolean("ok", true) && response.optString("error") == "device_limit") {
                     onMainDispatcher {
                         MaterialAlertDialogBuilder(this@TvMainActivity)
-                            .setTitle("⚠️ Лимит устройств")
+                            .setTitle("Лимит устройств")
                             .setMessage("Достигнут лимит устройств (2). Удалите устройство в личном кабинете.")
                             .setCancelable(false)
                             .setPositiveButton("OK") { _, _ -> finishAffinity() }
@@ -443,7 +600,7 @@ class TvMainActivity : ThemedActivity(),
                     return@runOnDefaultDispatcher
                 }
 
-                // Update check
+                // Update
                 if (response.has("update") && !response.isNull("update")) {
                     val updateObj = response.getJSONObject("update")
                     val serverVersion = updateObj.optString("versionName", "")
@@ -505,7 +662,7 @@ class TvMainActivity : ThemedActivity(),
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // D-Pad: Enter/OK on connect button = same as click
+    // Lifecycle
     // ─────────────────────────────────────────────────────────────────────────
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -518,10 +675,6 @@ class TvMainActivity : ThemedActivity(),
         }
         return super.onKeyDown(keyCode, event)
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Lifecycle
-    // ─────────────────────────────────────────────────────────────────────────
 
     override fun onStart() {
         connection.updateConnectionId(SagerConnection.CONNECTION_ID_MAIN_ACTIVITY_FOREGROUND)
@@ -537,6 +690,8 @@ class TvMainActivity : ThemedActivity(),
         super.onDestroy()
         DataStore.configurationStore.unregisterChangeListener(this)
         connection.disconnect(this)
+        stopBreathAnimation()
+        stopPulseAnimation()
     }
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
@@ -554,7 +709,7 @@ class TvMainActivity : ThemedActivity(),
         return Snackbar.make(findViewById(android.R.id.content), text, Snackbar.LENGTH_LONG)
     }
 
-    private fun Toast(text: String) {
+    private fun showToast(text: String) {
         android.widget.Toast.makeText(this, text, android.widget.Toast.LENGTH_SHORT).show()
     }
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0A1628">
@@ -21,14 +20,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="8dp">
 
-            <!-- Logo -->
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@mipmap/ic_launcher"
-                android:layout_marginEnd="12dp" />
+                android:layout_marginEnd="10dp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -36,11 +34,10 @@
                 android:layout_weight="1"
                 android:text="LvovFlow"
                 android:textColor="#F8FAFC"
-                android:textSize="24sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-medium" />
 
-            <!-- Subscription badge -->
             <TextView
                 android:id="@+id/tv_sub_badge"
                 android:layout_width="wrap_content"
@@ -52,16 +49,15 @@
                 android:paddingBottom="4dp"
                 android:text="● Активна"
                 android:textColor="#22C55E"
-                android:textSize="13sp"
-                android:layout_marginEnd="16dp" />
+                android:textSize="12sp"
+                android:layout_marginEnd="12dp" />
 
-            <!-- Version -->
             <TextView
                 android:id="@+id/tv_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#64748B"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
         <!-- ===== MAIN CONTENT: LEFT + RIGHT ===== -->
@@ -71,50 +67,69 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
-            <!-- ===== LEFT PANEL: Connect ===== -->
+            <!-- ===== LEFT PANEL: Connect + Map ===== -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="4"
+                android:layout_weight="5"
                 android:orientation="vertical"
-                android:gravity="center"
-                android:layout_marginEnd="32dp">
+                android:gravity="center_horizontal"
+                android:layout_marginEnd="24dp">
 
-                <!-- Status text above button -->
+                <!-- Status text -->
                 <TextView
                     android:id="@+id/tv_status_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="12dp"
                     android:text="Активировать ускорение"
                     android:textColor="#E2E8F0"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <!-- Big Connect Button -->
+                <!-- Connect Button with glow + pulse rings -->
                 <FrameLayout
-                    android:layout_width="180dp"
-                    android:layout_height="180dp"
-                    android:layout_marginBottom="16dp">
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:layout_marginBottom="8dp">
+
+                    <!-- Pulse rings (behind button) -->
+                    <View
+                        android:id="@+id/tv_pulse_ring1"
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_pulse_ring"
+                        android:alpha="0" />
+
+                    <View
+                        android:id="@+id/tv_pulse_ring2"
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_pulse_ring"
+                        android:alpha="0" />
 
                     <!-- Glow background -->
                     <View
                         android:id="@+id/tv_glow"
-                        android:layout_width="180dp"
-                        android:layout_height="180dp"
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
                         android:layout_gravity="center"
                         android:background="@drawable/bg_glow_circle"
                         android:alpha="0.4" />
 
-                    <!-- The button itself -->
-                    <Button
+                    <!-- The button with icon instead of emoji -->
+                    <ImageButton
                         android:id="@+id/tv_btn_connect"
-                        android:layout_width="160dp"
-                        android:layout_height="160dp"
+                        android:layout_width="140dp"
+                        android:layout_height="140dp"
                         android:layout_gravity="center"
                         android:background="@drawable/bg_tv_connect_button"
-                        android:text="⚡"
-                        android:textSize="48sp"
+                        android:src="@drawable/ic_tv_bolt"
+                        android:scaleType="centerInside"
+                        android:padding="36dp"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
                         android:nextFocusDown="@+id/tv_btn_subscription"
@@ -128,11 +143,10 @@
                     android:layout_height="wrap_content"
                     android:text="00:00:00"
                     android:textColor="#F8FAFC"
-                    android:textSize="28sp"
+                    android:textSize="24sp"
                     android:textStyle="bold"
                     android:fontFamily="sans-serif-medium"
-                    android:visibility="gone"
-                    android:layout_marginBottom="8dp" />
+                    android:visibility="gone" />
 
                 <!-- Speed row -->
                 <LinearLayout
@@ -141,6 +155,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center"
+                    android:layout_marginTop="4dp"
                     android:visibility="gone">
 
                     <TextView
@@ -149,14 +164,14 @@
                         android:layout_height="wrap_content"
                         android:text="↓ 0 Б/с"
                         android:textColor="#22C55E"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <View
                         android:layout_width="1dp"
-                        android:layout_height="16dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
                         android:background="#2E3A50" />
 
                     <TextView
@@ -165,7 +180,7 @@
                         android:layout_height="wrap_content"
                         android:text="↑ 0 Б/с"
                         android:textColor="#22D3EE"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -174,14 +189,23 @@
                     android:id="@+id/tv_ip_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:textColor="#64748B"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+
+                <!-- Connection Map -->
+                <io.nekohasekai.sagernet.widget.ConnectionMapView
+                    android:id="@+id/tv_connection_map"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="8dp"
                     android:visibility="gone" />
 
             </LinearLayout>
 
-            <!-- ===== RIGHT PANEL: Info + Actions ===== -->
+            <!-- ===== RIGHT PANEL: Live Stats + Actions ===== -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -189,14 +213,15 @@
                 android:orientation="vertical"
                 android:gravity="center_vertical">
 
-                <!-- Stats cards row -->
+                <!-- Live session stats -->
                 <LinearLayout
+                    android:id="@+id/tv_stats_row"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="20dp">
+                    android:layout_marginBottom="16dp">
 
-                    <!-- Speed card -->
+                    <!-- Downloaded -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -204,29 +229,30 @@
                         android:orientation="vertical"
                         android:gravity="center"
                         android:background="@drawable/bg_stat_card"
-                        android:padding="16dp"
-                        android:layout_marginEnd="8dp">
+                        android:padding="14dp"
+                        android:layout_marginEnd="6dp">
                         <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
                             android:src="@drawable/ic_stat_speed"
-                            android:layout_marginBottom="8dp" />
+                            android:layout_marginBottom="6dp" />
                         <TextView
+                            android:id="@+id/tv_stat_download"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="10G"
-                            android:textColor="#FFFFFF"
-                            android:textSize="18sp"
+                            android:text="0 Б"
+                            android:textColor="#22C55E"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="СКОРОСТЬ"
+                            android:text="СКАЧАНО"
                             android:textColor="#55FFFFFF"
-                            android:textSize="11sp" />
+                            android:textSize="10sp" />
                     </LinearLayout>
 
-                    <!-- Ping card -->
+                    <!-- Uploaded -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -234,29 +260,30 @@
                         android:orientation="vertical"
                         android:gravity="center"
                         android:background="@drawable/bg_stat_card"
-                        android:padding="16dp"
-                        android:layout_marginEnd="8dp">
+                        android:padding="14dp"
+                        android:layout_marginEnd="6dp">
                         <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
                             android:src="@drawable/ic_stat_ping"
-                            android:layout_marginBottom="8dp" />
+                            android:layout_marginBottom="6dp" />
                         <TextView
+                            android:id="@+id/tv_stat_upload"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="24ms"
-                            android:textColor="#FFFFFF"
-                            android:textSize="18sp"
+                            android:text="0 Б"
+                            android:textColor="#22D3EE"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="ПИНГ"
+                            android:text="ОТПРАВЛЕНО"
                             android:textColor="#55FFFFFF"
-                            android:textSize="11sp" />
+                            android:textSize="10sp" />
                     </LinearLayout>
 
-                    <!-- Shield card -->
+                    <!-- Session time -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -264,40 +291,45 @@
                         android:orientation="vertical"
                         android:gravity="center"
                         android:background="@drawable/bg_stat_card"
-                        android:padding="16dp">
+                        android:padding="14dp">
                         <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
                             android:src="@drawable/ic_stat_shield"
-                            android:layout_marginBottom="8dp" />
+                            android:layout_marginBottom="6dp" />
                         <TextView
+                            android:id="@+id/tv_stat_session"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0 лог"
+                            android:text="00:00"
                             android:textColor="#FFFFFF"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="АНОНИМНО"
+                            android:text="СЕССИЯ"
                             android:textColor="#55FFFFFF"
-                            android:textSize="11sp" />
+                            android:textSize="10sp" />
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Action buttons -->
+                <!-- Action buttons with SVG icons -->
                 <Button
                     android:id="@+id/tv_btn_subscription"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_height="52dp"
+                    android:layout_marginBottom="8dp"
                     android:background="@drawable/bg_tv_button_focus"
-                    android:text="💳  Моя подписка"
+                    android:drawableStart="@drawable/ic_tv_subscription"
+                    android:drawablePadding="12dp"
+                    android:text="Моя подписка"
                     android:textColor="#E2E8F0"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textAllCaps="false"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
                     android:focusable="true"
                     android:nextFocusUp="@id/tv_btn_connect"
                     android:nextFocusDown="@+id/tv_btn_about"
@@ -306,14 +338,18 @@
                 <Button
                     android:id="@+id/tv_btn_about"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_height="52dp"
+                    android:layout_marginBottom="8dp"
                     android:background="@drawable/bg_tv_button_focus"
-                    android:text="ℹ️  О приложении"
+                    android:drawableStart="@drawable/ic_tv_info"
+                    android:drawablePadding="12dp"
+                    android:text="О приложении"
                     android:textColor="#E2E8F0"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textAllCaps="false"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
                     android:focusable="true"
                     android:nextFocusUp="@id/tv_btn_subscription"
                     android:nextFocusDown="@+id/tv_btn_logout"
@@ -322,13 +358,17 @@
                 <Button
                     android:id="@+id/tv_btn_logout"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:background="@drawable/bg_tv_button_focus"
-                    android:text="🚪  Выйти"
+                    android:drawableStart="@drawable/ic_tv_logout"
+                    android:drawablePadding="12dp"
+                    android:text="Выйти"
                     android:textColor="#94A3B8"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textAllCaps="false"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
                     android:focusable="true"
                     android:nextFocusUp="@id/tv_btn_about"
                     android:nextFocusLeft="@id/tv_btn_connect" />
