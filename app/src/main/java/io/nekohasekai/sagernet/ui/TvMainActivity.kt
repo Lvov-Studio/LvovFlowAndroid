@@ -95,6 +95,9 @@ class TvMainActivity : ThemedActivity(),
     private var sessionDownloadBytes: Long = 0L
     private var sessionUploadBytes: Long = 0L
 
+    // Sound feedback (TV has no haptic)
+    private var toneGenerator: android.media.ToneGenerator? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -128,6 +131,13 @@ class TvMainActivity : ThemedActivity(),
         pulseRing2 = findViewById(R.id.tv_pulse_ring2)
 
         versionText.text = "v${BuildConfig.VERSION_NAME}"
+
+        // Initialize sound feedback
+        try {
+            toneGenerator = android.media.ToneGenerator(
+                android.media.AudioManager.STREAM_NOTIFICATION, 60
+            )
+        } catch (_: Exception) { }
 
         // Connect button
         btnConnect.setOnClickListener {
@@ -347,6 +357,7 @@ class TvMainActivity : ThemedActivity(),
             startBreathAnimation()
             startPulseAnimation()
             fetchExternalIp()
+            playConnectSound()
         } else {
             // Button → bolt icon, cyan
             btnConnect.setImageResource(R.drawable.ic_tv_bolt)
@@ -369,7 +380,24 @@ class TvMainActivity : ThemedActivity(),
             stopConnectionTimer()
             stopBreathAnimation()
             stopPulseAnimation()
+
+            // Play disconnect sound only on explicit Idle (not Connecting/Stopping)
+            if (state == BaseService.State.Idle) playDisconnectSound()
         }
+    }
+
+    private fun playConnectSound() {
+        try {
+            // Short pleasant ascending tone
+            toneGenerator?.startTone(android.media.ToneGenerator.TONE_PROP_ACK, 150)
+        } catch (_: Exception) { }
+    }
+
+    private fun playDisconnectSound() {
+        try {
+            // Short descending tone
+            toneGenerator?.startTone(android.media.ToneGenerator.TONE_PROP_NACK, 150)
+        } catch (_: Exception) { }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -729,6 +757,8 @@ class TvMainActivity : ThemedActivity(),
         connection.disconnect(this)
         stopBreathAnimation()
         stopPulseAnimation()
+        try { toneGenerator?.release() } catch (_: Exception) { }
+        toneGenerator = null
     }
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
