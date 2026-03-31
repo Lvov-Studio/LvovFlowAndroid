@@ -1072,7 +1072,7 @@ class MainActivity : ThemedActivity(),
                     onMainDispatcher {
                         com.google.android.material.dialog.MaterialAlertDialogBuilder(this@MainActivity)
                             .setTitle("⚠️ Достигнут лимит устройств")
-                            .setMessage("Ваша подписка позволяет использовать не более 3 устройств одновременно.\n\nЧтобы добавить это устройство, улучшите подписку или выйдите с другого устройства в личном кабинете.")
+                            .setMessage("Ваша подписка позволяет использовать не более 2 устройств одновременно.\n\nЧтобы добавить это устройство, улучшите подписку или выйдите с другого устройства в личном кабинете.")
                             .setCancelable(false)
                             .setPositiveButton("Улучшить подписку") { _, _ ->
                                 startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://lvovflow.com/cabinet.php")))
