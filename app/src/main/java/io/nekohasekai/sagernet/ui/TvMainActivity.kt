@@ -95,6 +95,9 @@ class TvMainActivity : ThemedActivity(),
     private var sessionDownloadBytes: Long = 0L
     private var sessionUploadBytes: Long = 0L
 
+    // Track whether we already handled Connected state (to avoid resetting on bg return)
+    private var wasConnected: Boolean = false
+
     // Sound feedback (TV has no haptic)
     private var toneGenerator: android.media.ToneGenerator? = null
 
@@ -197,10 +200,12 @@ class TvMainActivity : ThemedActivity(),
         connection.connect(this, this)
         DataStore.configurationStore.registerChangeListener(this)
 
+        // Restore persisted session stats (survives background transitions)
+        restoreSessionStats()
+
         // Background checks
         checkAppUpdate()
         refreshSubscriptionStatus()
-        updateSubscriptionBadge()
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -213,24 +218,22 @@ class TvMainActivity : ThemedActivity(),
         if (expireDate.isBlank()) return
 
         try {
-            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+            val sdf = java.text.SimpleDateFormat("dd.MM.yyyy", java.util.Locale.US)
             val expiry = sdf.parse(expireDate) ?: return
             val today = java.util.Calendar.getInstance().time
             val daysLeft = ((expiry.time - today.time) / 86_400_000L).toInt()
 
-            // Format display date
-            val displaySdf = java.text.SimpleDateFormat("dd.MM.yyyy", java.util.Locale("ru"))
-            val displayDate = displaySdf.format(expiry)
+
 
             if (daysLeft > 0) {
                 subBadge.text = "● Активна"
                 subBadge.setTextColor(0xFF22C55E.toInt())
-                subExpiry.text = "до $displayDate ($daysLeft дн.)"
+                subExpiry.text = "до $expireDate ($daysLeft дн.)"
                 subExpiry.setTextColor(if (daysLeft <= 7) 0xFFEF4444.toInt() else 0xFF64748B.toInt())
             } else {
                 subBadge.text = "● Истекла"
                 subBadge.setTextColor(0xFFEF4444.toInt())
-                subExpiry.text = displayDate
+                subExpiry.text = expireDate
                 subExpiry.setTextColor(0xFFEF4444.toInt())
             }
             subExpiry.visibility = View.VISIBLE
@@ -349,15 +352,20 @@ class TvMainActivity : ThemedActivity(),
             connectionMap.visibility = View.VISIBLE
             connectionMap.setActive(true)
 
-            // Reset session counters
-            sessionDownloadBytes = 0L
-            sessionUploadBytes = 0L
+            if (!wasConnected) {
+                // Genuine new connection — reset counters
+                sessionDownloadBytes = 0L
+                sessionUploadBytes = 0L
+                connectTime = System.currentTimeMillis()
+                playConnectSound()
+            }
+            // else: returning from background — keep existing counters
+            wasConnected = true
 
             startConnectionTimer()
             startBreathAnimation()
             startPulseAnimation()
             fetchExternalIp()
-            playConnectSound()
         } else {
             // Button → bolt icon, cyan
             btnConnect.setImageResource(R.drawable.ic_tv_bolt)
@@ -382,7 +390,11 @@ class TvMainActivity : ThemedActivity(),
             stopPulseAnimation()
 
             // Play disconnect sound only on explicit Idle (not Connecting/Stopping)
-            if (state == BaseService.State.Idle) playDisconnectSound()
+            if (state == BaseService.State.Idle) {
+                playDisconnectSound()
+                wasConnected = false
+                clearSessionStats()
+            }
         }
     }
 
@@ -518,7 +530,9 @@ class TvMainActivity : ThemedActivity(),
     // ─────────────────────────────────────────────────────────────────────────
 
     private fun startConnectionTimer() {
-        connectTime = System.currentTimeMillis()
+        // connectTime is set in changeState(Connected) only on new connection,
+        // or restored from SharedPreferences — don't overwrite here
+        if (connectTime == 0L) connectTime = System.currentTimeMillis()
         timerJob?.cancel()
         timerJob = lifecycleScope.launch {
             while (isActive) {
@@ -693,7 +707,11 @@ class TvMainActivity : ThemedActivity(),
     private fun refreshSubscriptionStatus() {
         val prefs = getSharedPreferences("lvovflow", MODE_PRIVATE)
         val sessionToken = prefs.getString("session_token", "") ?: ""
-        if (sessionToken.isBlank()) return
+        if (sessionToken.isBlank()) {
+            // Still try to show badge from cached data
+            updateSubscriptionBadge()
+            return
+        }
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -723,7 +741,44 @@ class TvMainActivity : ThemedActivity(),
                     }
                 }
             } catch (_: Exception) { }
+
+            // Update badge on main thread AFTER server data is saved
+            withContext(Dispatchers.Main) {
+                updateSubscriptionBadge()
+            }
         }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Session stats persistence (survive background transitions)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun saveSessionStats() {
+        if (connectTime == 0L) return
+        getSharedPreferences("lvovflow_tv_session", MODE_PRIVATE).edit().apply {
+            putLong("connect_time", connectTime)
+            putLong("download_bytes", sessionDownloadBytes)
+            putLong("upload_bytes", sessionUploadBytes)
+            apply()
+        }
+    }
+
+    private fun restoreSessionStats() {
+        val prefs = getSharedPreferences("lvovflow_tv_session", MODE_PRIVATE)
+        val savedConnectTime = prefs.getLong("connect_time", 0L)
+        if (savedConnectTime > 0L) {
+            connectTime = savedConnectTime
+            sessionDownloadBytes = prefs.getLong("download_bytes", 0L)
+            sessionUploadBytes = prefs.getLong("upload_bytes", 0L)
+            wasConnected = true
+        }
+    }
+
+    private fun clearSessionStats() {
+        connectTime = 0L
+        sessionDownloadBytes = 0L
+        sessionUploadBytes = 0L
+        getSharedPreferences("lvovflow_tv_session", MODE_PRIVATE).edit().clear().apply()
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -744,10 +799,12 @@ class TvMainActivity : ThemedActivity(),
     override fun onStart() {
         connection.updateConnectionId(SagerConnection.CONNECTION_ID_MAIN_ACTIVITY_FOREGROUND)
         super.onStart()
+        restoreSessionStats()
     }
 
     override fun onStop() {
         connection.updateConnectionId(SagerConnection.CONNECTION_ID_MAIN_ACTIVITY_BACKGROUND)
+        saveSessionStats()
         super.onStop()
     }
 

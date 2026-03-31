@@ -83,7 +83,45 @@
             android:padding="32dp"
             android:maxWidth="480dp">
 
-            <!-- ===== STEP 1: Email ===== -->
+            <!-- ===== TAB SWITCHER: Email / QR ===== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:orientation="horizontal"
+                android:background="#10FFFFFF"
+                android:layout_marginBottom="20dp"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/tv_tab_email"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:text="Email"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#25C9EF"
+                    android:focusable="true" />
+
+                <Button
+                    android:id="@+id/tv_tab_qr"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:text="QR-код"
+                    android:textColor="#7099C0"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#00000000"
+                    android:focusable="true" />
+            </LinearLayout>
+
+            <!-- ===== STEP: Email (original) ===== -->
             <LinearLayout
                 android:id="@+id/tv_step_email"
                 android:layout_width="match_parent"
@@ -153,7 +191,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- ===== STEP 2: OTP ===== -->
+            <!-- ===== STEP: OTP ===== -->
             <LinearLayout
                 android:id="@+id/tv_step_otp"
                 android:layout_width="match_parent"
@@ -278,6 +316,98 @@
                         android:textColor="#7099C0"
                         android:textSize="14sp" />
                 </LinearLayout>
+            </LinearLayout>
+
+            <!-- ===== STEP: QR Login ===== -->
+            <LinearLayout
+                android:id="@+id/tv_step_qr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="Отсканируйте QR-код\nкамерой телефона"
+                    android:textColor="#7099C0"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp" />
+
+                <!-- QR code -->
+                <ImageView
+                    android:id="@+id/tv_qr_login_image"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:background="#FFFFFF"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    android:contentDescription="QR-код входа" />
+
+                <!-- Loading -->
+                <ProgressBar
+                    android:id="@+id/tv_qr_login_loading"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:indeterminateTint="#25C9EF"
+                    android:visibility="visible" />
+
+                <!-- Pair code display -->
+                <TextView
+                    android:id="@+id/tv_pair_code_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Код:"
+                    android:textColor="#64748B"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_pair_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="AB12CD"
+                    android:textColor="#25C9EF"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:fontFamily="monospace"
+                    android:letterSpacing="0.2"
+                    android:visibility="gone" />
+
+                <!-- Status text -->
+                <TextView
+                    android:id="@+id/tv_qr_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Ожидание подтверждения..."
+                    android:textColor="#64748B"
+                    android:textSize="13sp"
+                    android:gravity="center"
+                    android:visibility="gone" />
+
+                <!-- Refresh button -->
+                <Button
+                    android:id="@+id/tv_btn_refresh_qr"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Обновить QR-код"
+                    android:textColor="#25C9EF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#15FFFFFF"
+                    android:focusable="true"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </LinearLayout>

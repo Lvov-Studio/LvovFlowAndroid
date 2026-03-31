@@ -2,13 +2,18 @@ package io.nekohasekai.sagernet.ui
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -21,8 +26,11 @@ import io.nekohasekai.sagernet.database.SubscriptionBean
 import io.nekohasekai.sagernet.group.GroupUpdater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -32,8 +40,9 @@ import java.net.URL
 
 /**
  * LvovFlow — TV Activation Screen
- * Same OTP flow as ActivationActivity but with TV-optimized layout.
- * All auth logic is identical to the mobile version.
+ * Two login methods:
+ *   1. Email + OTP (original, via TV keyboard)
+ *   2. QR Code (scan with phone, confirm in browser)
  */
 class TvActivationActivity : AppCompatActivity() {
 
@@ -48,7 +57,10 @@ class TvActivationActivity : AppCompatActivity() {
 
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var currentEmail: String = ""
+    private var pollJob: Job? = null
+    private var currentPairCode: String = ""
 
+    // Email/OTP views
     private lateinit var stepEmail: LinearLayout
     private lateinit var stepOtp: LinearLayout
     private lateinit var emailInput: EditText
@@ -62,6 +74,19 @@ class TvActivationActivity : AppCompatActivity() {
     private lateinit var emailProgress: LinearLayout
     private lateinit var verifyProgress: LinearLayout
 
+    // Tab buttons
+    private lateinit var tabEmail: Button
+    private lateinit var tabQr: Button
+
+    // QR views
+    private lateinit var stepQr: LinearLayout
+    private lateinit var qrLoginImage: ImageView
+    private lateinit var qrLoginLoading: ProgressBar
+    private lateinit var pairCodeLabel: TextView
+    private lateinit var pairCodeText: TextView
+    private lateinit var qrStatus: TextView
+    private lateinit var btnRefreshQr: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -72,6 +97,7 @@ class TvActivationActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_tv_activation)
 
+        // Bind Email/OTP views
         stepEmail = findViewById(R.id.tv_step_email)
         stepOtp = findViewById(R.id.tv_step_otp)
         emailInput = findViewById(R.id.tv_email_input)
@@ -85,32 +111,261 @@ class TvActivationActivity : AppCompatActivity() {
         emailProgress = findViewById(R.id.tv_email_progress)
         verifyProgress = findViewById(R.id.tv_verify_progress)
 
-        // Step 1: send OTP
+        // Bind tab buttons
+        tabEmail = findViewById(R.id.tv_tab_email)
+        tabQr = findViewById(R.id.tv_tab_qr)
+
+        // Bind QR views
+        stepQr = findViewById(R.id.tv_step_qr)
+        qrLoginImage = findViewById(R.id.tv_qr_login_image)
+        qrLoginLoading = findViewById(R.id.tv_qr_login_loading)
+        pairCodeLabel = findViewById(R.id.tv_pair_code_label)
+        pairCodeText = findViewById(R.id.tv_pair_code)
+        qrStatus = findViewById(R.id.tv_qr_status)
+        btnRefreshQr = findViewById(R.id.tv_btn_refresh_qr)
+
+        // ── Tab switching ──
+        tabEmail.setOnClickListener { switchToEmailTab() }
+        tabQr.setOnClickListener { switchToQrTab() }
+
+        // ── Email/OTP handlers ──
         btnSendCode.setOnClickListener { sendCode() }
         emailInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) { sendCode(); true } else false
         }
-
-        // Step 2: verify OTP
         btnVerify.setOnClickListener { verifyCode() }
         otpInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) { verifyCode(); true } else false
         }
-
-        // Back to email
         btnBack.setOnClickListener { showEmailStep() }
-
-        // Resend
         btnResend.setOnClickListener {
             if (currentEmail.isNotBlank()) sendCode(resend = true)
         }
 
-        // Auto-focus email field for immediate TV keyboard input
+        // ── QR handlers ──
+        btnRefreshQr.setOnClickListener { requestPairingCode() }
+
+        // Start with email tab focused
         emailInput.requestFocus()
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // UI transitions
+    // Tab switching
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun switchToEmailTab() {
+        // Visual
+        tabEmail.backgroundTintList = ColorStateList.valueOf(0xFF25C9EF.toInt())
+        tabEmail.setTextColor(0xFFFFFFFF.toInt())
+        tabQr.backgroundTintList = ColorStateList.valueOf(0x00000000)
+        tabQr.setTextColor(0xFF7099C0.toInt())
+
+        // Show email, hide QR
+        stepQr.visibility = View.GONE
+        stepOtp.visibility = View.GONE
+        stepEmail.visibility = View.VISIBLE
+        hideError()
+        emailInput.requestFocus()
+        stopPolling()
+    }
+
+    private fun switchToQrTab() {
+        // Visual
+        tabQr.backgroundTintList = ColorStateList.valueOf(0xFF25C9EF.toInt())
+        tabQr.setTextColor(0xFFFFFFFF.toInt())
+        tabEmail.backgroundTintList = ColorStateList.valueOf(0x00000000)
+        tabEmail.setTextColor(0xFF7099C0.toInt())
+
+        // Show QR, hide email/otp
+        stepEmail.visibility = View.GONE
+        stepOtp.visibility = View.GONE
+        stepQr.visibility = View.VISIBLE
+        hideError()
+
+        // Request new pairing code
+        requestPairingCode()
+        btnRefreshQr.requestFocus()
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // QR Pairing
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun requestPairingCode() {
+        stopPolling()
+        qrLoginImage.visibility = View.GONE
+        qrLoginLoading.visibility = View.VISIBLE
+        pairCodeLabel.visibility = View.GONE
+        pairCodeText.visibility = View.GONE
+        qrStatus.visibility = View.GONE
+        btnRefreshQr.visibility = View.GONE
+
+        scope.launch {
+            try {
+                val result = postJson("$API_BASE/tv_pair.php", mapOf("action" to "create"))
+                if (result.optBoolean("ok")) {
+                    val pairCode = result.optString("pair_code", "")
+                    val pairUrl = result.optString("pair_url", "")
+                    currentPairCode = pairCode
+
+                    if (pairUrl.isNotBlank()) {
+                        val qrBitmap = withContext(Dispatchers.IO) {
+                            generateQrBitmap(pairUrl, 512)
+                        }
+
+                        withContext(Dispatchers.Main) {
+                            qrLoginLoading.visibility = View.GONE
+                            qrLoginImage.setImageBitmap(qrBitmap)
+                            qrLoginImage.visibility = View.VISIBLE
+                            pairCodeLabel.visibility = View.VISIBLE
+                            pairCodeText.text = pairCode
+                            pairCodeText.visibility = View.VISIBLE
+                            qrStatus.text = "Ожидание подтверждения..."
+                            qrStatus.visibility = View.VISIBLE
+                            btnRefreshQr.visibility = View.VISIBLE
+                        }
+
+                        // Start polling
+                        startPolling(pairCode)
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        qrLoginLoading.visibility = View.GONE
+                        showError("Не удалось создать QR-код")
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    qrLoginLoading.visibility = View.GONE
+                    showError("Ошибка сети: ${e.message}")
+                }
+            }
+        }
+    }
+
+    private fun startPolling(pairCode: String) {
+        stopPolling()
+        pollJob = scope.launch {
+            // Poll every 3 seconds for up to 10 minutes
+            val maxAttempts = 200  // 200 * 3s = 600s = 10 min
+            for (i in 0 until maxAttempts) {
+                if (!isActive) break
+                delay(3000)
+
+                try {
+                    val result = withContext(Dispatchers.IO) {
+                        val conn = URL("$API_BASE/tv_pair.php")
+                            .openConnection() as HttpURLConnection
+                        conn.apply {
+                            requestMethod = "POST"
+                            setRequestProperty("Content-Type", "application/json")
+                            setRequestProperty("X-App-Client", "LvovFlow-Android")
+                            connectTimeout = 5000
+                            readTimeout = 5000
+                            doOutput = true
+                        }
+                        val body = JSONObject().apply {
+                            put("action", "poll")
+                            put("pair_code", pairCode)
+                        }.toString()
+                        OutputStreamWriter(conn.outputStream).use { it.write(body) }
+                        val stream = if (conn.responseCode in 200..299) conn.inputStream
+                                     else conn.errorStream ?: conn.inputStream
+                        val response = stream.bufferedReader().readText()
+                        conn.disconnect()
+                        JSONObject(response)
+                    }
+
+                    val status = result.optString("status", "")
+                    when (status) {
+                        "confirmed" -> {
+                            // Success! Extract session data
+                            val token = result.optString("token", "")
+                            val subUrl = result.optString("subscription_url", "")
+                            val email = result.optString("email", "")
+                            val expireDate = result.optString("expire_date", "")
+
+                            if (token.isNotBlank() && subUrl.isNotBlank()) {
+                                saveSession(token, subUrl, email, expireDate)
+                                importSubscription(subUrl)
+
+                                withContext(Dispatchers.Main) {
+                                    qrStatus.text = "✅ Авторизовано!"
+                                    qrStatus.setTextColor(0xFF22C55E.toInt())
+                                    delay(1000)
+                                    goToMain()
+                                }
+                                return@launch
+                            }
+                        }
+                        "expired" -> {
+                            withContext(Dispatchers.Main) {
+                                qrStatus.text = "QR-код истёк. Обновите."
+                                qrStatus.setTextColor(0xFFEF4444.toInt())
+                            }
+                            return@launch
+                        }
+                        // "pending" — continue polling
+                    }
+                } catch (_: Exception) {
+                    // Network error — continue polling silently
+                }
+            }
+
+            // Timeout
+            withContext(Dispatchers.Main) {
+                qrStatus.text = "Время ожидания истекло. Обновите QR."
+                qrStatus.setTextColor(0xFFEF4444.toInt())
+            }
+        }
+    }
+
+    private fun stopPolling() {
+        pollJob?.cancel()
+        pollJob = null
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // QR Bitmap generation (ZXing)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun generateQrBitmap(data: String, size: Int): Bitmap {
+        try {
+            val hints = java.util.EnumMap<com.google.zxing.EncodeHintType, Any>(
+                com.google.zxing.EncodeHintType::class.java
+            )
+            hints[com.google.zxing.EncodeHintType.MARGIN] = 1
+            hints[com.google.zxing.EncodeHintType.ERROR_CORRECTION] =
+                com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.M
+
+            val matrix = com.google.zxing.qrcode.QRCodeWriter()
+                .encode(data, com.google.zxing.BarcodeFormat.QR_CODE, size, size, hints)
+
+            val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+            for (x in 0 until size) {
+                for (y in 0 until size) {
+                    bitmap.setPixel(x, y, if (matrix.get(x, y)) Color.BLACK else Color.WHITE)
+                }
+            }
+            return bitmap
+        } catch (e: Exception) {
+            // Fallback
+            val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+            val canvas = android.graphics.Canvas(bitmap)
+            canvas.drawColor(Color.WHITE)
+            val paint = android.graphics.Paint().apply {
+                color = Color.BLACK
+                textSize = 28f
+                isAntiAlias = true
+                textAlign = android.graphics.Paint.Align.CENTER
+            }
+            canvas.drawText("QR Error", size / 2f, size / 2f, paint)
+            return bitmap
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // UI transitions (Email/OTP — unchanged)
     // ─────────────────────────────────────────────────────────────────────────
 
     private fun showEmailStep() {
@@ -153,7 +408,7 @@ class TvActivationActivity : AppCompatActivity() {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Network calls (identical to ActivationActivity)
+    // Network calls (Email/OTP — unchanged)
     // ─────────────────────────────────────────────────────────────────────────
 
     private fun sendCode(resend: Boolean = false) {
@@ -294,6 +549,7 @@ class TvActivationActivity : AppCompatActivity() {
     private fun showExpiredScreen(expireDate: String) {
         stepEmail.visibility = View.GONE
         stepOtp.visibility = View.GONE
+        stepQr.visibility = View.GONE
         hideError()
 
         val dateText = if (expireDate.isNotBlank()) "Срок действия истёк $expireDate."
@@ -315,7 +571,7 @@ class TvActivationActivity : AppCompatActivity() {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // HTTP helper (identical to ActivationActivity)
+    // HTTP helper
     // ─────────────────────────────────────────────────────────────────────────
 
     private suspend fun postJson(url: String, body: Map<String, String>): JSONObject =
@@ -349,6 +605,7 @@ class TvActivationActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        stopPolling()
         scope.cancel()
     }
 }
