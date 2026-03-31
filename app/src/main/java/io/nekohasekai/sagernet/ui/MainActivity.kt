@@ -173,6 +173,17 @@ class MainActivity : ThemedActivity(),
         // Check for updates silently
         checkAppUpdate()
 
+        // LvovFlow: Force-stop stale VPN service after app update
+        // If the app was updated while VPN was running, the service is dead but
+        // state may still be "Connected". Detect version change and force cleanup.
+        val lastVersion = prefs.getString("last_app_version", "")
+        val currentVersion = BuildConfig.VERSION_NAME
+        if (lastVersion != currentVersion) {
+            // Version changed — force stop any orphaned VPN tunnel
+            SagerNet.stopService()
+            prefs.edit().putString("last_app_version", currentVersion).apply()
+        }
+
         changeState(BaseService.State.Idle)
         connection.connect(this, this)
         DataStore.configurationStore.registerChangeListener(this)
@@ -1153,8 +1164,18 @@ class MainActivity : ThemedActivity(),
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         btnUpdate.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            startActivity(intent)
+            // LvovFlow: Stop VPN before installing update to prevent broken state
+            if (DataStore.serviceState == BaseService.State.Connected ||
+                DataStore.serviceState == BaseService.State.Connecting) {
+                SagerNet.stopService()
+                // Small delay to let VPN service stop cleanly
+                lifecycleScope.launch {
+                    delay(500)
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                }
+            } else {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            }
         }
 
         btnCancel.setOnClickListener {
