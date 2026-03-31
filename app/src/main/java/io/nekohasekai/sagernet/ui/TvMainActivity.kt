@@ -73,6 +73,7 @@ class TvMainActivity : ThemedActivity(),
     private lateinit var tvIpInfo: TextView
     private lateinit var tvGlow: View
     private lateinit var subBadge: TextView
+    private lateinit var subExpiry: TextView
     private lateinit var versionText: TextView
     private lateinit var connectionMap: ConnectionMapView
     private lateinit var statsRow: LinearLayout
@@ -116,6 +117,7 @@ class TvMainActivity : ThemedActivity(),
         tvIpInfo = findViewById(R.id.tv_ip_info)
         tvGlow = findViewById(R.id.tv_glow)
         subBadge = findViewById(R.id.tv_sub_badge)
+        subExpiry = findViewById(R.id.tv_sub_expiry)
         versionText = findViewById(R.id.tv_version)
         connectionMap = findViewById(R.id.tv_connection_map)
         statsRow = findViewById(R.id.tv_stats_row)
@@ -188,6 +190,41 @@ class TvMainActivity : ThemedActivity(),
         // Background checks
         checkAppUpdate()
         refreshSubscriptionStatus()
+        updateSubscriptionBadge()
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Subscription badge with expiry date
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun updateSubscriptionBadge() {
+        val prefs = getSharedPreferences("lvovflow", MODE_PRIVATE)
+        val expireDate = prefs.getString("expire_date", "") ?: ""
+        if (expireDate.isBlank()) return
+
+        try {
+            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+            val expiry = sdf.parse(expireDate) ?: return
+            val today = java.util.Calendar.getInstance().time
+            val daysLeft = ((expiry.time - today.time) / 86_400_000L).toInt()
+
+            // Format display date
+            val displaySdf = java.text.SimpleDateFormat("dd.MM.yyyy", java.util.Locale("ru"))
+            val displayDate = displaySdf.format(expiry)
+
+            if (daysLeft > 0) {
+                subBadge.text = "● Активна"
+                subBadge.setTextColor(0xFF22C55E.toInt())
+                subExpiry.text = "до $displayDate ($daysLeft дн.)"
+                subExpiry.setTextColor(if (daysLeft <= 7) 0xFFEF4444.toInt() else 0xFF64748B.toInt())
+            } else {
+                subBadge.text = "● Истекла"
+                subBadge.setTextColor(0xFFEF4444.toInt())
+                subExpiry.text = displayDate
+                subExpiry.setTextColor(0xFFEF4444.toInt())
+            }
+            subExpiry.visibility = View.VISIBLE
+        } catch (_: Exception) { }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
