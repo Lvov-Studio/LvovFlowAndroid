@@ -118,6 +118,7 @@ class DevicesActivity : AppCompatActivity() {
             .setNegativeButton("Отмена", null)
             .create()
         dialog.show()
+        styleDialogButtons(dialog)
     }
 
     private fun executeTvPairing(pairCode: String) {
@@ -347,7 +348,7 @@ class DevicesActivity : AppCompatActivity() {
                 }
             }
             .setNegativeButton("Отмена", null)
-            .show()
+            .create().also { it.show(); styleDialogButtons(it) }
     }
 
     private fun confirmTerminateAll() {
@@ -374,7 +375,12 @@ class DevicesActivity : AppCompatActivity() {
                 }
             }
             .setNegativeButton("Отмена", null)
-            .show()
+            .create().also { it.show(); styleDialogButtons(it) }
+    }
+
+    private fun styleDialogButtons(dialog: AlertDialog) {
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(0xFF25C9EF.toInt())
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(0xFF94A3B8.toInt())
     }
 
     // ═══════════════════════════════════════════════════════════════════
