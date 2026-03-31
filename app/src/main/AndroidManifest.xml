@@ -95,6 +95,11 @@
             android:configChanges="uiMode"
             android:exported="false" />
 
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.DevicesActivity"
+            android:configChanges="uiMode"
+            android:exported="false" />
+
         <!-- LvovFlow: TV-optimized activities -->
         <activity
             android:name="io.nekohasekai.sagernet.ui.TvMainActivity"
