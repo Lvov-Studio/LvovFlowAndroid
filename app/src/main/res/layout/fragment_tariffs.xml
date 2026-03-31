@@ -213,7 +213,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:alpha="0.35"
+                android:alpha="0.3"
                 android:background="@drawable/bg_glass_card"
                 android:orientation="vertical"
                 android:padding="24dp">
@@ -252,75 +252,6 @@
                     android:textColor="#94A3B8"
                     android:textSize="13sp" />
 
-                <!-- Feature 1 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_marginEnd="12dp"
-                        android:src="@drawable/ic_tariff_bolt"
-                        app:tint="#0EA5E9" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Выбор локаций"
-                        android:textColor="#E2E8F0"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <!-- Feature 2 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_marginEnd="12dp"
-                        android:src="@drawable/ic_tariff_ai"
-                        app:tint="#0EA5E9" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Доступ к нейросетям"
-                        android:textColor="#E2E8F0"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <!-- Feature 3 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_marginEnd="12dp"
-                        android:src="@drawable/ic_tariff_devices"
-                        app:tint="#0EA5E9" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="До 4 устройств"
-                        android:textColor="#E2E8F0"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
             </LinearLayout>
 
             <!-- "Скоро" overlay -->
@@ -329,15 +260,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/bg_pill_badge"
-                android:backgroundTint="#CC0F1D32"
-                android:paddingStart="24dp"
+                android:backgroundTint="#E60F1D32"
+                android:paddingStart="28dp"
                 android:paddingTop="10dp"
-                android:paddingEnd="24dp"
+                android:paddingEnd="28dp"
                 android:paddingBottom="10dp"
                 android:text="Скоро"
                 android:textColor="#0EA5E9"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:elevation="4dp" />
         </FrameLayout>
 
         <!-- ═══════════════════════════════════════════════ -->
@@ -351,7 +283,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:alpha="0.35"
+                android:alpha="0.3"
                 android:background="@drawable/bg_glass_card"
                 android:orientation="vertical"
                 android:padding="24dp">
@@ -390,75 +322,6 @@
                     android:textColor="#94A3B8"
                     android:textSize="13sp" />
 
-                <!-- Feature 1 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_marginEnd="12dp"
-                        android:src="@drawable/ic_tariff_bolt"
-                        app:tint="#8B5CF6" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Все преимущества Flow Pro"
-                        android:textColor="#E2E8F0"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <!-- Feature 2 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_marginEnd="12dp"
-                        android:src="@drawable/ic_tariff_brain"
-                        app:tint="#8B5CF6" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Доступ к флагманским нейросетям"
-                        android:textColor="#E2E8F0"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <!-- Feature 3 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_marginEnd="12dp"
-                        android:src="@drawable/ic_tariff_devices"
-                        app:tint="#8B5CF6" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="До 5 устройств"
-                        android:textColor="#E2E8F0"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
             </LinearLayout>
 
             <!-- "Скоро" overlay -->
@@ -467,15 +330,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/bg_pill_badge"
-                android:backgroundTint="#CC0F1D32"
-                android:paddingStart="24dp"
+                android:backgroundTint="#E60F1D32"
+                android:paddingStart="28dp"
                 android:paddingTop="10dp"
-                android:paddingEnd="24dp"
+                android:paddingEnd="28dp"
                 android:paddingBottom="10dp"
                 android:text="Скоро"
                 android:textColor="#8B5CF6"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:elevation="4dp" />
         </FrameLayout>
 
     </LinearLayout>
