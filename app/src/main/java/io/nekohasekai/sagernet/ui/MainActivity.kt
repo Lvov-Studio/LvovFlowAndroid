@@ -495,25 +495,32 @@ class MainActivity : ThemedActivity(),
         val isConnected = DataStore.serviceState == BaseService.State.Connected
 
         if (isMain) {
-            binding.fab.show()
-            binding.connTimerLabel.visibility = if (isConnected) View.VISIBLE else View.GONE
-            binding.connTimer.visibility = if (isConnected) View.VISIBLE else View.GONE
-            binding.speedRow.visibility = if (isConnected) View.VISIBLE else View.GONE
-            binding.connStatusLabel.visibility = View.VISIBLE
-            binding.tvIpInfo.visibility = if (isConnected && binding.tvIpInfo.text.isNotEmpty()) View.VISIBLE else View.GONE
-            binding.connectionMap.visibility = if (isConnected) View.VISIBLE else View.GONE
-            binding.connectionMap.setActive(isConnected)
+            // Only show home UI elements if the container is actually visible
+            val containerVisible = binding.mainHomeContainer.visibility == View.VISIBLE
+            if (containerVisible) {
+                binding.fab.show()
+                binding.connTimerLabel.visibility = if (isConnected) View.VISIBLE else View.GONE
+                binding.connTimer.visibility = if (isConnected) View.VISIBLE else View.GONE
+                binding.speedRow.visibility = if (isConnected) View.VISIBLE else View.GONE
+                binding.connStatusLabel.visibility = View.VISIBLE
+                binding.tvIpInfo.visibility = if (isConnected && binding.tvIpInfo.text.isNotEmpty()) View.VISIBLE else View.GONE
+                binding.connectionMap.visibility = if (isConnected) View.VISIBLE else View.GONE
+                binding.connectionMap.setActive(isConnected)
 
-            if (isConnected) {
-                binding.glowBg.visibility = View.VISIBLE
-                binding.pulseRing1.visibility = View.VISIBLE
-                binding.pulseRing2.visibility = View.VISIBLE
-                binding.pulseRing3.visibility = View.VISIBLE
-                startPulseAnimation()
-                startBreathAnimation()
+                if (isConnected) {
+                    binding.glowBg.visibility = View.VISIBLE
+                    binding.pulseRing1.visibility = View.VISIBLE
+                    binding.pulseRing2.visibility = View.VISIBLE
+                    binding.pulseRing3.visibility = View.VISIBLE
+                    startPulseAnimation()
+                    startBreathAnimation()
+                }
+            } else {
+                binding.fab.hide()
             }
         } else {
             if (!DataStore.showBottomBar) binding.fab.hide()
+            binding.fab.hide()
             binding.connTimerLabel.visibility = View.GONE
             binding.connTimer.visibility = View.GONE
             binding.speedRow.visibility = View.GONE
@@ -816,19 +823,24 @@ class MainActivity : ThemedActivity(),
         }
 
         // LvovFlow: timer + status + speed + server card + glow + pulse rings
+        // Only update home screen UI if user is actually on the home tab
+        val isOnHomeTab = binding.mainHomeContainer.visibility == View.VISIBLE
+        
         if (state == BaseService.State.Connected) {
-            binding.connTimerLabel.visibility = View.VISIBLE
-            binding.connTimer.visibility = View.VISIBLE
-            binding.speedRow.visibility = View.VISIBLE
-            binding.speedSparkline.visibility = View.VISIBLE
-            binding.connStatusLabel.text = "Ускорение активно"
-            // Connection map — show animated route
-            binding.connectionMap.visibility = View.VISIBLE
-            binding.connectionMap.setActive(true)
+            if (isOnHomeTab) {
+                binding.connTimerLabel.visibility = View.VISIBLE
+                binding.connTimer.visibility = View.VISIBLE
+                binding.speedRow.visibility = View.VISIBLE
+                binding.speedSparkline.visibility = View.VISIBLE
+                binding.connStatusLabel.text = "Ускорение активно"
+                // Connection map — show animated route
+                binding.connectionMap.visibility = View.VISIBLE
+                binding.connectionMap.setActive(true)
 
-            // LvovFlow: glow green when connected
-            binding.glowBg.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF22C55E.toInt())
-            binding.glowBg.alpha = 0.35f
+                // LvovFlow: glow green when connected
+                binding.glowBg.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF22C55E.toInt())
+                binding.glowBg.alpha = 0.35f
+            }
 
             // LvovFlow: navigation bar → dark green
             animateNavBarColor(0xFF0D3320.toInt())
@@ -837,9 +849,11 @@ class MainActivity : ThemedActivity(),
             fetchExternalIp()
             
             startConnectionTimer()
-            startBreathAnimation()
-            startPulseAnimation()
-            playShockwaveAnimation()
+            if (isOnHomeTab) {
+                startBreathAnimation()
+                startPulseAnimation()
+                playShockwaveAnimation()
+            }
 
             if (!wasConnected) {
                 // Genuine first connection in this lifecycle
@@ -847,22 +861,24 @@ class MainActivity : ThemedActivity(),
             }
             wasConnected = true
         } else {
-            binding.connTimerLabel.visibility = View.GONE
-            binding.connTimer.visibility = View.GONE
-            binding.speedRow.visibility = View.GONE
-            binding.speedSparkline.visibility = View.GONE
-            binding.speedSparkline.clear()
-            binding.tvIpInfo.visibility = View.GONE
-            binding.connectionMap.setActive(false)
-            binding.connectionMap.visibility = View.GONE
-            binding.connStatusLabel.text = when (state) {
-                BaseService.State.Connecting -> "Подключение..."
-                BaseService.State.Stopping -> "Отключение..."
-                else -> "Активировать ускорение"
+            if (isOnHomeTab) {
+                binding.connTimerLabel.visibility = View.GONE
+                binding.connTimer.visibility = View.GONE
+                binding.speedRow.visibility = View.GONE
+                binding.speedSparkline.visibility = View.GONE
+                binding.speedSparkline.clear()
+                binding.tvIpInfo.visibility = View.GONE
+                binding.connectionMap.setActive(false)
+                binding.connectionMap.visibility = View.GONE
+                binding.connStatusLabel.text = when (state) {
+                    BaseService.State.Connecting -> "Подключение..."
+                    BaseService.State.Stopping -> "Отключение..."
+                    else -> "Активировать ускорение"
+                }
+                // LvovFlow: glow back to cyan/blue when idle
+                binding.glowBg.backgroundTintList = null
+                binding.glowBg.alpha = 0.45f
             }
-            // LvovFlow: glow back to cyan/blue when idle
-            binding.glowBg.backgroundTintList = null
-            binding.glowBg.alpha = 0.45f
 
             // LvovFlow: navigation bar → dark navy
             animateNavBarColor(0xFF0A1628.toInt())
