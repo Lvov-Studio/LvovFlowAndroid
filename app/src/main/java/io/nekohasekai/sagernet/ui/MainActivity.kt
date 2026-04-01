@@ -213,7 +213,24 @@ class MainActivity : ThemedActivity(),
                         doOutput = true
                     }
                     OutputStreamWriter(conn.outputStream).use { it.write("{}") }
-                    val stream = if (conn.responseCode in 200..299) conn.inputStream
+                    val responseCode = conn.responseCode
+                    
+                    // Session expired/invalid → redirect to login
+                    if (responseCode == 401) {
+                        conn.disconnect()
+                        withContext(Dispatchers.Main) {
+                            // Clear invalid session
+                            lvovPrefs.edit().remove("session_token").apply()
+                            // Redirect to login
+                            startActivity(Intent(this@MainActivity, ActivationActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            })
+                            finish()
+                        }
+                        return@launch
+                    }
+                    
+                    val stream = if (responseCode in 200..299) conn.inputStream
                                  else conn.errorStream ?: conn.inputStream
                     val json = JSONObject(stream.bufferedReader().readText())
                     conn.disconnect()
@@ -225,10 +242,6 @@ class MainActivity : ThemedActivity(),
                             if (newExpire.isNotBlank()) putString("expire_date", newExpire)
                             if (newSubUrl.isNotBlank()) putString("subscription_url", newSubUrl)
                             apply()
-                        }
-                        // Обновляем UI на главном потоке (раньше тут обновлялась шапка меню)
-                        withContext(Dispatchers.Main) {
-                            // Header is now just a logo, nothing to update here
                         }
                     }
                 } catch (_: Exception) {
