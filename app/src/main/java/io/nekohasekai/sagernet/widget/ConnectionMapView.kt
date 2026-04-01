@@ -182,21 +182,45 @@ class ConnectionMapView @JvmOverloads constructor(
         canvas.drawCircle(rightX, centerY, nodeRadius, nodePaint)
         canvas.drawCircle(rightX, centerY, nodeRadius, nodeBorderPaint)
 
-        // Draw icons inside nodes (simple text-based)
-        val iconPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            textSize = 20f
-            textAlign = Paint.Align.CENTER
-            color = if (isActive) 0xFFFFFFFF.toInt() else 0xFF64748B.toInt()
+        // Draw vector icons inside nodes
+        val iconSize = 20
+        val halfIcon = iconSize / 2
+
+        // Left: phone icon
+        val phoneIcon = androidx.core.content.ContextCompat.getDrawable(context, io.nekohasekai.sagernet.R.drawable.ic_map_phone)
+        phoneIcon?.let {
+            val tint = if (isActive) 0xFFE2E8F0.toInt() else 0xFF64748B.toInt()
+            it.setTint(tint)
+            it.setBounds(
+                (leftX - halfIcon).toInt(), (centerY - halfIcon).toInt(),
+                (leftX + halfIcon).toInt(), (centerY + halfIcon).toInt()
+            )
+            it.draw(canvas)
         }
-        canvas.drawText("📱", leftX, centerY + 7f, iconPaint)
-        
-        val boltPaint = Paint(iconPaint)
-        boltPaint.color = if (isActive) 0xFF22D3EE.toInt() else 0xFF64748B.toInt()
-        canvas.drawText("⚡", centerX, centerY + 7f, boltPaint)
-        
-        val globePaint = Paint(iconPaint)
-        globePaint.color = if (isActive) 0xFF22C55E.toInt() else 0xFF64748B.toInt()
-        canvas.drawText("🌐", rightX, centerY + 7f, globePaint)
+
+        // Center: bolt icon
+        val boltIcon = androidx.core.content.ContextCompat.getDrawable(context, io.nekohasekai.sagernet.R.drawable.ic_map_bolt)
+        boltIcon?.let {
+            val tint = if (isActive) 0xFF22D3EE.toInt() else 0xFF64748B.toInt()
+            it.setTint(tint)
+            it.setBounds(
+                (centerX - halfIcon).toInt(), (centerY - halfIcon).toInt(),
+                (centerX + halfIcon).toInt(), (centerY + halfIcon).toInt()
+            )
+            it.draw(canvas)
+        }
+
+        // Right: globe icon
+        val globeIcon = androidx.core.content.ContextCompat.getDrawable(context, io.nekohasekai.sagernet.R.drawable.ic_map_globe)
+        globeIcon?.let {
+            val tint = if (isActive) 0xFF22C55E.toInt() else 0xFF64748B.toInt()
+            it.setTint(tint)
+            it.setBounds(
+                (rightX - halfIcon).toInt(), (centerY - halfIcon).toInt(),
+                (rightX + halfIcon).toInt(), (centerY + halfIcon).toInt()
+            )
+            it.draw(canvas)
+        }
 
         // Labels
         val lp = if (isActive) Paint(labelPaint).apply { color = 0xFFE2E8F0.toInt() } else labelPaint
