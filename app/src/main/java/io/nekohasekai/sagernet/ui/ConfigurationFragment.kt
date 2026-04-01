@@ -237,8 +237,8 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         DataStore.profileCacheStore.registerChangeListener(this)
 
-        // LvovFlow: Floating notification button
-        view.findViewById<android.view.View>(R.id.btn_notifications)?.setOnClickListener {
+        // LvovFlow: Floating notification button (in layout_main.xml, not fragment)
+        activity?.findViewById<android.view.View>(R.id.btn_notifications)?.setOnClickListener {
             startActivity(android.content.Intent(requireContext(), NotificationsActivity::class.java))
         }
     }
