@@ -1237,16 +1237,12 @@ class MainActivity : ThemedActivity(),
     }
 
     private fun updateChatIconColor() {
-        val btnChat = findViewById<android.widget.ImageButton>(R.id.btn_chat) ?: return
+        val badge = findViewById<android.view.View>(R.id.notification_badge) ?: return
         val prefs = getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
         val pendingId = prefs.getInt("pending_notif_id", 0)
         val lastId = prefs.getInt("last_notif_id", 0)
 
-        if (pendingId > lastId) {
-            btnChat.setColorFilter(android.graphics.Color.parseColor("#EF4444")) // RED
-        } else {
-            btnChat.setColorFilter(android.graphics.Color.parseColor("#8B9BB4")) // DEFAULT GRAY
-        }
+        badge.visibility = if (pendingId > lastId) android.view.View.VISIBLE else android.view.View.GONE
     }
 
     // ── LvovFlow: Premium "Lion Heartbeat" haptic feedback ──────────────
