@@ -19,6 +19,7 @@ import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.GroupManager
 import io.nekohasekai.sagernet.database.ProxyGroup
+import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.SubscriptionBean
 import io.nekohasekai.sagernet.group.GroupUpdater
 import kotlinx.coroutines.CoroutineScope
@@ -301,19 +302,34 @@ class ActivationActivity : AppCompatActivity() {
 
     private suspend fun importSubscription(subUrl: String) = withContext(Dispatchers.IO) {
         try {
-            val group = ProxyGroup(type = GroupType.SUBSCRIPTION).apply {
-                name = "LvovFlow"
-                subscription = SubscriptionBean().apply {
+            // Check if LvovFlow group already exists
+            val existingGroups = SagerDatabase.groupDao.allGroups()
+            val existingGroup = existingGroups.find { it.name == "LvovFlow" }
+
+            if (existingGroup != null) {
+                // Update existing group's subscription URL
+                existingGroup.subscription = SubscriptionBean().apply {
                     link = subUrl
                 }
+                withContext(Dispatchers.Main) {
+                    GroupManager.updateGroup(existingGroup)
+                }
+                GroupUpdater.startUpdate(existingGroup, true)
+            } else {
+                // Create new group
+                val group = ProxyGroup(type = GroupType.SUBSCRIPTION).apply {
+                    name = "LvovFlow"
+                    subscription = SubscriptionBean().apply {
+                        link = subUrl
+                    }
+                }
+                withContext(Dispatchers.Main) {
+                    GroupManager.createGroup(group)
+                }
+                GroupUpdater.startUpdate(group, true)
             }
-            withContext(Dispatchers.Main) {
-                GroupManager.createGroup(group)
-            }
-            GroupUpdater.startUpdate(group, true)
         } catch (e: Exception) {
-            // Subscription import failed silently — user can still use app,
-            // they'll see the update option in menu
+            android.util.Log.e("LvovFlow", "Subscription import failed: ${e.message}", e)
         }
     }
 
