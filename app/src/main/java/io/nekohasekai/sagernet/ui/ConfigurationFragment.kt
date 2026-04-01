@@ -50,6 +50,7 @@ import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.ProxyGroup
 import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.database.SubscriptionBean
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
 import io.nekohasekai.sagernet.databinding.LayoutProgressListBinding
@@ -892,38 +893,72 @@ class ConfigurationFragment @JvmOverloads constructor(
             configurationListView.adapter = adapter
             configurationListView.setItemViewCacheSize(20)
 
-            // LvovFlow: show empty state when no profiles
+            // LvovFlow: show empty state when no profiles + auto-import
             val emptyState = view.findViewById<View>(R.id.empty_state)
+            val emptyProgress = view.findViewById<View>(R.id.empty_state_progress)
+            val emptyTitle = view.findViewById<android.widget.TextView>(R.id.empty_state_title)
+            val emptySubtitle = view.findViewById<android.widget.TextView>(R.id.empty_state_subtitle)
+            val btnRetry = view.findViewById<View>(R.id.btn_retry_import)
+
+            fun autoImportSubscription() {
+                // Show loading state
+                emptyProgress?.visibility = View.VISIBLE
+                btnRetry?.visibility = View.GONE
+                emptyTitle?.text = "Обновление серверов…"
+                emptySubtitle?.text = "Загружаем список серверов. Это займёт несколько секунд."
+
+                val lvPrefs = requireContext().getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
+                val subUrl = lvPrefs.getString("subscription_url", "") ?: ""
+                if (subUrl.isBlank()) {
+                    emptyProgress?.visibility = View.GONE
+                    emptyTitle?.text = "Войдите в аккаунт"
+                    emptySubtitle?.text = "Для получения серверов необходимо войти."
+                    return
+                }
+
+                runOnDefaultDispatcher {
+                    try {
+                        val groups = SagerDatabase.groupDao.allGroups()
+                        val existing = groups.find { it.name == "LvovFlow" }
+                        if (existing != null) {
+                            existing.subscription = SubscriptionBean().apply { link = subUrl }
+                            onMainDispatcher { GroupManager.updateGroup(existing) }
+                            io.nekohasekai.sagernet.group.GroupUpdater.startUpdate(existing, true)
+                        } else {
+                            val group = ProxyGroup(type = GroupType.SUBSCRIPTION).apply {
+                                name = "LvovFlow"
+                                subscription = SubscriptionBean().apply { link = subUrl }
+                            }
+                            onMainDispatcher { GroupManager.createGroup(group) }
+                            io.nekohasekai.sagernet.group.GroupUpdater.startUpdate(group, true)
+                        }
+                    } catch (e: Exception) {
+                        onMainDispatcher {
+                            emptyProgress?.visibility = View.GONE
+                            btnRetry?.visibility = View.VISIBLE
+                            emptyTitle?.text = "Не удалось загрузить"
+                            emptySubtitle?.text = "Проверьте подключение к интернету."
+                        }
+                    }
+                }
+            }
+
             adapter!!.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
                 private fun updateEmptyState() {
-                    emptyState?.visibility = if (adapter!!.itemCount == 0) View.VISIBLE else View.GONE
+                    val isEmpty = adapter!!.itemCount == 0
+                    emptyState?.visibility = if (isEmpty) View.VISIBLE else View.GONE
+                    if (isEmpty) {
+                        autoImportSubscription()
+                    }
                 }
                 override fun onChanged() = updateEmptyState()
                 override fun onItemRangeInserted(positionStart: Int, itemCount: Int) = updateEmptyState()
                 override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) = updateEmptyState()
             })
 
-            // LvovFlow: paste from clipboard button in empty state
-            view.findViewById<View>(R.id.btn_paste_clipboard)?.setOnClickListener {
-                val cf = parentFragment as? ConfigurationFragment ?: return@setOnClickListener
-                val text = SagerNet.getClipboardText()
-                if (text.isBlank()) {
-                    (activity as? MainActivity)?.snackbar(getString(R.string.clipboard_empty))?.show()
-                } else runOnDefaultDispatcher {
-                    try {
-                        val proxies = RawUpdater.parseRaw(text)
-                        if (proxies.isNullOrEmpty()) onMainDispatcher {
-                            (activity as? MainActivity)?.snackbar(getString(R.string.no_proxies_found_in_clipboard))?.show()
-                        } else cf.import(proxies)
-                    } catch (e: SubscriptionFoundException) {
-                        (activity as MainActivity).importSubscription(e.link.toUri())
-                    } catch (e: Exception) {
-                        Logs.w(e)
-                        onMainDispatcher {
-                            (activity as? MainActivity)?.snackbar(e.readableMessage)?.show()
-                        }
-                    }
-                }
+            // Retry button
+            btnRetry?.setOnClickListener {
+                autoImportSubscription()
             }
 
             if (!select) {
