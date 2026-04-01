@@ -638,9 +638,10 @@ class MainActivity : ThemedActivity(),
         return true
     }
 
-    // LvovFlow: connection timer
+    // LvovFlow: connection timer + session persistence
     private var timerJob: Job? = null
     private var connectTime: Long = 0L
+    private var wasConnected: Boolean = false
     private var breathAnimator: AnimatorSet? = null
 
     private fun startBreathAnimation() {
@@ -755,7 +756,8 @@ class MainActivity : ThemedActivity(),
     }
 
     private fun startConnectionTimer() {
-        connectTime = System.currentTimeMillis()
+        // Only set connectTime if it hasn't been restored from SharedPreferences
+        if (connectTime == 0L) connectTime = System.currentTimeMillis()
         timerJob?.cancel()
         timerJob = lifecycleScope.launch {
             while (isActive) {
@@ -825,6 +827,12 @@ class MainActivity : ThemedActivity(),
             startBreathAnimation()
             startPulseAnimation()
             playShockwaveAnimation()
+
+            if (!wasConnected) {
+                // Genuine first connection in this lifecycle
+                connectTime = System.currentTimeMillis()
+            }
+            wasConnected = true
         } else {
             binding.connTimerLabel.visibility = View.GONE
             binding.connTimer.visibility = View.GONE
@@ -849,6 +857,12 @@ class MainActivity : ThemedActivity(),
             stopConnectionTimer()
             stopBreathAnimation()
             stopPulseAnimation()
+
+            // Only clear session on actual explicit disconnect
+            if (state == BaseService.State.Idle && wasConnected) {
+                clearMobileSessionStats()
+            }
+            wasConnected = false
         }
     }
 
@@ -1015,10 +1029,12 @@ class MainActivity : ThemedActivity(),
     override fun onStart() {
         connection.updateConnectionId(SagerConnection.CONNECTION_ID_MAIN_ACTIVITY_FOREGROUND)
         super.onStart()
+        restoreMobileSessionStats()
     }
 
     override fun onStop() {
         connection.updateConnectionId(SagerConnection.CONNECTION_ID_MAIN_ACTIVITY_BACKGROUND)
+        saveMobileSessionStats()
         super.onStop()
     }
 
@@ -1027,6 +1043,32 @@ class MainActivity : ThemedActivity(),
         GroupManager.userInterface = null
         DataStore.configurationStore.unregisterChangeListener(this)
         connection.disconnect(this)
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Session stats persistence (survive background transitions)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun saveMobileSessionStats() {
+        if (connectTime == 0L) return
+        getSharedPreferences("lvovflow_mobile_session", MODE_PRIVATE).edit().apply {
+            putLong("connect_time", connectTime)
+            apply()
+        }
+    }
+
+    private fun restoreMobileSessionStats() {
+        val prefs = getSharedPreferences("lvovflow_mobile_session", MODE_PRIVATE)
+        val savedConnectTime = prefs.getLong("connect_time", 0L)
+        if (savedConnectTime > 0L) {
+            connectTime = savedConnectTime
+            wasConnected = true
+        }
+    }
+
+    private fun clearMobileSessionStats() {
+        connectTime = 0L
+        getSharedPreferences("lvovflow_mobile_session", MODE_PRIVATE).edit().clear().apply()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {

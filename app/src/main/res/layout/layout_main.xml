@@ -26,6 +26,39 @@
             android:clipChildren="false"
             android:clipToPadding="false">
 
+            <!-- Floating notification bell (top-right) -->
+            <FrameLayout
+                android:id="@+id/btn_notifications"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_chat_bubble"
+                    app:tint="#64748B" />
+
+                <!-- Unread badge dot -->
+                <View
+                    android:id="@+id/notification_badge"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_circle_green"
+                    android:backgroundTint="#EF4444"
+                    android:visibility="gone" />
+            </FrameLayout>
+
             <!-- Timer Label -->
             <TextView
                 android:id="@+id/conn_timer_label"

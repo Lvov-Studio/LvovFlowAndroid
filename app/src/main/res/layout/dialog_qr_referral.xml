@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#0A1628"
+    android:padding="32dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Отсканируйте QR-код"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Ваш друг получит +7 дней бесплатно"
+        android:textColor="#94A3B8"
+        android:textSize="13sp" />
+
+    <!-- QR code image -->
+    <FrameLayout
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_marginTop="24dp"
+        android:background="@android:color/white"
+        android:padding="12dp">
+
+        <ImageView
+            android:id="@+id/iv_qr_code"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter" />
+
+        <ProgressBar
+            android:id="@+id/pb_qr_loading"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="#0EA5E9" />
+    </FrameLayout>
+
+    <!-- Referral link text -->
+    <TextView
+        android:id="@+id/tv_qr_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="lvovflow.com/r/..."
+        android:textColor="#64748B"
+        android:textSize="12sp"
+        android:fontFamily="monospace" />
+
+    <Button
+        android:id="@+id/btn_qr_close"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#1E293B"
+        android:text="Закрыть"
+        android:textAllCaps="false"
+        android:textColor="#CBD5E1"
+        android:textSize="15sp" />
+</LinearLayout>

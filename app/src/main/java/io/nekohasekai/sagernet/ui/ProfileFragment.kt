@@ -115,18 +115,9 @@ class ProfileFragment : ToolbarFragment() {
             }
         }
 
-        view.findViewById<LinearLayout>(R.id.item_promo).setOnClickListener {
-            showPromoDialog()
-        }
-
-        // Share / invite friend
-        view.findViewById<LinearLayout>(R.id.item_share).setOnClickListener {
-            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_SUBJECT, "LvovFlow — YouTube без тормозов")
-                putExtra(Intent.EXTRA_TEXT, "Попробуй LvovFlow — YouTube, Instagram и Netflix без лагов! Бесплатно 7 дней \uD83D\uDE80\nhttps://lvovflow.com")
-            }
-            startActivity(Intent.createChooser(shareIntent, "Поделиться"))
+        // Привилегии (referral + promo combined screen)
+        view.findViewById<android.widget.LinearLayout>(R.id.item_privileges).setOnClickListener {
+            (requireActivity() as? MainActivity)?.displayFragment(PrivilegesFragment())
         }
 
         view.findViewById<LinearLayout>(R.id.item_devices).setOnClickListener {
@@ -164,26 +155,7 @@ class ProfileFragment : ToolbarFragment() {
         }
     }
 
-    private fun showPromoDialog() {
-        val input = EditText(requireContext()).apply {
-            hint = "Введите промокод"
-            setPadding(48, 32, 48, 16)
-        }
-        AlertDialog.Builder(requireContext())
-            .setTitle("🎟 Промокод")
-            .setView(input)
-            .setPositiveButton("Применить") { _, _ ->
-                val code = input.text.toString().trim().uppercase()
-                applyPromo(code)
-            }
-            .setNegativeButton("Отмена", null)
-            .show()
-    }
 
-    private fun applyPromo(code: String) {
-        if (code.isBlank()) return
-        Toast.makeText(requireContext(), "Промокод «$code» принят! Свяжитесь с поддержкой для активации.", Toast.LENGTH_LONG).show()
-    }
 
     @OptIn(kotlinx.coroutines.DelicateCoroutinesApi::class)
     private fun logout() {

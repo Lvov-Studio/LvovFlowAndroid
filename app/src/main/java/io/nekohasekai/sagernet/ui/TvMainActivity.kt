@@ -389,12 +389,14 @@ class TvMainActivity : ThemedActivity(),
             stopBreathAnimation()
             stopPulseAnimation()
 
-            // Play disconnect sound only on explicit Idle (not Connecting/Stopping)
-            if (state == BaseService.State.Idle) {
+            // Play disconnect sound only on explicit disconnect (wasConnected guard
+            // prevents clearing stats during the initial onCreate → changeState(Idle) call,
+            // which runs BEFORE restoreSessionStats() has a chance to read SharedPreferences)
+            if (state == BaseService.State.Idle && wasConnected) {
                 playDisconnectSound()
-                wasConnected = false
                 clearSessionStats()
             }
+            wasConnected = false
         }
     }
 

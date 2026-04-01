@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#070F1E">
+
+    <!-- Invisible standard Toolbar so ToolbarFragment doesn't crash -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="120dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- ════════════════════════════════════════════ -->
+            <!-- HEADER: Days earned                         -->
+            <!-- ════════════════════════════════════════════ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_glass_card"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="28dp"
+                android:layout_marginTop="16dp"
+                android:elevation="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ваши привилегии"
+                    android:textColor="#94A3B8"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08" />
+
+                <TextView
+                    android:id="@+id/tv_earned_days"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="0 дней"
+                    android:textColor="#22C55E"
+                    android:textSize="42sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="бесплатного ускорения заработано"
+                    android:textColor="#64748B"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- ════════════════════════════════════════════ -->
+            <!-- REFERRAL LINK                               -->
+            <!-- ════════════════════════════════════════════ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_glass_card"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:layout_marginTop="20dp"
+                android:elevation="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Пригласите друга"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Вы и ваш друг получите по 7 дней бесплатно"
+                    android:textColor="#94A3B8"
+                    android:textSize="13sp" />
+
+                <!-- Link field -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_referral_field"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="4dp">
+
+                    <TextView
+                        android:id="@+id/tv_referral_link"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="lvovflow.com/r/..."
+                        android:textColor="#CBD5E1"
+                        android:textSize="13sp"
+                        android:singleLine="true"
+                        android:ellipsize="middle"
+                        android:fontFamily="monospace" />
+
+                    <Button
+                        android:id="@+id/btn_copy_link"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:text="Копировать"
+                        android:textAllCaps="false"
+                        android:textSize="13sp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:backgroundTint="#0EA5E9"
+                        app:cornerRadius="10dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp" />
+                </LinearLayout>
+
+                <!-- Share + QR row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_share_referral"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="52dp"
+                        android:backgroundTint="#10B981"
+                        android:text="Поделиться"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="14dp"
+                        app:icon="@drawable/ic_social_share"
+                        app:iconTint="#FFFFFF"
+                        app:iconGravity="textStart"
+                        app:iconPadding="6dp" />
+
+                    <Button
+                        android:id="@+id/btn_show_qr"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:layout_marginStart="8dp"
+                        android:backgroundTint="#1E293B"
+                        android:text=""
+                        app:cornerRadius="14dp"
+                        app:icon="@drawable/ic_qr_code"
+                        app:iconTint="#0EA5E9"
+                        app:iconGravity="textStart"
+                        app:iconSize="24dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ════════════════════════════════════════════ -->
+            <!-- HOW IT WORKS (3 steps)                      -->
+            <!-- ════════════════════════════════════════════ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_glass_card"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:layout_marginTop="20dp"
+                android:elevation="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Как это работает"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <!-- Step 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp">
+                        <View
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_pill_badge"
+                            android:backgroundTint="#1A0EA5E9" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="1"
+                            android:textColor="#0EA5E9"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:text="Поделитесь ссылкой с другом"
+                        android:textColor="#E2E8F0"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Step 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp">
+                        <View
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_pill_badge"
+                            android:backgroundTint="#1A10B981" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="2"
+                            android:textColor="#10B981"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:text="Друг оформляет подписку"
+                        android:textColor="#E2E8F0"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Step 3 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp">
+                        <View
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_pill_badge"
+                            android:backgroundTint="#1A8B5CF6" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="3"
+                            android:textColor="#8B5CF6"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:text="Вы оба получаете +7 дней бесплатно"
+                        android:textColor="#E2E8F0"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ════════════════════════════════════════════ -->
+            <!-- PROMO CODE SECTION                          -->
+            <!-- ════════════════════════════════════════════ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_glass_card"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:layout_marginTop="20dp"
+                android:elevation="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Промокод"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Введите промокод от партнёра или акции"
+                    android:textColor="#94A3B8"
+                    android:textSize="13sp" />
+
+                <!-- Promo input field -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_referral_field"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="4dp">
+
+                    <EditText
+                        android:id="@+id/et_promo_code"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:hint="LVOV2026"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#475569"
+                        android:textSize="14sp"
+                        android:background="@android:color/transparent"
+                        android:imeOptions="actionDone"
+                        android:inputType="textCapCharacters"
+                        android:fontFamily="monospace"
+                        android:maxLines="1" />
+
+                    <Button
+                        android:id="@+id/btn_apply_promo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:text="Применить"
+                        android:textAllCaps="false"
+                        android:textSize="13sp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:backgroundTint="#8B5CF6"
+                        app:cornerRadius="10dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ════════════════════════════════════════════ -->
+            <!-- INVITE HISTORY (placeholder)                -->
+            <!-- ════════════════════════════════════════════ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_glass_card"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:layout_marginTop="20dp"
+                android:elevation="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="История приглашений"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_invite_empty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Пока нет приглашений.\nПоделитесь ссылкой — и здесь появится список."
+                    android:textColor="#475569"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="4dp" />
+
+                <LinearLayout
+                    android:id="@+id/invite_list_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
