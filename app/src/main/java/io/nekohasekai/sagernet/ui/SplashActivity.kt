@@ -17,6 +17,19 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
+        // ── Deep link: extract referral code from lvovflow.com/r/CODE ──
+        val deepLinkRefCode = intent?.data?.let { uri ->
+            if (uri.host == "lvovflow.com" && uri.pathSegments.size >= 2 && uri.pathSegments[0] == "r") {
+                uri.pathSegments[1] // the referral code
+            } else null
+        }
+        // Persist referral code so it survives app restart
+        if (!deepLinkRefCode.isNullOrBlank()) {
+            getSharedPreferences("lvovflow", MODE_PRIVATE).edit()
+                .putString("pending_ref_code", deepLinkRefCode)
+                .apply()
+        }
+
         val logo = findViewById<ImageView>(R.id.splash_logo)
 
         // Pulsing animation for the logo
@@ -48,6 +61,11 @@ class SplashActivity : AppCompatActivity() {
             } else {
                 if (isTv) Intent(this@SplashActivity, TvMainActivity::class.java)
                 else Intent(this@SplashActivity, MainActivity::class.java)
+            }
+
+            // Forward referral code to ActivationActivity
+            if (!deepLinkRefCode.isNullOrBlank()) {
+                nextIntent.putExtra("ref_code", deepLinkRefCode)
             }
 
             // Add smooth fade transition flags

@@ -69,6 +69,7 @@ class ActivationActivity : AppCompatActivity() {
 
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var currentEmail: String = ""
+    private var pendingRefCode: String = ""
 
     // Views
     private lateinit var stepEmail: LinearLayout
@@ -87,6 +88,11 @@ class ActivationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // ── Read referral code from deep link (Intent extra) or SharedPreferences ──
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        pendingRefCode = intent?.getStringExtra("ref_code")
+            ?: prefs.getString("pending_ref_code", "") ?: ""
 
         // If user already has a token → go directly to MainActivity
         if (isAuthenticated(this)) {
@@ -230,10 +236,11 @@ class ActivationActivity : AppCompatActivity() {
 
         scope.launch {
             try {
-                val result = postJson(
-                    "$API_BASE/verify_otp.php",
-                    mapOf("email" to currentEmail, "code" to code)
-                )
+                val bodyMap = mutableMapOf("email" to currentEmail, "code" to code)
+                if (pendingRefCode.isNotBlank()) {
+                    bodyMap["ref_code"] = pendingRefCode
+                }
+                val result = postJson("$API_BASE/verify_otp.php", bodyMap)
                 val ok = result.optBoolean("ok", false)
                 if (ok) {
                     val token = result.optString("token", "")
@@ -252,6 +259,13 @@ class ActivationActivity : AppCompatActivity() {
 
                     // Сохраняем сессию в любом случае (чтобы не просить OTP повторно)
                     saveSession(token, subUrl, currentEmail, expireDate)
+
+                    // Clear pending referral code after successful registration
+                    if (pendingRefCode.isNotBlank()) {
+                        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+                            .remove("pending_ref_code").apply()
+                        pendingRefCode = ""
+                    }
 
                     if (isExpired) {
                         // Подписка истекла — показываем экран с предложением продлить
