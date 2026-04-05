@@ -109,9 +109,9 @@ class ProfileFragment : ToolbarFragment() {
 
         view.findViewById<LinearLayout>(R.id.item_support).setOnClickListener {
             try {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/LvovFlowBot")))
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/lvovflow_support_bot")))
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "@LvovFlowBot", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "@lvovflow_support_bot", Toast.LENGTH_SHORT).show()
             }
         }
 
