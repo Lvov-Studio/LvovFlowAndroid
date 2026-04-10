@@ -22,7 +22,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private lateinit var isProxyApps: SwitchPreference
 
-    private lateinit var globalCustomConfig: EditConfigPreference
+    private var globalCustomConfig: EditConfigPreference? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,7 +64,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val mixedPort = findPreference<EditTextPreference>(Key.MIXED_PORT)!!
         val serviceMode = findPreference<Preference>(Key.SERVICE_MODE)!!
         val allowAccess = findPreference<Preference>(Key.ALLOW_ACCESS)!!
-        val appendHttpProxy = findPreference<SwitchPreference>(Key.APPEND_HTTP_PROXY)!!
+        val appendHttpProxy = findPreference<SwitchPreference>(Key.APPEND_HTTP_PROXY)
 
         val showDirectSpeed = findPreference<SwitchPreference>(Key.SHOW_DIRECT_SPEED)!!
         val ipv6Mode = findPreference<Preference>(Key.IPV6_MODE)!!
@@ -72,24 +72,24 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         val smartBypassRu = findPreference<SwitchPreference>(Key.SMART_BYPASS_RU)!!
         val bypassLan = findPreference<SwitchPreference>(Key.BYPASS_LAN)!!
-        val bypassLanInCore = findPreference<SwitchPreference>(Key.BYPASS_LAN_IN_CORE)!!
+        val bypassLanInCore = findPreference<SwitchPreference>(Key.BYPASS_LAN_IN_CORE)
 
         val remoteDns = findPreference<EditTextPreference>(Key.REMOTE_DNS)!!
         val directDns = findPreference<EditTextPreference>(Key.DIRECT_DNS)!!
         val enableDnsRouting = findPreference<SwitchPreference>(Key.ENABLE_DNS_ROUTING)!!
         val enableFakeDns = findPreference<SwitchPreference>(Key.ENABLE_FAKEDNS)!!
 
-        val logLevel = findPreference<LongClickListPreference>(Key.LOG_LEVEL)!!
-        val mtu = findPreference<MTUPreference>(Key.MTU)!!
-        globalCustomConfig = findPreference(Key.GLOBAL_CUSTOM_CONFIG)!!
-        globalCustomConfig.useConfigStore(Key.GLOBAL_CUSTOM_CONFIG)
+        val logLevel = findPreference<LongClickListPreference>(Key.LOG_LEVEL)
+        val mtu = findPreference<MTUPreference>(Key.MTU)
+        globalCustomConfig = findPreference(Key.GLOBAL_CUSTOM_CONFIG)
+        globalCustomConfig?.useConfigStore(Key.GLOBAL_CUSTOM_CONFIG)
 
-        logLevel.dialogLayoutResource = R.layout.layout_loglevel_help
-        logLevel.setOnPreferenceChangeListener { _, _ ->
+        logLevel?.dialogLayoutResource = R.layout.layout_loglevel_help
+        logLevel?.setOnPreferenceChangeListener { _, _ ->
             needRestart()
             true
         }
-        logLevel.setOnLongClickListener {
+        logLevel?.setOnLongClickListener {
             if (context == null) return@setOnLongClickListener true
 
             val view = EditText(context).apply {
@@ -113,15 +113,18 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         mixedPort.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
 
-        val metedNetwork = findPreference<Preference>(Key.METERED_NETWORK)!!
+        val metedNetwork = findPreference<Preference>(Key.METERED_NETWORK)
         if (Build.VERSION.SDK_INT < 28) {
-            metedNetwork.remove()
+            metedNetwork?.remove()
         }
-        isProxyApps = findPreference(Key.PROXY_APPS)!!
-        isProxyApps.setOnPreferenceChangeListener { _, newValue ->
-            startActivity(Intent(activity, AppManagerActivity::class.java))
-            if (newValue as Boolean) DataStore.dirty = true
-            newValue
+        val proxyAppsPreference = findPreference<SwitchPreference>(Key.PROXY_APPS)
+        if (proxyAppsPreference != null) {
+            isProxyApps = proxyAppsPreference
+            isProxyApps.setOnPreferenceChangeListener { _, newValue ->
+                startActivity(Intent(activity, AppManagerActivity::class.java))
+                if (newValue as Boolean) DataStore.dirty = true
+                newValue
+            }
         }
 
         val profileTrafficStatistics =
@@ -139,24 +142,24 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
-        val tunImplementation = findPreference<SimpleMenuPreference>(Key.TUN_IMPLEMENTATION)!!
-        val resolveDestination = findPreference<SwitchPreference>(Key.RESOLVE_DESTINATION)!!
+        val tunImplementation = findPreference<SimpleMenuPreference>(Key.TUN_IMPLEMENTATION)
+        val resolveDestination = findPreference<SwitchPreference>(Key.RESOLVE_DESTINATION)
         val acquireWakeLock = findPreference<SwitchPreference>(Key.ACQUIRE_WAKE_LOCK)!!
-        val enableClashAPI = findPreference<SwitchPreference>(Key.ENABLE_CLASH_API)!!
-        enableClashAPI.setOnPreferenceChangeListener { _, newValue ->
+        val enableClashAPI = findPreference<SwitchPreference>(Key.ENABLE_CLASH_API)
+        enableClashAPI?.setOnPreferenceChangeListener { _, newValue ->
             (activity as MainActivity?)?.refreshNavMenu(newValue as Boolean)
             needReload()
             true
         }
 
         mixedPort.onPreferenceChangeListener = reloadListener
-        appendHttpProxy.onPreferenceChangeListener = reloadListener
+        appendHttpProxy?.onPreferenceChangeListener = reloadListener
         showDirectSpeed.onPreferenceChangeListener = reloadListener
         trafficSniffing.onPreferenceChangeListener = reloadListener
         bypassLan.onPreferenceChangeListener = reloadListener
-        bypassLanInCore.onPreferenceChangeListener = reloadListener
+        bypassLanInCore?.onPreferenceChangeListener = reloadListener
         smartBypassRu.onPreferenceChangeListener = reloadListener
-        mtu.onPreferenceChangeListener = reloadListener
+        mtu?.onPreferenceChangeListener = reloadListener
 
         enableFakeDns.onPreferenceChangeListener = reloadListener
         remoteDns.onPreferenceChangeListener = reloadListener
@@ -166,10 +169,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         ipv6Mode.onPreferenceChangeListener = reloadListener
         allowAccess.onPreferenceChangeListener = reloadListener
 
-        resolveDestination.onPreferenceChangeListener = reloadListener
-        tunImplementation.onPreferenceChangeListener = reloadListener
+        resolveDestination?.onPreferenceChangeListener = reloadListener
+        tunImplementation?.onPreferenceChangeListener = reloadListener
         acquireWakeLock.onPreferenceChangeListener = reloadListener
-        globalCustomConfig.onPreferenceChangeListener = reloadListener
+        globalCustomConfig?.onPreferenceChangeListener = reloadListener
     }
 
     override fun onResume() {
@@ -178,8 +181,8 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         if (::isProxyApps.isInitialized) {
             isProxyApps.isChecked = DataStore.proxyApps
         }
-        if (::globalCustomConfig.isInitialized) {
-            globalCustomConfig.notifyChanged()
+        if (globalCustomConfig != null) {
+            globalCustomConfig?.notifyChanged()
         }
     }
 
