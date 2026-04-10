@@ -67,6 +67,12 @@
             app:summary="@string/proxied_apps_summary"
             app:title="@string/proxied_apps" />
         <SwitchPreference
+            app:defaultValue="true"
+            app:icon="@drawable/ic_baseline_legend_toggle_24"
+            app:key="smartBypassRu"
+            app:summary="@string/smart_bypass_ru_summary"
+            app:title="@string/smart_bypass_ru" />
+        <SwitchPreference
             app:icon="@drawable/ic_baseline_legend_toggle_24"
             app:key="bypassLan"
             app:title="@string/route_opt_bypass_lan" />

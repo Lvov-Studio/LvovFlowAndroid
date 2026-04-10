@@ -66,6 +66,8 @@
 <string name="bottomsheet_drag_handle_clicked">Двойное нажатие на маркер перемещения</string>
 <string name="bottomsheet_drag_handle_content_description">Маркер перемещения</string>
 <string name="bypass_apps">Обход</string>
+<string name="smart_bypass_ru">Умный обход РФ 🇷🇺</string>
+<string name="smart_bypass_ru_summary">Банки, Госуслуги и российские сервисы работают напрямую, без VPN</string>
 <string name="bypass_lan_in_core">Обход LAN в ядре</string>
 <string name="cag_dns">Настройки DNS</string>
 <string name="cag_misc">Прочие настройки</string>

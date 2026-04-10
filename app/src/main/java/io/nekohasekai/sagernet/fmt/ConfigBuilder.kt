@@ -603,6 +603,46 @@ fun buildConfig(
             }
         }
 
+        // Smart Bypass RU: route Russian domains and IPs directly (bypass VPN)
+        if (DataStore.smartBypassRu && !forTest) {
+            val ruBankDomains = listOf(
+                "sberbank.ru", "online.sberbank.ru",
+                "tinkoff.ru", "tbank.ru",
+                "gosuslugi.ru", "esia.gosuslugi.ru",
+                "nalog.gov.ru", "lkfl2.nalog.ru",
+                "alfabank.ru", "vtb.ru",
+                "raiffeisen.ru", "gazprombank.ru",
+                "ozon.ru", "wildberries.ru",
+                "avito.ru", "yandex.ru", "ya.ru",
+                "kinopoisk.ru", "mail.ru",
+                "vk.com", "ok.ru",
+                "mos.ru", "cbr.ru"
+            )
+            val ruRuleSets = mutableListOf<RuleSet>()
+
+            // Rule 1: geosite:ru + bank domains → bypass
+            route.rules.add(Rule_DefaultOptions().apply {
+                makeSingBoxRule(listOf("geosite:ru") + ruBankDomains.map { "domain:$it" }, false)
+                if (rule_set != null) generateRuleSet(rule_set, ruRuleSets)
+                outbound = TAG_BYPASS
+            })
+            // Rule 2: geoip:ru → bypass
+            route.rules.add(Rule_DefaultOptions().apply {
+                makeSingBoxRule(listOf("geoip:ru"), true)
+                if (rule_set != null) generateRuleSet(rule_set, ruRuleSets)
+                outbound = TAG_BYPASS
+            })
+            route.rule_set.addAll(ruRuleSets)
+
+            // DNS: resolve RU domains via direct DNS
+            if (enableDnsRouting) {
+                dns.rules.add(DNSRule_DefaultOptions().apply {
+                    makeSingBoxRule(listOf("geosite:ru") + ruBankDomains.map { "domain:$it" })
+                    server = "dns-direct"
+                })
+            }
+        }
+
         // 对 rule_set tag 去重
         if (route.rule_set != null) {
             route.rule_set = route.rule_set.distinctBy { it.tag }
