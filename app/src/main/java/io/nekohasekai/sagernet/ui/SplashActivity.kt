@@ -16,6 +16,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        findViewById<android.widget.TextView>(R.id.splash_version).text = "v${io.nekohasekai.sagernet.BuildConfig.VERSION_NAME}"
 
         // ── Deep link: extract referral code from lvovflow.com/r/CODE ──
         val deepLinkRefCode = intent?.data?.let { uri ->

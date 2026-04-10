@@ -66,9 +66,10 @@
 
     <!-- Version at bottom -->
     <TextView
+        android:id="@+id/splash_version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="v1.0.1"
+        android:text=""
         android:textColor="#2A3B55"
         android:textSize="12sp"
         android:layout_marginBottom="32dp"
