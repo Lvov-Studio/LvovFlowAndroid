@@ -125,7 +125,7 @@ class ProfileFragment : ToolbarFragment() {
         }
 
         view.findViewById<LinearLayout>(R.id.item_settings).setOnClickListener {
-            (requireActivity() as? MainActivity)?.displayFragment(SettingsFragment())
+            (requireActivity() as? MainActivity)?.displayFragmentWithId(R.id.nav_settings)
         }
 
         view.findViewById<View>(R.id.item_logout).setOnClickListener {
