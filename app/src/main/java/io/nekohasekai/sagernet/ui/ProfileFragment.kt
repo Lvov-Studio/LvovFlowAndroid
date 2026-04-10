@@ -124,6 +124,10 @@ class ProfileFragment : ToolbarFragment() {
             startActivity(Intent(requireContext(), DevicesActivity::class.java))
         }
 
+        view.findViewById<LinearLayout>(R.id.item_settings).setOnClickListener {
+            (requireActivity() as? MainActivity)?.displayFragment(SettingsFragment())
+        }
+
         view.findViewById<View>(R.id.item_logout).setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("Выйти из аккаунта?")
