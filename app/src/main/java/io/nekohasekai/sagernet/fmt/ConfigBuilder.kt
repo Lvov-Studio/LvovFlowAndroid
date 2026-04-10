@@ -605,28 +605,49 @@ fun buildConfig(
 
         // Smart Bypass RU: route Russian domains and IPs directly (bypass VPN)
         if (DataStore.smartBypassRu && !forTest) {
-            val ruBankDomains = listOf(
-                "sberbank.ru", "online.sberbank.ru",
-                "tinkoff.ru", "tbank.ru",
-                "gosuslugi.ru", "esia.gosuslugi.ru",
-                "nalog.gov.ru", "lkfl2.nalog.ru",
-                "alfabank.ru", "vtb.ru",
-                "raiffeisen.ru", "gazprombank.ru",
-                "ozon.ru", "wildberries.ru",
-                "avito.ru", "yandex.ru", "ya.ru",
-                "kinopoisk.ru", "mail.ru",
-                "vk.com", "ok.ru",
-                "mos.ru", "cbr.ru"
+            val ruDomains = listOf(
+                // Банки
+                "domain:sberbank.ru", "domain:online.sberbank.ru",
+                "domain:tinkoff.ru", "domain:tbank.ru",
+                "domain:alfabank.ru", "domain:vtb.ru",
+                "domain:raiffeisen.ru", "domain:gazprombank.ru",
+                "domain:open.ru", "domain:sovcombank.ru",
+                "domain:rosbank.ru", "domain:psbank.ru",
+                "domain:uralsib.ru", "domain:homecredit.ru",
+                // Госуслуги и государственные
+                "domain:gosuslugi.ru", "domain:esia.gosuslugi.ru",
+                "domain:nalog.gov.ru", "domain:lkfl2.nalog.ru",
+                "domain:mos.ru", "domain:cbr.ru",
+                "domain:government.ru", "domain:pfr.gov.ru",
+                "domain:fss.ru",
+                // Маркетплейсы и сервисы
+                "domain:ozon.ru", "domain:wildberries.ru",
+                "domain:avito.ru", "domain:dns-shop.ru",
+                "domain:mvideo.ru", "domain:eldorado.ru",
+                "domain:citilink.ru", "domain:lamoda.ru",
+                // Яндекс
+                "domain:yandex.ru", "domain:ya.ru",
+                "domain:yandex.net", "domain:yastatic.net",
+                "domain:kinopoisk.ru",
+                // Соцсети и почта
+                "domain:vk.com", "domain:vkontakte.ru",
+                "domain:ok.ru", "domain:mail.ru",
+                "domain:dzen.ru", "domain:rutube.ru",
+                // Операторы
+                "domain:megafon.ru", "domain:mts.ru",
+                "domain:beeline.ru", "domain:tele2.ru",
+                // Доставка и транспорт
+                "domain:cdek.ru", "domain:pochta.ru",
+                "domain:rzd.ru"
             )
             val ruRuleSets = mutableListOf<RuleSet>()
 
-            // Rule 1: geosite:ru + bank domains → bypass
+            // Rule 1: Russian domains → bypass
             route.rules.add(Rule_DefaultOptions().apply {
-                makeSingBoxRule(listOf("geosite:ru") + ruBankDomains.map { "domain:$it" }, false)
-                if (rule_set != null) generateRuleSet(rule_set, ruRuleSets)
+                makeSingBoxRule(ruDomains, false)
                 outbound = TAG_BYPASS
             })
-            // Rule 2: geoip:ru → bypass
+            // Rule 2: geoip:ru → bypass (GeoIP database has all country codes)
             route.rules.add(Rule_DefaultOptions().apply {
                 makeSingBoxRule(listOf("geoip:ru"), true)
                 if (rule_set != null) generateRuleSet(rule_set, ruRuleSets)
@@ -637,7 +658,7 @@ fun buildConfig(
             // DNS: resolve RU domains via direct DNS
             if (enableDnsRouting) {
                 dns.rules.add(DNSRule_DefaultOptions().apply {
-                    makeSingBoxRule(listOf("geosite:ru") + ruBankDomains.map { "domain:$it" })
+                    makeSingBoxRule(ruDomains)
                     server = "dns-direct"
                 })
             }
