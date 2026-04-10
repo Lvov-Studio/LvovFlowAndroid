@@ -7,7 +7,7 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.*
-import moe.matsuri.nb4a.ui.FixedLinearLayoutManager
+import io.nekohasekai.sagernet.ktx.FixedLinearLayoutManager
 
 /**
  * LvovFlow: Simplified settings fragment — only Smart Bypass toggle.
