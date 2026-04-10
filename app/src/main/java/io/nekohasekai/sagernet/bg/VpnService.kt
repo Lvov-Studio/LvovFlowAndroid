@@ -188,6 +188,66 @@ class VpnService : BaseVpnService(),
             }
         }
 
+        // LvovFlow: When Smart Bypass RU is enabled, exclude Russian gov/banking apps
+        // from the VPN tunnel entirely — so they don't detect VPN at the OS level.
+        if (DataStore.smartBypassRu && !DataStore.proxyApps) {
+            val ruBypassPackages = listOf(
+                // Госуслуги
+                "ru.rostel",
+                "ru.gosuslugi.pos",
+                // Сбербанк
+                "ru.sberbankmobile",
+                "ru.sberbank.sbbol",
+                // Тинькофф
+                "com.idamob.tinkoff.android",
+                // ВТБ
+                "ru.vtb24.mobilebank.android",
+                // Альфа-Банк
+                "ru.alfabank.mobile.android",
+                // Райффайзен
+                "com.bm.android",
+                // Газпромбанк
+                "ru.gazprombank.android",
+                // Открытие
+                "ru.openbank.app",
+                // Почта Банк
+                "ru.ftc.faktura.multibank",
+                // Россельхозбанк
+                "ru.rshb.mbank",
+                // Совкомбанк
+                "ru.sovcomcard.halva.v1",
+                // МТС Банк
+                "ru.mts.mtsmon",
+                // Промсвязьбанк
+                "ru.simpls.brs2.mobbank",
+                // Ак Барс
+                "com.akbars.android",
+                // ЮMoney (Yandex Money)
+                "ru.yandex.money",
+                // Т2 (Tele2)
+                "ru.tele2.mytele2",
+                // Мегафон
+                "ru.megafon.mlk",
+                // Билайн
+                "ru.beeline.services",
+                // МТС
+                "ru.mts.pay"
+            )
+
+            val bypassed = mutableListOf<String>()
+            for (pkg in ruBypassPackages) {
+                try {
+                    builder.addDisallowedApplication(pkg)
+                    bypassed.add(pkg)
+                } catch (_: PackageManager.NameNotFoundException) {
+                    // App not installed — skip
+                }
+            }
+            if (bypassed.isNotEmpty()) {
+                Logs.d("LvovFlow Smart Bypass: excluded ${bypassed.size} RU apps from VPN tunnel")
+            }
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && DataStore.appendHttpProxy) {
             builder.setHttpProxy(ProxyInfo.buildDirectProxy(LOCALHOST, DataStore.mixedPort))
         }

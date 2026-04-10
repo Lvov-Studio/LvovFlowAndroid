@@ -15,7 +15,7 @@ class SettingsFragment : ToolbarFragment(R.layout.layout_config_settings) {
         toolbar.setTitle(R.string.settings)
 
         parentFragmentManager.beginTransaction()
-            .replace(R.id.settings, SettingsPreferenceFragment())
+            .replace(R.id.settings, LvovFlowSettingsFragment())
             .commitAllowingStateLoss()
     }
 
