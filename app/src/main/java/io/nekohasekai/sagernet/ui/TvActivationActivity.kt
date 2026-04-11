@@ -124,6 +124,12 @@ class TvActivationActivity : AppCompatActivity() {
         qrStatus = findViewById(R.id.tv_qr_status)
         btnRefreshQr = findViewById(R.id.tv_btn_refresh_qr)
 
+        // ── Clear Material tint so custom drawables work ──
+        tabEmail.backgroundTintList = null
+        tabQr.backgroundTintList = null
+        btnSendCode.backgroundTintList = null
+        btnVerify.backgroundTintList = null
+
         // ── Tab switching ──
         tabEmail.setOnClickListener { switchToEmailTab() }
         tabQr.setOnClickListener { switchToQrTab() }
@@ -154,7 +160,9 @@ class TvActivationActivity : AppCompatActivity() {
     // ─────────────────────────────────────────────────────────────────────────
 
     private fun switchToEmailTab() {
-        // Visual
+        // Visual — clear Material tint before setting custom background
+        tabEmail.backgroundTintList = null
+        tabQr.backgroundTintList = null
         tabEmail.setBackgroundResource(R.drawable.bg_tv_tab_active)
         tabEmail.setTextColor(0xFFFFFFFF.toInt())
         tabQr.setBackgroundResource(R.drawable.bg_tv_tab_inactive)
@@ -170,7 +178,9 @@ class TvActivationActivity : AppCompatActivity() {
     }
 
     private fun switchToQrTab() {
-        // Visual
+        // Visual — clear Material tint before setting custom background
+        tabQr.backgroundTintList = null
+        tabEmail.backgroundTintList = null
         tabQr.setBackgroundResource(R.drawable.bg_tv_tab_active)
         tabQr.setTextColor(0xFFFFFFFF.toInt())
         tabEmail.setBackgroundResource(R.drawable.bg_tv_tab_inactive)
