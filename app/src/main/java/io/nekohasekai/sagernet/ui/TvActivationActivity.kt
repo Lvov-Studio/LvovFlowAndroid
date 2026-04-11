@@ -155,9 +155,9 @@ class TvActivationActivity : AppCompatActivity() {
 
     private fun switchToEmailTab() {
         // Visual
-        tabEmail.backgroundTintList = ColorStateList.valueOf(0xFF25C9EF.toInt())
+        tabEmail.setBackgroundResource(R.drawable.bg_tv_tab_active)
         tabEmail.setTextColor(0xFFFFFFFF.toInt())
-        tabQr.backgroundTintList = ColorStateList.valueOf(0x00000000)
+        tabQr.setBackgroundResource(R.drawable.bg_tv_tab_inactive)
         tabQr.setTextColor(0xFF7099C0.toInt())
 
         // Show email, hide QR
@@ -171,9 +171,9 @@ class TvActivationActivity : AppCompatActivity() {
 
     private fun switchToQrTab() {
         // Visual
-        tabQr.backgroundTintList = ColorStateList.valueOf(0xFF25C9EF.toInt())
+        tabQr.setBackgroundResource(R.drawable.bg_tv_tab_active)
         tabQr.setTextColor(0xFFFFFFFF.toInt())
-        tabEmail.backgroundTintList = ColorStateList.valueOf(0x00000000)
+        tabEmail.setBackgroundResource(R.drawable.bg_tv_tab_inactive)
         tabEmail.setTextColor(0xFF7099C0.toInt())
 
         // Show QR, hide email/otp

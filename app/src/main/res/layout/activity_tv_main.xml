@@ -12,7 +12,9 @@
         android:paddingStart="48dp"
         android:paddingEnd="48dp"
         android:paddingTop="27dp"
-        android:paddingBottom="27dp">
+        android:paddingBottom="27dp"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <!-- ===== TOP BAR ===== -->
         <LinearLayout
@@ -81,7 +83,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <!-- ===== LEFT PANEL: Connect + Map ===== -->
             <LinearLayout
@@ -227,7 +231,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:orientation="vertical"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:paddingEnd="4dp">
 
                 <!-- Live session stats -->
                 <LinearLayout

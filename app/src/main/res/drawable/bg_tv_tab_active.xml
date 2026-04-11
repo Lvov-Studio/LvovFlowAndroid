@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Focused: subtle glow border -->
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#25C9EF" />
+            <corners android:radius="8dp" />
+            <stroke android:width="2dp" android:color="#5EE0FF" />
+        </shape>
+    </item>
+    <!-- Selected / active tab -->
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#25C9EF" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+    <!-- Default -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#25C9EF" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+</selector>

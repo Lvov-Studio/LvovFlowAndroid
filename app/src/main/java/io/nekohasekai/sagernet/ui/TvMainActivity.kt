@@ -685,24 +685,132 @@ class TvMainActivity : ThemedActivity(),
                 if (response.has("update") && !response.isNull("update")) {
                     val updateObj = response.getJSONObject("update")
                     val serverVersion = updateObj.optString("versionName", "")
-                    val releaseUrl = updateObj.optString("url", "https://lvovflow.com/app/LvovFlow-latest.apk")
+                    val rawUrl = updateObj.optString("url", "https://lvovflow.com/app/LvovFlow-latest-{abi}.apk")
+                    val deviceAbi = android.os.Build.SUPPORTED_ABIS.firstOrNull() ?: "armeabi-v7a"
+                    val releaseUrl = rawUrl.replace("{abi}", deviceAbi)
                     val changelog = updateObj.optString("changelog", "Оптимизация и стабильность.")
 
                     if (serverVersion.isNotBlank() && serverVersion != BuildConfig.VERSION_NAME) {
                         onMainDispatcher {
-                            MaterialAlertDialogBuilder(this@TvMainActivity)
-                                .setTitle("Обновление: $serverVersion")
-                                .setMessage(changelog)
-                                .setPositiveButton("Обновить") { _, _ ->
-                                    if (DataStore.serviceState.started) SagerNet.stopService()
-                                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(releaseUrl)))
-                                }
-                                .setNegativeButton("Позже", null)
-                                .show()
+                            showTvUpdateDialog(serverVersion, releaseUrl, changelog)
                         }
                     }
                 }
             } catch (_: Exception) { }
+        }
+    }
+
+    private fun showTvUpdateDialog(version: String, apkUrl: String, changelog: String) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_tv_update, null)
+        val dialog = android.app.Dialog(this, android.R.style.Theme_Translucent_NoTitleBar).apply {
+            setContentView(dialogView)
+            setCancelable(false)
+            window?.setLayout(
+                android.view.WindowManager.LayoutParams.MATCH_PARENT,
+                android.view.WindowManager.LayoutParams.MATCH_PARENT
+            )
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+        }
+
+        dialogView.findViewById<TextView>(R.id.tv_update_title).text = "Обновление"
+        dialogView.findViewById<TextView>(R.id.tv_update_version).text = "v$version"
+        dialogView.findViewById<TextView>(R.id.tv_update_changelog).text = changelog
+
+        val progressContainer = dialogView.findViewById<View>(R.id.tv_update_progress_container)
+        val progressBar = dialogView.findViewById<android.widget.ProgressBar>(R.id.tv_update_progress_bar)
+        val progressText = dialogView.findViewById<TextView>(R.id.tv_update_progress_text)
+        val btnUpdate = dialogView.findViewById<Button>(R.id.tv_btn_update_now)
+        val btnLater = dialogView.findViewById<Button>(R.id.tv_btn_update_later)
+
+        btnUpdate.apply {
+            setOnClickListener {
+                if (DataStore.serviceState.started) SagerNet.stopService()
+                // Show progress, hide buttons
+                btnUpdate.isEnabled = false
+                btnUpdate.text = "Скачивание..."
+                btnLater.visibility = View.GONE
+                progressContainer.visibility = View.VISIBLE
+
+                downloadAndInstallApk(apkUrl, progressBar, progressText, dialog)
+            }
+            requestFocus()
+        }
+
+        btnLater.setOnClickListener { dialog.dismiss() }
+        dialog.show()
+    }
+
+    private fun downloadAndInstallApk(
+        apkUrl: String,
+        progressBar: android.widget.ProgressBar,
+        progressText: TextView,
+        dialog: android.app.Dialog
+    ) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val updateDir = java.io.File(filesDir, "updates")
+                if (!updateDir.exists()) updateDir.mkdirs()
+                val apkFile = java.io.File(updateDir, "LvovFlow-update.apk")
+
+                // Delete old file if exists
+                if (apkFile.exists()) apkFile.delete()
+
+                val conn = URL(apkUrl).openConnection() as HttpURLConnection
+                conn.connectTimeout = 15_000
+                conn.readTimeout = 30_000
+                conn.setRequestProperty("User-Agent", "LvovFlow-Android-TV")
+                conn.connect()
+
+                val totalBytes = conn.contentLength.toLong()
+                var downloadedBytes = 0L
+
+                conn.inputStream.use { input ->
+                    java.io.FileOutputStream(apkFile).use { output ->
+                        val buffer = ByteArray(8192)
+                        var bytesRead: Int
+                        while (input.read(buffer).also { bytesRead = it } != -1) {
+                            output.write(buffer, 0, bytesRead)
+                            downloadedBytes += bytesRead
+                            if (totalBytes > 0) {
+                                val percent = (downloadedBytes * 100 / totalBytes).toInt()
+                                withContext(Dispatchers.Main) {
+                                    progressBar.progress = percent
+                                    progressText.text = "Скачивание... $percent%"
+                                }
+                            }
+                        }
+                    }
+                }
+                conn.disconnect()
+
+                // Download complete — trigger install
+                withContext(Dispatchers.Main) {
+                    progressText.text = "Установка..."
+                    progressBar.progress = 100
+
+                    try {
+                        val authority = "${applicationContext.packageName}.cache"
+                        val apkUri = androidx.core.content.FileProvider.getUriForFile(
+                            this@TvMainActivity, authority, apkFile
+                        )
+                        val installIntent = Intent(Intent.ACTION_VIEW).apply {
+                            setDataAndType(apkUri, "application/vnd.android.package-archive")
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        startActivity(installIntent)
+                        dialog.dismiss()
+                    } catch (e: Exception) {
+                        progressText.text = "Ошибка установки: ${e.message}"
+                        progressText.setTextColor(0xFFEF4444.toInt())
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    progressText.text = "Ошибка загрузки: ${e.message}"
+                    progressText.setTextColor(0xFFEF4444.toInt())
+                }
+            }
         }
     }
 

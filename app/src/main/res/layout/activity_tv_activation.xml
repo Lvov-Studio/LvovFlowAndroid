@@ -86,38 +86,39 @@
             <!-- ===== TAB SWITCHER: Email / QR ===== -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
+                android:layout_height="48dp"
                 android:orientation="horizontal"
-                android:background="#10FFFFFF"
+                android:background="@drawable/bg_input_field"
                 android:layout_marginBottom="20dp"
+                android:padding="4dp"
                 android:gravity="center">
 
                 <Button
                     android:id="@+id/tv_tab_email"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_margin="2dp"
                     android:text="Email"
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textAllCaps="false"
-                    android:backgroundTint="#25C9EF"
+                    android:background="@drawable/bg_tv_tab_active"
+                    android:stateListAnimator="@null"
                     android:focusable="true" />
 
                 <Button
                     android:id="@+id/tv_tab_qr"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_margin="2dp"
                     android:text="QR-код"
                     android:textColor="#7099C0"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textAllCaps="false"
-                    android:backgroundTint="#00000000"
+                    android:background="@drawable/bg_tv_tab_inactive"
+                    android:stateListAnimator="@null"
                     android:focusable="true" />
             </LinearLayout>
 
@@ -142,7 +143,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_input_field"
+                    android:background="@drawable/bg_tv_input_focus"
                     android:hint="Ваш Email"
                     android:textColorHint="#40FFFFFF"
                     android:inputType="textEmailAddress"
@@ -164,7 +165,8 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textAllCaps="false"
-                    android:backgroundTint="#25C9EF"
+                    android:background="@drawable/bg_tv_btn_primary"
+                    android:stateListAnimator="@null"
                     android:focusable="true"
                     android:nextFocusUp="@id/tv_email_input" />
 
@@ -239,7 +241,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="72dp"
                     android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_input_field"
+                    android:background="@drawable/bg_tv_input_focus"
                     android:hint="— — — — — —"
                     android:textColorHint="#30FFFFFF"
                     android:inputType="numberPassword"
@@ -263,7 +265,8 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textAllCaps="false"
-                    android:backgroundTint="#25C9EF"
+                    android:background="@drawable/bg_tv_btn_primary"
+                    android:stateListAnimator="@null"
                     android:focusable="true"
                     android:nextFocusUp="@id/tv_otp_input" />
 
@@ -332,8 +335,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:text="Отсканируйте QR-код\nкамерой телефона"
-                    android:textColor="#7099C0"
-                    android:textSize="15sp"
+                    android:textColor="#E2E8F0"
+                    android:textSize="17sp"
                     android:gravity="center"
                     android:lineSpacingExtra="4dp" />
 

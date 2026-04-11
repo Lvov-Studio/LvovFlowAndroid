@@ -1185,7 +1185,9 @@ class MainActivity : ThemedActivity(),
                 if (response.has("update") && !response.isNull("update")) {
                     val updateObj = response.getJSONObject("update")
                     val serverVersionName = updateObj.optString("versionName", "")
-                    val releaseUrl = updateObj.optString("url", "https://lvovflow.com/app/LvovFlow-latest.apk")
+                    val rawUrl = updateObj.optString("url", "https://lvovflow.com/app/LvovFlow-latest-{abi}.apk")
+                    val deviceAbi = android.os.Build.SUPPORTED_ABIS.firstOrNull() ?: "arm64-v8a"
+                    val releaseUrl = rawUrl.replace("{abi}", deviceAbi)
                     val changelog = updateObj.optString("changelog", "Оптимизация скорости и повышение стабильности работы.")
                     
                     if (serverVersionName.isNotBlank() && serverVersionName != BuildConfig.VERSION_NAME) {
