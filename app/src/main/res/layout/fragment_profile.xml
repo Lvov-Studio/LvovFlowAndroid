@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     android:background="#070F1E">
 
-    <!-- Invisible standard Toolbar so ToolbarFragment doesn't crash -->
+    <!-- Invisible Toolbar so ToolbarFragment doesn't crash -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -19,323 +19,433 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:fillViewport="true">
-        
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="32dp">
+            android:paddingBottom="40dp">
 
-
-
-
-            <!-- ══════════════════════════════════════════════════ -->
-            <!-- SERVER-DRIVEN profile header (avatar + email)     -->
-            <!-- Design changes → edit app_profile.php on server   -->
-            <!-- ══════════════════════════════════════════════════ -->
+            <!-- ═══════════════════════════════════════════════════ -->
+            <!-- SERVER-DRIVEN header: avatar + email + status card  -->
+            <!-- Edit design → app_profile.php on server            -->
+            <!-- ═══════════════════════════════════════════════════ -->
             <WebView
                 android:id="@+id/webview_profile_header"
                 android:layout_width="match_parent"
-                android:layout_height="160dp"
+                android:layout_height="215dp"
                 android:background="#070F1E" />
 
+            <!-- ╔═══════════════════════════════════════════╗ -->
+            <!-- ║  СЕКЦИЯ: АККАУНТ                         ║ -->
+            <!-- ╚═══════════════════════════════════════════╝ -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="АККАУНТ"
+                android:textColor="#2A3D58"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.12"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="8dp" />
 
-            <!-- Menu card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginBottom="20dp"
                 android:background="@drawable/bg_glass_card"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
 
-                <!-- Рефреш -->
-                <LinearLayout
-                    android:id="@+id/item_refresh"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="?attr/selectableItemBackground"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_baseline_refresh_24"
-                        app:tint="#64748B" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="16dp"
-                        android:text="Обновить подключение"
-                        android:textColor="#E2E8F0"
-                        android:textSize="16sp" />
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="#64748B" />
-                </LinearLayout>
-
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#1A2C46" android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
-
-                <!-- Подписка -->
+                <!-- Подписка ──────────────────────────────── -->
                 <LinearLayout
                     android:id="@+id/item_subscription"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
                     android:orientation="horizontal"
-                    android:minHeight="64dp"
                     android:gravity="center_vertical"
                     android:background="?attr/selectableItemBackground"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp">
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp">
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_action_done"
-                        app:tint="#64748B" />
+                    <!-- Иконка: синяя -->
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_badge_trial"
+                        android:backgroundTint="#1A3B82F6">
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_action_done"
+                            app:tint="#3B82F6" />
+                    </FrameLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:layout_marginStart="16dp">
+                        android:layout_marginStart="14dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Подписка"
                             android:textColor="#E2E8F0"
-                            android:textSize="16sp" />
-                        <LinearLayout
+                            android:textSize="15sp" />
+                        <TextView
+                            android:id="@+id/tv_sub_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="2dp">
-                            <View
-                                android:id="@+id/sub_status_dot"
-                                android:layout_width="6dp"
-                                android:layout_height="6dp"
-                                android:background="@drawable/bg_circle_green"
-                                android:backgroundTint="#22C55E" />
-                            <TextView
-                                android:id="@+id/tv_sub_status"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Активна"
-                                android:textColor="#22C55E"
-                                android:textSize="12sp"
-                                android:layout_marginStart="5dp" />
-                        </LinearLayout>
+                            android:text="Управление и оплата"
+                            android:textColor="#3B4F6B"
+                            android:textSize="12sp"
+                            android:layout_marginTop="1dp" />
                     </LinearLayout>
 
                     <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
                         android:src="@drawable/ic_chevron_right"
-                        app:tint="#64748B" />
+                        app:tint="#2A3D58" />
                 </LinearLayout>
 
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#1A2C46" android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
-
-                <!-- Поддержка -->
-                <LinearLayout
-                    android:id="@+id/item_support"
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="?attr/selectableItemBackground"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp">
+                    android:layout_height="1dp"
+                    android:background="#0C1A2E"
+                    android:layout_marginStart="64dp"
+                    android:layout_marginEnd="14dp" />
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_help_outline"
-                        app:tint="#64748B" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="16dp"
-                        android:text="Поддержка"
-                        android:textColor="#E2E8F0"
-                        android:textSize="16sp" />
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="#64748B" />
-                </LinearLayout>
-
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#1A2C46" android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
-
-                <!-- Привилегии (referral + promo) -->
+                <!-- Привилегии ─────────────────────────────── -->
                 <LinearLayout
                     android:id="@+id/item_privileges"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="64dp"
+                    android:layout_height="60dp"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:background="?attr/selectableItemBackground"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp">
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp">
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_baseline_card_giftcard_24"
-                        app:tint="#8B5CF6" />
+                    <!-- Иконка: фиолетовая -->
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_badge_trial"
+                        android:backgroundTint="#1A8B5CF6">
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_baseline_card_giftcard_24"
+                            app:tint="#8B5CF6" />
+                    </FrameLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:layout_marginStart="16dp">
+                        android:layout_marginStart="14dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Привилегии"
                             android:textColor="#E2E8F0"
-                            android:textSize="16sp" />
+                            android:textSize="15sp" />
                         <TextView
                             android:id="@+id/tv_privileges_subtitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
                             android:text="Промокоды и приглашения"
-                            android:textColor="#64748B"
-                            android:textSize="12sp" />
+                            android:textColor="#3B4F6B"
+                            android:textSize="12sp"
+                            android:layout_marginTop="1dp" />
                     </LinearLayout>
 
                     <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
                         android:src="@drawable/ic_chevron_right"
-                        app:tint="#64748B" />
-                </LinearLayout>
-
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#1A2C46" android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
-
-                <!-- Мои устройства -->
-                <LinearLayout
-                    android:id="@+id/item_devices"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="?attr/selectableItemBackground"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_devices"
-                        app:tint="#64748B" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="16dp"
-                        android:text="Мои устройства"
-                        android:textColor="#E2E8F0"
-                        android:textSize="16sp" />
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="#64748B" />
-                </LinearLayout>
-
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#1A2C46" android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
-
-                <!-- Настройки VPN -->
-                <LinearLayout
-                    android:id="@+id/item_settings"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="?attr/selectableItemBackground"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_action_settings"
-                        app:tint="#64748B" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="16dp"
-                        android:text="Настройки"
-                        android:textColor="#E2E8F0"
-                        android:textSize="16sp" />
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="#64748B" />
+                        app:tint="#2A3D58" />
                 </LinearLayout>
 
             </LinearLayout>
 
-            <!-- Logout — subtle, not scary -->
+            <!-- ╔═══════════════════════════════════════════╗ -->
+            <!-- ║  СЕКЦИЯ: ПОДКЛЮЧЕНИЕ                     ║ -->
+            <!-- ╚═══════════════════════════════════════════╝ -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ПОДКЛЮЧЕНИЕ"
+                android:textColor="#2A3D58"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.12"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_glass_card"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
+
+                <!-- Обновить подключение ──────────────────── -->
+                <LinearLayout
+                    android:id="@+id/item_refresh"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp">
+
+                    <!-- Иконка: зелёная -->
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_badge_trial"
+                        android:backgroundTint="#1A10B981">
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_baseline_refresh_24"
+                            app:tint="#10B981" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="14dp"
+                        android:text="Обновить подключение"
+                        android:textColor="#E2E8F0"
+                        android:textSize="15sp" />
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="#2A3D58" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#0C1A2E"
+                    android:layout_marginStart="64dp"
+                    android:layout_marginEnd="14dp" />
+
+                <!-- Мои устройства ─────────────────────────── -->
+                <LinearLayout
+                    android:id="@+id/item_devices"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp">
+
+                    <!-- Иконка: голубая -->
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_badge_trial"
+                        android:backgroundTint="#1A25C9EF">
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_devices"
+                            app:tint="#25C9EF" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="14dp"
+                        android:text="Мои устройства"
+                        android:textColor="#E2E8F0"
+                        android:textSize="15sp" />
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="#2A3D58" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ╔═══════════════════════════════════════════╗ -->
+            <!-- ║  СЕКЦИЯ: ПРОЧЕЕ                          ║ -->
+            <!-- ╚═══════════════════════════════════════════╝ -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ПРОЧЕЕ"
+                android:textColor="#2A3D58"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.12"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_glass_card"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
+
+                <!-- Поддержка ──────────────────────────────── -->
+                <LinearLayout
+                    android:id="@+id/item_support"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp">
+
+                    <!-- Иконка: оранжевая -->
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_badge_trial"
+                        android:backgroundTint="#1AF59E0B">
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_help_outline"
+                            app:tint="#F59E0B" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="14dp"
+                        android:text="Поддержка"
+                        android:textColor="#E2E8F0"
+                        android:textSize="15sp" />
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="#2A3D58" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#0C1A2E"
+                    android:layout_marginStart="64dp"
+                    android:layout_marginEnd="14dp" />
+
+                <!-- Настройки ──────────────────────────────── -->
+                <LinearLayout
+                    android:id="@+id/item_settings"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp">
+
+                    <!-- Иконка: серая -->
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_badge_trial"
+                        android:backgroundTint="#1464748B">
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_action_settings"
+                            app:tint="#94A3B8" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="14dp"
+                        android:text="Настройки"
+                        android:textColor="#E2E8F0"
+                        android:textSize="15sp" />
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="#2A3D58" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ── Выход ─────────────────────────────────────── -->
             <TextView
                 android:id="@+id/item_logout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="32dp"
-                android:padding="12dp"
+                android:layout_marginTop="4dp"
+                android:padding="14dp"
                 android:text="Выйти из аккаунта"
-                android:textColor="#475569"
+                android:textColor="#2A3D58"
                 android:textSize="14sp"
+                android:gravity="center"
                 android:background="?attr/selectableItemBackgroundBorderless" />
 
-            <!-- Version label + update check -->
+            <!-- ── Версия + обновление ───────────────────────── -->
             <TextView
                 android:id="@+id/tv_version"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 android:text="LvovFlow v1.0.0"
-                android:textColor="#475569"
+                android:textColor="#1A2E45"
                 android:textSize="12sp"
-                android:gravity="center"
-                android:fontFamily="sans-serif-medium" />
+                android:gravity="center" />
 
             <TextView
                 android:id="@+id/tv_check_update"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="2dp"
                 android:padding="8dp"
                 android:text="Проверить обновления"
-                android:textColor="#3B82F6"
+                android:textColor="#25C9EF"
                 android:textSize="12sp"
                 android:background="?attr/selectableItemBackgroundBorderless" />
 
