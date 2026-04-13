@@ -27,14 +27,18 @@
             android:paddingBottom="40dp">
 
             <!-- ═══════════════════════════════════════════════════ -->
-            <!-- SERVER-DRIVEN header: avatar + email + status card  -->
-            <!-- Edit design → app_profile.php on server            -->
+            <!-- НАТИВНЫЙ ЗАГОЛОВОК ПРОФИЛЯ                          -->
             <!-- ═══════════════════════════════════════════════════ -->
-            <WebView
-                android:id="@+id/webview_profile_header"
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="215dp"
-                android:background="#070F1E" />
+                android:layout_height="wrap_content"
+                android:text="Профиль"
+                android:textColor="#FFFFFF"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp" />
 
             <!-- ╔═══════════════════════════════════════════╗ -->
             <!-- ║  СЕКЦИЯ: АККАУНТ                         ║ -->

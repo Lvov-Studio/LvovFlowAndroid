@@ -8,10 +8,6 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import android.webkit.WebView
-import android.webkit.WebSettings
-import android.webkit.WebViewClient
-import android.annotation.SuppressLint
 import androidx.appcompat.app.AlertDialog
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
@@ -43,40 +39,12 @@ class ProfileFragment : ToolbarFragment() {
 
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-    @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // Toolbar expected by ToolbarFragment (invisible in layout)
         toolbar.navigationIcon = null
         toolbar.title = null
-
-        val prefs = requireContext().getSharedPreferences("lvovflow", Context.MODE_PRIVATE)
-        val email      = prefs.getString("user_email", "") ?: ""
-        val expireDate = prefs.getString("expire_date", "") ?: ""
-        val isExpired  = prefs.getBoolean("is_expired", false)
-        val token      = prefs.getString("session_token", "") ?: ""
-
-        // ── SERVER-DRIVEN profile header ──
-        val status = when {
-            isExpired       -> "expired"
-            expireDate.isBlank() -> "trial"
-            else            -> "active"
-        }
-        val profileUrl = "https://lvovflow.com/app/app_profile.php" +
-            "?token=${Uri.encode(token)}" +
-            "&email=${Uri.encode(email)}" +
-            "&expire=${Uri.encode(expireDate)}" +
-            "&status=$status"
-
-        view.findViewById<WebView>(R.id.webview_profile_header)?.apply {
-            setBackgroundColor(0xFF070F1E.toInt())
-            settings.javaScriptEnabled = true
-            settings.setSupportZoom(false)
-            settings.builtInZoomControls = false
-            webViewClient = WebViewClient()
-            loadUrl(profileUrl)
-        }
 
         // Version
         view.findViewById<TextView>(R.id.tv_version).text =
