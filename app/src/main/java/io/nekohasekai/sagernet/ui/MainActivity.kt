@@ -196,7 +196,7 @@ class MainActivity : ThemedActivity(),
 
         // LvovFlow: server selection removed — using connection map instead
 
-        // LvovFlow: refresh subscription status from server in background
+        // LvovFlow: refresh subscription status + home banner from server
         val sessionToken = lvovPrefs.getString("session_token", "") ?: ""
         if (sessionToken.isNotBlank()) {
             lifecycleScope.launch(Dispatchers.IO) {
@@ -214,14 +214,12 @@ class MainActivity : ThemedActivity(),
                     }
                     OutputStreamWriter(conn.outputStream).use { it.write("{}") }
                     val responseCode = conn.responseCode
-                    
+
                     // Session expired/invalid → redirect to login
                     if (responseCode == 401) {
                         conn.disconnect()
                         withContext(Dispatchers.Main) {
-                            // Clear invalid session
                             lvovPrefs.edit().remove("session_token").apply()
-                            // Redirect to login
                             startActivity(Intent(this@MainActivity, ActivationActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             })
@@ -229,7 +227,7 @@ class MainActivity : ThemedActivity(),
                         }
                         return@launch
                     }
-                    
+
                     val stream = if (responseCode in 200..299) conn.inputStream
                                  else conn.errorStream ?: conn.inputStream
                     val json = JSONObject(stream.bufferedReader().readText())
@@ -237,17 +235,16 @@ class MainActivity : ThemedActivity(),
                     if (json.optBoolean("ok")) {
                         val newExpire = json.optString("expire_date", "")
                         val newSubUrl = json.optString("subscription_url", "")
-                        // Сохраняем свежие данные
                         lvovPrefs.edit().apply {
                             if (newExpire.isNotBlank()) putString("expire_date", newExpire)
                             if (newSubUrl.isNotBlank()) putString("subscription_url", newSubUrl)
                             apply()
                         }
                     }
-                } catch (_: Exception) {
-                    // Без интернета — остаётся кэш
-                }
+                } catch (_: Exception) { }
             }
+            // Load home banner in parallel
+            loadHomeBanner(sessionToken)
         }
 
         refreshNavMenu(DataStore.enableClashAPI)
@@ -499,8 +496,6 @@ class MainActivity : ThemedActivity(),
             val containerVisible = binding.mainHomeContainer.visibility == View.VISIBLE
             if (containerVisible) {
                 binding.fab.show()
-                binding.connTimerLabel.visibility = if (isConnected) View.VISIBLE else View.GONE
-                binding.connTimer.visibility = if (isConnected) View.VISIBLE else View.GONE
                 binding.speedRow.visibility = if (isConnected) View.VISIBLE else View.GONE
                 binding.connStatusLabel.visibility = View.VISIBLE
                 binding.tvIpInfo.visibility = if (isConnected && binding.tvIpInfo.text.isNotEmpty()) View.VISIBLE else View.GONE
@@ -521,8 +516,6 @@ class MainActivity : ThemedActivity(),
         } else {
             if (!DataStore.showBottomBar) binding.fab.hide()
             binding.fab.hide()
-            binding.connTimerLabel.visibility = View.GONE
-            binding.connTimer.visibility = View.GONE
             binding.speedRow.visibility = View.GONE
             binding.connStatusLabel.visibility = View.GONE
             binding.tvIpInfo.visibility = View.GONE
@@ -658,9 +651,7 @@ class MainActivity : ThemedActivity(),
         return true
     }
 
-    // LvovFlow: connection timer + session persistence
-    private var timerJob: Job? = null
-    private var connectTime: Long = 0L
+    // LvovFlow: connection state tracking
     private var wasConnected: Boolean = false
     private var breathAnimator: AnimatorSet? = null
 
@@ -775,26 +766,91 @@ class MainActivity : ThemedActivity(),
         animateShockwaveRing(ring2, 400L)
     }
 
-    private fun startConnectionTimer() {
-        // Only set connectTime if it hasn't been restored from SharedPreferences
-        if (connectTime == 0L) connectTime = System.currentTimeMillis()
-        timerJob?.cancel()
-        timerJob = lifecycleScope.launch {
-            while (isActive) {
-                val elapsed = System.currentTimeMillis() - connectTime
-                val h = elapsed / 3_600_000L
-                val m = (elapsed / 60_000L) % 60
-                val s = (elapsed / 1_000L) % 60
-                binding.connTimer.text = "%02d:%02d:%02d".format(h, m, s)
-                delay(1_000L)
+    // LvovFlow: Load home screen banner from server (subscription status + admin messages)
+    private fun loadHomeBanner(token: String) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val conn = URL("https://lvovflow.com/api/app/home_config.php")
+                    .openConnection() as HttpURLConnection
+                conn.apply {
+                    requestMethod = "POST"
+                    setRequestProperty("Content-Type", "application/json")
+                    setRequestProperty("X-App-Client", "LvovFlow-Android")
+                    setRequestProperty("X-Session-Token", token)
+                    connectTimeout = 6_000
+                    readTimeout = 6_000
+                    doOutput = true
+                }
+                OutputStreamWriter(conn.outputStream).use { it.write("{}") }
+                val body = conn.inputStream.bufferedReader().readText()
+                conn.disconnect()
+                val json = JSONObject(body)
+                if (!json.optBoolean("ok")) return@launch
+
+                val sub = json.optJSONObject("subscription")
+                val banner = json.optJSONObject("banner")
+
+                withContext(Dispatchers.Main) {
+                    if (sub != null) {
+                        val expireDate = sub.optString("expire_date", "")
+                        val isExpired = sub.optBoolean("is_expired", false)
+                        val daysLeft = if (sub.isNull("days_left")) null else sub.optInt("days_left")
+
+                        val statusText = when {
+                            isExpired -> "❌ Подписка истекла"
+                            expireDate.isNotBlank() && daysLeft != null && daysLeft <= 7 ->
+                                "⚠️ Истекает через $daysLeft ${pluralDays(daysLeft)}"
+                            expireDate.isNotBlank() -> "✓ Активна до $expireDate"
+                            else -> "✓ Подписка активна"
+                        }
+
+                        val statusColor = when {
+                            isExpired -> 0xFFEF4444.toInt()
+                            daysLeft != null && daysLeft <= 7 -> 0xFFF59E0B.toInt()
+                            else -> 0xFF22C55E.toInt()
+                        }
+
+                        binding.tvSubscriptionStatus.text = statusText
+                        binding.tvSubscriptionStatus.setTextColor(statusColor)
+                        binding.homeBanner.visibility = View.VISIBLE
+                    }
+
+                    if (banner != null && banner.optBoolean("visible")) {
+                        val msgText = banner.optString("text", "")
+                        val action = banner.optString("action", "")
+                        if (msgText.isNotBlank()) {
+                            binding.tvAdminMessage.text = msgText
+                            binding.tvAdminMessage.visibility = View.VISIBLE
+                            if (action.isNotBlank()) {
+                                binding.homeBanner.setOnClickListener {
+                                    when (action) {
+                                        "tariffs" -> displayFragmentWithId(R.id.nav_bottom_tariffs)
+                                        "profile" -> displayFragmentWithId(R.id.nav_bottom_profile)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (_: Exception) {
+                // Без интернета — используем кэш из SharedPreferences
+                val prefs = getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
+                val expireDate = prefs.getString("expire_date", "") ?: ""
+                if (expireDate.isNotBlank()) {
+                    withContext(Dispatchers.Main) {
+                        binding.tvSubscriptionStatus.text = "✓ Активна до $expireDate"
+                        binding.tvSubscriptionStatus.setTextColor(0xFF22C55E.toInt())
+                        binding.homeBanner.visibility = View.VISIBLE
+                    }
+                }
             }
         }
     }
 
-    private fun stopConnectionTimer() {
-        timerJob?.cancel()
-        timerJob = null
-        if (::binding.isInitialized) binding.connTimer.text = "00:00:00"
+    private fun pluralDays(n: Int): String = when {
+        n % 10 == 1 && n % 100 != 11 -> "день"
+        n % 10 in 2..4 && (n % 100 < 10 || n % 100 >= 20) -> "дня"
+        else -> "дней"
     }
 
     private fun changeState(
@@ -828,27 +884,18 @@ class MainActivity : ThemedActivity(),
         
         if (state == BaseService.State.Connected) {
             if (isOnHomeTab) {
-                binding.connTimerLabel.visibility = View.VISIBLE
-                binding.connTimer.visibility = View.VISIBLE
                 binding.speedRow.visibility = View.VISIBLE
                 binding.speedSparkline.visibility = View.VISIBLE
                 binding.connStatusLabel.text = "Ускорение активно"
-                // Connection map — show animated route
                 binding.connectionMap.visibility = View.VISIBLE
                 binding.connectionMap.setActive(true)
-
-                // LvovFlow: glow green when connected
                 binding.glowBg.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF22C55E.toInt())
                 binding.glowBg.alpha = 0.35f
             }
 
-            // LvovFlow: navigation bar → dark green
             animateNavBarColor(0xFF0D3320.toInt())
-
-            // LvovFlow: fetch external IP in background
             fetchExternalIp()
-            
-            startConnectionTimer()
+
             if (isOnHomeTab) {
                 startBreathAnimation()
                 startPulseAnimation()
@@ -856,14 +903,11 @@ class MainActivity : ThemedActivity(),
             }
 
             if (!wasConnected) {
-                // Genuine first connection in this lifecycle
                 connectTime = System.currentTimeMillis()
             }
             wasConnected = true
         } else {
             if (isOnHomeTab) {
-                binding.connTimerLabel.visibility = View.GONE
-                binding.connTimer.visibility = View.GONE
                 binding.speedRow.visibility = View.GONE
                 binding.speedSparkline.visibility = View.GONE
                 binding.speedSparkline.clear()
@@ -875,19 +919,15 @@ class MainActivity : ThemedActivity(),
                     BaseService.State.Stopping -> "Отключение..."
                     else -> "Активировать ускорение"
                 }
-                // LvovFlow: glow back to cyan/blue when idle
                 binding.glowBg.backgroundTintList = null
                 binding.glowBg.alpha = 0.45f
             }
 
-            // LvovFlow: navigation bar → dark navy
             animateNavBarColor(0xFF0A1628.toInt())
 
-            stopConnectionTimer()
             stopBreathAnimation()
             stopPulseAnimation()
 
-            // Only clear session on actual explicit disconnect
             if (state == BaseService.State.Idle && wasConnected) {
                 clearMobileSessionStats()
             }

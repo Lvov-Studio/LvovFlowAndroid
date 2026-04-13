@@ -60,46 +60,51 @@
                     android:visibility="gone" />
             </FrameLayout>
 
-            <!-- Timer Label -->
-            <TextView
-                android:id="@+id/conn_timer_label"
-                android:layout_width="wrap_content"
+            <!-- Home Banner: subscription status + admin message (server-driven) -->
+            <LinearLayout
+                android:id="@+id/home_banner"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:text="Время подключения"
-                android:textColor="#94A3B8"
-                android:textSize="13sp"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="60dp"
+                android:orientation="vertical"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/conn_timer"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Timer Clock -->
-            <TextView
-                android:id="@+id/conn_timer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="00:00:00"
-                android:textColor="#F8FAFC"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-medium"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/speed_row"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                <TextView
+                    android:id="@+id/tv_subscription_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="#22C55E"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
 
-            <!-- Speed Row (download / upload) -->
+                <TextView
+                    android:id="@+id/tv_admin_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text=""
+                    android:textColor="#94A3B8"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <!-- Speed Row (download / upload) — shown below IP when connected -->
             <LinearLayout
                 android:id="@+id/speed_row"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal"
                 android:gravity="center"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/speed_sparkline"
+                app:layout_constraintTop_toBottomOf="@id/tv_ip_info"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
@@ -132,14 +137,14 @@
 
             </LinearLayout>
 
-            <!-- Speed Sparkline Graph -->
+            <!-- Speed Sparkline Graph — shown below speed row -->
             <io.nekohasekai.sagernet.widget.SpeedSparklineView
                 android:id="@+id/speed_sparkline"
                 android:layout_width="240dp"
                 android:layout_height="40dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="6dp"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/button_container"
+                app:layout_constraintTop_toBottomOf="@id/speed_row"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
