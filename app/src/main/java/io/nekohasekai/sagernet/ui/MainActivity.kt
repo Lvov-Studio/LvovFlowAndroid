@@ -653,6 +653,7 @@ class MainActivity : ThemedActivity(),
 
     // LvovFlow: connection state tracking
     private var wasConnected: Boolean = false
+    private var connectTime: Long = 0L
     private var breathAnimator: AnimatorSet? = null
 
     private fun startBreathAnimation() {
