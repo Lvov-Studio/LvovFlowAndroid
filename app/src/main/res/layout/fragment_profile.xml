@@ -28,67 +28,17 @@
 
 
 
-            <!-- Avatar + user info -->
-            <LinearLayout
+
+            <!-- ══════════════════════════════════════════════════ -->
+            <!-- SERVER-DRIVEN profile header (avatar + email)     -->
+            <!-- Design changes → edit app_profile.php on server   -->
+            <!-- ══════════════════════════════════════════════════ -->
+            <WebView
+                android:id="@+id/webview_profile_header"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:paddingTop="12dp"
-                android:paddingBottom="16dp">
+                android:layout_height="160dp"
+                android:background="#070F1E" />
 
-                <FrameLayout
-                    android:layout_width="64dp"
-                    android:layout_height="64dp">
-
-                    <View
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:background="@drawable/bg_glow_circle"
-                        android:alpha="0.35" />
-
-                    <!-- Gradient circle with first letter -->
-                    <FrameLayout
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/bg_circle_avatar">
-
-                        <TextView
-                            android:id="@+id/tv_profile_letter"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:text="L"
-                            android:textColor="#FFFFFF"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            android:fontFamily="sans-serif-medium" />
-
-                    </FrameLayout>
-
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/tv_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text=""
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tv_expire"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text=""
-                    android:textColor="#25C9EF"
-                    android:textSize="13sp" />
-
-            </LinearLayout>
 
             <!-- Menu card -->
             <LinearLayout

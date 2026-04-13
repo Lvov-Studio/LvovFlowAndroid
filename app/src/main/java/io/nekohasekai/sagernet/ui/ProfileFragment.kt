@@ -5,10 +5,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import android.webkit.WebView
+import android.webkit.WebSettings
+import android.webkit.WebViewClient
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AlertDialog
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
@@ -40,6 +43,7 @@ class ProfileFragment : ToolbarFragment() {
 
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -48,35 +52,30 @@ class ProfileFragment : ToolbarFragment() {
         toolbar.title = null
 
         val prefs = requireContext().getSharedPreferences("lvovflow", Context.MODE_PRIVATE)
-        val email     = prefs.getString("user_email", "") ?: ""
+        val email      = prefs.getString("user_email", "") ?: ""
         val expireDate = prefs.getString("expire_date", "") ?: ""
+        val isExpired  = prefs.getBoolean("is_expired", false)
+        val token      = prefs.getString("session_token", "") ?: ""
 
-        // LvovFlow: mask email for privacy — show first 3 chars + ***
-        val maskedEmail = if (email.contains("@")) {
-            val local = email.substringBefore("@")
-            val domain = email.substringAfter("@")
-            val visible = local.take(3)
-            "${visible}***@${domain}"
-        } else email
-        view.findViewById<TextView>(R.id.tv_email).text = maskedEmail
-        // Set profile avatar letter
-        val profileLetter = if (email.isNotBlank()) email.substring(0, 1).uppercase() else "L"
-        view.findViewById<TextView>(R.id.tv_profile_letter)?.text = profileLetter
-        view.findViewById<TextView>(R.id.tv_expire).text =
-            if (expireDate.isNotBlank()) "Подписка до $expireDate" else "Активная подписка"
+        // ── SERVER-DRIVEN profile header ──
+        val status = when {
+            isExpired       -> "expired"
+            expireDate.isBlank() -> "trial"
+            else            -> "active"
+        }
+        val profileUrl = "https://lvovflow.com/app/app_profile.php" +
+            "?token=${Uri.encode(token)}" +
+            "&email=${Uri.encode(email)}" +
+            "&expire=${Uri.encode(expireDate)}" +
+            "&status=$status"
 
-        // Subscription sub-status row with green/red dot
-        val tvSubStatus = view.findViewById<TextView>(R.id.tv_sub_status)
-        val subDot = view.findViewById<android.view.View>(R.id.sub_status_dot)
-        val isExpired = prefs.getBoolean("is_expired", false)
-        if (isExpired) {
-            tvSubStatus.text = "Истекла"
-            tvSubStatus.setTextColor(0xFFEF4444.toInt())
-            subDot.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFFEF4444.toInt())
-        } else {
-            tvSubStatus.text = if (expireDate.isNotBlank()) "Активна до $expireDate" else "Активна"
-            tvSubStatus.setTextColor(0xFF22C55E.toInt())
-            subDot.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF22C55E.toInt())
+        view.findViewById<WebView>(R.id.webview_profile_header)?.apply {
+            setBackgroundColor(0xFF070F1E.toInt())
+            settings.javaScriptEnabled = true
+            settings.setSupportZoom(false)
+            settings.builtInZoomControls = false
+            webViewClient = WebViewClient()
+            loadUrl(profileUrl)
         }
 
         // Version
