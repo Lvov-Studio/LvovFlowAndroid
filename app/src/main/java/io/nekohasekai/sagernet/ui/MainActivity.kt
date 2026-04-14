@@ -1,6 +1,8 @@
 package io.nekohasekai.sagernet.ui
 
+import android.graphics.drawable.GradientDrawable
 import android.content.res.ColorStateList
+import android.view.animation.LinearInterpolator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.Manifest.permission.POST_NOTIFICATIONS
@@ -91,6 +93,11 @@ class MainActivity : ThemedActivity(),
 
         binding = LayoutMainBinding.inflate(layoutInflater)
         binding.fab.initProgress(binding.fabProgress)
+
+        // LvovFlow Concept: Wire custom VPN button to hidden FAB
+        binding.vpnButtonCore.setOnClickListener {
+            binding.fab.performClick()
+        }
         if (themeResId !in intArrayOf(
                 R.style.Theme_SagerNet_Black
             )
@@ -495,38 +502,21 @@ class MainActivity : ThemedActivity(),
             // Only show home UI elements if the container is actually visible
             val containerVisible = binding.mainHomeContainer.visibility == View.VISIBLE
             if (containerVisible) {
-                binding.fab.show()
                 binding.speedRow.visibility = if (isConnected) View.VISIBLE else View.GONE
-                binding.connStatusLabel.visibility = View.VISIBLE
-                binding.tvIpInfo.visibility = if (isConnected && binding.tvIpInfo.text.isNotEmpty()) View.VISIBLE else View.GONE
-                binding.connectionMap.visibility = if (isConnected) View.VISIBLE else View.GONE
-                binding.connectionMap.setActive(isConnected)
+                binding.ipPill.visibility = if (isConnected) View.VISIBLE else View.GONE
 
                 if (isConnected) {
                     binding.glowBg.visibility = View.VISIBLE
-                    binding.pulseRing1.visibility = View.VISIBLE
-                    binding.pulseRing2.visibility = View.VISIBLE
-                    binding.pulseRing3.visibility = View.VISIBLE
-                    startPulseAnimation()
+                    startOrbitAnimation()
                     startBreathAnimation()
                 }
-            } else {
-                binding.fab.hide()
             }
         } else {
-            if (!DataStore.showBottomBar) binding.fab.hide()
-            binding.fab.hide()
             binding.speedRow.visibility = View.GONE
-            binding.connStatusLabel.visibility = View.GONE
-            binding.tvIpInfo.visibility = View.GONE
-            binding.connectionMap.visibility = View.GONE
-            binding.connectionMap.setActive(false)
+            binding.ipPill.visibility = View.GONE
 
             binding.glowBg.visibility = View.GONE
-            binding.pulseRing1.visibility = View.GONE
-            binding.pulseRing2.visibility = View.GONE
-            binding.pulseRing3.visibility = View.GONE
-            stopPulseAnimation()
+            stopOrbitAnimation()
             stopBreathAnimation()
         }
 
@@ -655,16 +645,19 @@ class MainActivity : ThemedActivity(),
     private var wasConnected: Boolean = false
     private var connectTime: Long = 0L
     private var breathAnimator: AnimatorSet? = null
+    private var orbitInnerAnimator: ObjectAnimator? = null
+    private var orbitOuterAnimator: ObjectAnimator? = null
 
     private fun startBreathAnimation() {
         breathAnimator?.cancel()
-        val scaleX = ObjectAnimator.ofFloat(binding.fab, "scaleX", 1f, 1.08f, 1f).apply {
-            duration = 2000L
+        val target = binding.vpnButtonCore
+        val scaleX = ObjectAnimator.ofFloat(target, "scaleX", 1f, 1.06f, 1f).apply {
+            duration = 2500L
             repeatCount = ObjectAnimator.INFINITE
             repeatMode = ObjectAnimator.REVERSE
         }
-        val scaleY = ObjectAnimator.ofFloat(binding.fab, "scaleY", 1f, 1.08f, 1f).apply {
-            duration = 2000L
+        val scaleY = ObjectAnimator.ofFloat(target, "scaleY", 1f, 1.06f, 1f).apply {
+            duration = 2500L
             repeatCount = ObjectAnimator.INFINITE
             repeatMode = ObjectAnimator.REVERSE
         }
@@ -677,12 +670,41 @@ class MainActivity : ThemedActivity(),
     private fun stopBreathAnimation() {
         breathAnimator?.cancel()
         breathAnimator = null
-        binding.fab.scaleX = 1f
-        binding.fab.scaleY = 1f
+        if (::binding.isInitialized) {
+            binding.vpnButtonCore.scaleX = 1f
+            binding.vpnButtonCore.scaleY = 1f
+        }
     }
 
-    // LvovFlow: pulsing ring animation (3 rings, staggered)
-    private var pulseJob: Job? = null
+    // LvovFlow Concept: Orbit ring rotation animations
+    private fun startOrbitAnimation() {
+        stopOrbitAnimation()
+        orbitInnerAnimator = ObjectAnimator.ofFloat(binding.orbitInner, "rotation", 0f, 360f).apply {
+            duration = 20000L
+            repeatCount = ObjectAnimator.INFINITE
+            interpolator = LinearInterpolator()
+            start()
+        }
+        orbitOuterAnimator = ObjectAnimator.ofFloat(binding.orbitOuter, "rotation", 360f, 0f).apply {
+            duration = 30000L
+            repeatCount = ObjectAnimator.INFINITE
+            interpolator = LinearInterpolator()
+            start()
+        }
+        binding.orbitInner.alpha = 1f
+        binding.orbitOuter.alpha = 1f
+    }
+
+    private fun stopOrbitAnimation() {
+        orbitInnerAnimator?.cancel()
+        orbitOuterAnimator?.cancel()
+        orbitInnerAnimator = null
+        orbitOuterAnimator = null
+        if (::binding.isInitialized) {
+            binding.orbitInner.alpha = 0.2f
+            binding.orbitOuter.alpha = 0.2f
+        }
+    }
 
     // LvovFlow: Server selection bottom sheet
     private fun showServerSelectionBottomSheet(profiles: List<ProxyEntity>) {
@@ -697,47 +719,10 @@ class MainActivity : ThemedActivity(),
             if (DataStore.serviceState == BaseService.State.Connected) {
                 SagerNet.reloadService()
             }
-            // Server label removed — using connection map
             bottomSheetDialog.dismiss()
         }
         recyclerView.adapter = adapter
         bottomSheetDialog.show()
-    }
-
-    private fun animateRing(ring: View, delay: Long) {
-        ring.scaleX = 1f
-        ring.scaleY = 1f
-        ring.alpha = 0.7f
-        val scaleX = ObjectAnimator.ofFloat(ring, "scaleX", 1f, 1.8f).apply { duration = 2000L }
-        val scaleY = ObjectAnimator.ofFloat(ring, "scaleY", 1f, 1.8f).apply { duration = 2000L }
-        val alpha  = ObjectAnimator.ofFloat(ring, "alpha", 0.7f, 0f).apply { duration = 2000L }
-        AnimatorSet().apply {
-            playTogether(scaleX, scaleY, alpha)
-            startDelay = delay
-            start()
-        }
-    }
-
-    private fun startPulseAnimation() {
-        stopPulseAnimation()
-        pulseJob = lifecycleScope.launch {
-            while (isActive) {
-                animateRing(binding.pulseRing1, 0L)
-                animateRing(binding.pulseRing2, 600L)
-                animateRing(binding.pulseRing3, 1200L)
-                delay(2800L)
-            }
-        }
-    }
-
-    private fun stopPulseAnimation() {
-        pulseJob?.cancel()
-        pulseJob = null
-        if (::binding.isInitialized) {
-            binding.pulseRing1.alpha = 0f
-            binding.pulseRing2.alpha = 0f
-            binding.pulseRing3.alpha = 0f
-        }
     }
 
     /**
@@ -814,6 +799,11 @@ class MainActivity : ThemedActivity(),
                         binding.tvSubscriptionStatus.text = statusText
                         binding.tvSubscriptionStatus.setTextColor(statusColor)
                         binding.homeBanner.visibility = View.VISIBLE
+
+                        // LvovFlow Concept: Update status pill badge with expire date
+                        if (!isExpired && expireDate.isNotBlank()) {
+                            binding.tvStatusBadge.text = "До $expireDate"
+                        }
                     }
 
                     if (banner != null && banner.optBoolean("visible")) {
@@ -842,6 +832,8 @@ class MainActivity : ThemedActivity(),
                         binding.tvSubscriptionStatus.text = "✓ Активна до $expireDate"
                         binding.tvSubscriptionStatus.setTextColor(0xFF22C55E.toInt())
                         binding.homeBanner.visibility = View.VISIBLE
+                        // Update status pill badge from cache
+                        binding.tvStatusBadge.text = "До $expireDate"
                     }
                 }
             }
@@ -864,70 +856,112 @@ class MainActivity : ThemedActivity(),
         binding.fab.changeState(state, DataStore.serviceState, animate)
         if (msg != null) snackbar(getString(R.string.vpn_error, msg)).show()
 
-        // LvovFlow: FAB color — green when connected, indigo otherwise
-        val fabColor = if (state == BaseService.State.Connected) {
-            0xFF22C55E.toInt()  // bright green
-        } else {
-            com.google.android.material.color.MaterialColors.getColor(
-                binding.fab, com.google.android.material.R.attr.colorPrimary
-            )
-        }
-        binding.fab.backgroundTintList = ColorStateList.valueOf(fabColor)
-
         // LvovFlow: haptic feedback on successful connection (strong pulse)
         if (state == BaseService.State.Connected && animate) {
             performLionHaptic(light = false)
         }
 
-        // LvovFlow: timer + status + speed + server card + glow + pulse rings
-        // Only update home screen UI if user is actually on the home tab
+        // LvovFlow Concept: Update UI based on connection state
         val isOnHomeTab = binding.mainHomeContainer.visibility == View.VISIBLE
-        
+
         if (state == BaseService.State.Connected) {
+            // ── ON state: concept aesthetic ──
             if (isOnHomeTab) {
+                // Status text
+                binding.statusText.text = "LvovFlow Активен"
+                binding.statusText.setTextColor(0xFFFFFFFF.toInt())
+
+                // VPN button → active gradient
+                binding.vpnButtonCore.setBackgroundResource(R.drawable.bg_vpn_button_active)
+                binding.shieldIcon.setImageResource(R.drawable.ic_service_idle)
+                binding.shieldIcon.setColorFilter(0xFFFFFFFF.toInt())
+
+                // Speed & stats visible
                 binding.speedRow.visibility = View.VISIBLE
                 binding.speedSparkline.visibility = View.VISIBLE
-                binding.connStatusLabel.text = "Ускорение активно"
-                binding.connectionMap.visibility = View.VISIBLE
-                binding.connectionMap.setActive(true)
-                binding.glowBg.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF22C55E.toInt())
-                binding.glowBg.alpha = 0.35f
-            }
+                binding.ipPill.visibility = View.VISIBLE
 
-            animateNavBarColor(0xFF0D3320.toInt())
-            fetchExternalIp()
+                // Routing path visible
+                binding.routingPath.visibility = View.VISIBLE
+                binding.routeLineFill.visibility = View.VISIBLE
 
-            if (isOnHomeTab) {
+                // Glow behind button
+                binding.glowBg.visibility = View.VISIBLE
+                binding.glowBg.alpha = 0.30f
+
+                // Lower content fully visible
+                binding.lowerContent.alpha = 1f
+
+                // Background gradient (green radial)
+                binding.coordinator.setBackgroundResource(R.drawable.bg_app_gradient_on)
+
+                // Status pill → active (green)
+                binding.statusPillInner.setBackgroundResource(R.drawable.bg_status_pill_active)
+                binding.statusDot.backgroundTintList = ColorStateList.valueOf(0xFF00E676.toInt())
+                binding.tvStatusBadge.setTextColor(0xFF00E676.toInt())
+
+                // Orbit + breath animations
+                startOrbitAnimation()
                 startBreathAnimation()
-                startPulseAnimation()
                 playShockwaveAnimation()
             }
+
+            animateNavBarColor(0xFF0B0E14.toInt())
+            fetchExternalIp()
 
             if (!wasConnected) {
                 connectTime = System.currentTimeMillis()
             }
             wasConnected = true
         } else {
+            // ── OFF / Connecting / Stopping state ──
             if (isOnHomeTab) {
-                binding.speedRow.visibility = View.GONE
-                binding.speedSparkline.visibility = View.GONE
-                binding.speedSparkline.clear()
-                binding.tvIpInfo.visibility = View.GONE
-                binding.connectionMap.setActive(false)
-                binding.connectionMap.visibility = View.GONE
-                binding.connStatusLabel.text = when (state) {
+                binding.statusText.text = when (state) {
                     BaseService.State.Connecting -> "Подключение..."
                     BaseService.State.Stopping -> "Отключение..."
                     else -> "Активировать ускорение"
                 }
-                binding.glowBg.backgroundTintList = null
-                binding.glowBg.alpha = 0.45f
+                binding.statusText.setTextColor(0xFF8B949E.toInt())
+
+                // VPN button → idle (dim)
+                binding.vpnButtonCore.setBackgroundResource(R.drawable.bg_vpn_button_idle)
+                binding.shieldIcon.setColorFilter(0xFF8B949E.toInt())
+
+                // Hide speed & stats
+                binding.speedRow.visibility = View.GONE
+                binding.speedSparkline.visibility = View.GONE
+                binding.speedSparkline.clear()
+                binding.ipPill.visibility = View.GONE
+
+                // Routing path dim
+                binding.routingPath.visibility = View.VISIBLE
+                binding.routeLineFill.visibility = View.GONE
+
+                // Glow off
+                binding.glowBg.visibility = View.GONE
+
+                // Lower content faded
+                binding.lowerContent.animate()
+                    .alpha(0.15f)
+                    .setDuration(400)
+                    .start()
+
+                // Background solid dark
+                binding.coordinator.setBackgroundColor(0xFF0B0E14.toInt())
+
+                // Status pill → inactive (grey)
+                binding.statusPillInner.setBackgroundResource(R.drawable.bg_status_pill_inactive)
+                binding.statusDot.backgroundTintList = ColorStateList.valueOf(0xFF8B949E.toInt())
+                binding.tvStatusBadge.setTextColor(0xFF8B949E.toInt())
+                if (state == BaseService.State.Idle) {
+                    binding.tvStatusBadge.text = "Нет подключения"
+                }
             }
 
-            animateNavBarColor(0xFF0A1628.toInt())
+            animateNavBarColor(0xFF0B0E14.toInt())
 
             stopBreathAnimation()
-            stopPulseAnimation()
+            stopOrbitAnimation()
 
             if (state == BaseService.State.Idle && wasConnected) {
                 clearMobileSessionStats()
@@ -1042,8 +1076,9 @@ class MainActivity : ThemedActivity(),
                     val flag = countryCodeToFlag(cc)
                     if (ip.isNotEmpty()) {
                         withContext(Dispatchers.Main) {
-                            binding.tvIpInfo.text = "IP: $ip  •  $flag $cc"
-                            binding.tvIpInfo.visibility = View.VISIBLE
+                            binding.tvIpInfo.text = "IP: $ip"
+                            binding.tvCountryCode.text = cc
+                            binding.ipPill.visibility = View.VISIBLE
                         }
                         success = true
                         break

@@ -290,4 +290,33 @@
 
     <color name="preference_simple_menu_background">#FAFAFA</color>
 
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- LvovFlow Concept Design System              -->
+    <!-- ═══════════════════════════════════════════ -->
+    <color name="lf_bg_dark">#0B0E14</color>
+    <color name="lf_card_bg">#08FFFFFF</color>
+    <color name="lf_card_border">#0DFFFFFF</color>
+    <color name="lf_primary_cyan">#00F0FF</color>
+    <color name="lf_secondary_mint">#00E676</color>
+    <color name="lf_text_main">#FFFFFF</color>
+    <color name="lf_text_muted">#8B949E</color>
+
+    <!-- Derived opacities -->
+    <color name="lf_mint_10">#1A00E676</color>
+    <color name="lf_mint_15">#2600E676</color>
+    <color name="lf_mint_20">#3300E676</color>
+    <color name="lf_mint_25">#4000E676</color>
+    <color name="lf_mint_40">#6600E676</color>
+    <color name="lf_mint_05">#0D00E676</color>
+    <color name="lf_cyan_10">#1A00F0FF</color>
+    <color name="lf_cyan_50">#8000F0FF</color>
+    <color name="lf_white_03">#08FFFFFF</color>
+    <color name="lf_white_05">#0DFFFFFF</color>
+    <color name="lf_white_10">#1AFFFFFF</color>
+    <color name="lf_nav_bg">#D90B0E14</color>
+
+    <!-- Speed colors -->
+    <color name="lf_speed_down">#00E676</color>
+    <color name="lf_speed_up">#00F0FF</color>
+
 </resources>

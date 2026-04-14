@@ -10,7 +10,7 @@
         android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#0A1628"
+        android:background="@color/lf_bg_dark"
         android:clipChildren="false">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -18,7 +18,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!-- Main Centered Container -->
+        <!-- ═════════════════════════════════════════════════════ -->
+        <!-- MAIN HOME CONTAINER — concept vpn_concept.html       -->
+        <!-- ═════════════════════════════════════════════════════ -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_home_container"
             android:layout_width="match_parent"
@@ -27,182 +29,159 @@
             android:clipChildren="false"
             android:clipToPadding="false">
 
-            <!-- Floating notification bell (top-right) -->
-            <FrameLayout
-                android:id="@+id/btn_notifications"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_chat_bubble"
-                    app:tint="#64748B" />
-
-                <!-- Unread badge dot -->
-                <View
-                    android:id="@+id/notification_badge"
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_circle_green"
-                    android:backgroundTint="#EF4444"
-                    android:visibility="gone" />
-            </FrameLayout>
-
-            <!-- Home Banner: subscription status + admin message (server-driven) -->
+            <!-- ──── HEADER: Status Pill + Chat Button ──── -->
             <LinearLayout
-                android:id="@+id/home_banner"
+                android:id="@+id/header_row"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="60dp"
-                android:orientation="vertical"
-                android:visibility="gone"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="16dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <TextView
-                    android:id="@+id/tv_subscription_status"
-                    android:layout_width="wrap_content"
+                <!-- Status Pill Badge -->
+                <LinearLayout
+                    android:id="@+id/status_pill"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="#22C55E"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/tv_admin_message"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text=""
-                    android:textColor="#94A3B8"
-                    android:textSize="12sp"
-                    android:visibility="gone" />
+                    <LinearLayout
+                        android:id="@+id/status_pill_inner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bg_status_pill_active"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp">
 
+                        <View
+                            android:id="@+id/status_dot"
+                            android:layout_width="6dp"
+                            android:layout_height="6dp"
+                            android:background="@drawable/bg_circle_green"
+                            android:backgroundTint="@color/lf_secondary_mint" />
+
+                        <TextView
+                            android:id="@+id/tv_status_badge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="До 26.07.2026"
+                            android:textColor="@color/lf_secondary_mint"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Chat Button -->
+                <FrameLayout
+                    android:id="@+id/btn_notifications"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_chat_button"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_chat_bubble"
+                        app:tint="@color/lf_text_muted" />
+
+                    <!-- Unread badge dot -->
+                    <View
+                        android:id="@+id/notification_badge"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/bg_circle_green"
+                        android:backgroundTint="#EF4444"
+                        android:visibility="gone" />
+                </FrameLayout>
             </LinearLayout>
 
-            <!-- Speed Row (download / upload) — shown below IP when connected -->
-            <LinearLayout
-                android:id="@+id/speed_row"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/tv_ip_info"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
-
-                <TextView
-                    android:id="@+id/tv_speed_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="↓ 0 Б/с"
-                    android:textColor="#22C55E"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:fontFamily="sans-serif-medium" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="14dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="#2E3A50" />
-
-                <TextView
-                    android:id="@+id/tv_speed_up"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="↑ 0 Б/с"
-                    android:textColor="#22D3EE"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:fontFamily="sans-serif-medium" />
-
-            </LinearLayout>
-
-            <!-- Speed Sparkline Graph — shown below speed row -->
-            <io.nekohasekai.sagernet.widget.SpeedSparklineView
-                android:id="@+id/speed_sparkline"
-                android:layout_width="240dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="6dp"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/speed_row"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <!-- Circular Button and Glows -->
+            <!-- ──── VPN BUTTON with Orbit Rings ──── -->
             <FrameLayout
                 android:id="@+id/button_container"
-                android:layout_width="280dp"
-                android:layout_height="280dp"
+                android:layout_width="320dp"
+                android:layout_height="320dp"
                 android:clipChildren="false"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:clipToPadding="false"
+                app:layout_constraintTop_toBottomOf="@id/header_row"
+                app:layout_constraintBottom_toTopOf="@id/status_text"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintVertical_bias="0.47">
+                app:layout_constraintVertical_bias="0.15"
+                app:layout_constraintVertical_chainStyle="packed">
 
+                <!-- Outer orbit ring (135% of button wrapper, rotates reverse) -->
+                <View
+                    android:id="@+id/orbit_outer"
+                    android:layout_width="320dp"
+                    android:layout_height="320dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_orbit_ring_solid" />
+
+                <!-- Inner orbit ring (100% of button wrapper, dashed, rotates) -->
+                <View
+                    android:id="@+id/orbit_inner"
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_orbit_ring_dashed" />
+
+                <!-- Glow behind button (reused from existing, updated color) -->
                 <View
                     android:id="@+id/glow_bg"
-                    android:layout_width="280dp"
-                    android:layout_height="280dp"
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_glow_circle"
-                    android:alpha="0.45" />
+                    android:alpha="0.25" />
 
-                <View
-                    android:id="@+id/pulse_ring_3"
-                    android:layout_width="210dp"
-                    android:layout_height="210dp"
+                <!-- VPN Button Core -->
+                <FrameLayout
+                    android:id="@+id/vpn_button_core"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/bg_pulse_ring"
-                    android:alpha="0" />
+                    android:background="@drawable/bg_vpn_button_active"
+                    android:elevation="8dp"
+                    android:clickable="true"
+                    android:focusable="true">
 
-                <View
-                    android:id="@+id/pulse_ring_2"
-                    android:layout_width="170dp"
-                    android:layout_height="170dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_pulse_ring"
-                    android:alpha="0" />
+                    <ImageView
+                        android:id="@+id/shield_icon"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_service_idle"
+                        app:tint="@color/lf_text_main" />
+                </FrameLayout>
 
-                <View
-                    android:id="@+id/pulse_ring_1"
-                    android:layout_width="135dp"
-                    android:layout_height="135dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_pulse_ring"
-                    android:alpha="0" />
-
+                <!-- Real FAB (hidden, drives VPN logic) -->
                 <io.nekohasekai.sagernet.widget.ServiceButton
                     android:id="@+id/fab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:elevation="12dp"
+                    android:layout_width="1dp"
+                    android:layout_height="1dp"
                     android:layout_gravity="center"
-                    app:backgroundTint="?fabColorBackground"
-                    app:fabCustomSize="112dp"
-                    app:iconSize="56dp"
-                    app:pressedTranslationZ="6dp"
-                    app:srcCompat="@drawable/ic_service_idle" />
+                    android:alpha="0"
+                    android:elevation="0dp"
+                    app:backgroundTint="@android:color/transparent"
+                    app:fabCustomSize="1dp" />
 
                 <com.google.android.material.progressindicator.CircularProgressIndicator
                     android:id="@+id/fabProgress"
@@ -211,16 +190,16 @@
                     android:layout_gravity="center"
                     android:max="1"
                     android:visibility="invisible"
-                    app:indicatorColor="?colorMaterial100"
-                    app:indicatorSize="120dp"
+                    app:indicatorColor="@color/lf_secondary_mint"
+                    app:indicatorSize="156dp"
                     app:trackCornerRadius="@dimen/mtrl_progress_track_thickness"
-                    app:trackThickness="8dp" />
+                    app:trackThickness="4dp" />
 
                 <!-- Shockwave rings for connection animation -->
                 <View
                     android:id="@+id/shockwave_1"
-                    android:layout_width="112dp"
-                    android:layout_height="112dp"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_shockwave_ring"
                     android:alpha="0"
@@ -228,8 +207,8 @@
 
                 <View
                     android:id="@+id/shockwave_2"
-                    android:layout_width="112dp"
-                    android:layout_height="112dp"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_shockwave_ring"
                     android:alpha="0"
@@ -237,37 +216,338 @@
 
             </FrameLayout>
 
-            <!-- Status text -->
+            <!-- ──── STATUS TEXT ──── -->
             <TextView
-                android:id="@+id/conn_status_label"
+                android:id="@+id/status_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Активировать ускорение"
-                android:textColor="#E2E8F0"
-                android:textSize="16sp"
+                android:layout_marginTop="0dp"
+                android:text="LvovFlow Активен"
+                android:textColor="@color/lf_text_main"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
                 android:letterSpacing="0.02"
                 app:layout_constraintTop_toBottomOf="@id/button_container"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- IP info (shown when connected) -->
+            <!-- Old status label (hidden, kept for backward compat) -->
             <TextView
-                android:id="@+id/tv_ip_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:id="@+id/conn_status_label"
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:alpha="0"
                 android:text=""
-                android:textColor="#64748B"
-                android:textSize="12sp"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/conn_status_label"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- ══════════════════════════════════════════════════ -->
+            <!-- LOWER CONTENT SECTION (fades/blurs when OFF)       -->
+            <!-- ══════════════════════════════════════════════════ -->
+            <LinearLayout
+                android:id="@+id/lower_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                app:layout_constraintTop_toBottomOf="@id/status_text"
+                app:layout_constraintBottom_toTopOf="@id/bottom_nav_anchor"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <!-- IP Info Pill -->
+                <LinearLayout
+                    android:id="@+id/ip_pill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_ip_pill"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="18dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_ip_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="IP: 138.124.101.255"
+                        android:textColor="@color/lf_text_muted"
+                        android:textSize="15sp" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="#33FFFFFF" />
+
+                    <!-- Flag placeholder (set dynamically) -->
+                    <View
+                        android:id="@+id/flag_view"
+                        android:layout_width="18dp"
+                        android:layout_height="13dp"
+                        android:background="#33FFFFFF" />
+
+                    <TextView
+                        android:id="@+id/tv_country_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="NL"
+                        android:textColor="@color/lf_text_muted"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <!-- Speed Section -->
+                <LinearLayout
+                    android:id="@+id/speed_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="40dp"
+                    android:paddingStart="32dp"
+                    android:paddingEnd="32dp"
+                    android:visibility="gone">
+
+                    <!-- Download speed -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/tv_speed_down"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="↓ 0 Б/с"
+                            android:textColor="@color/lf_speed_down"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Загрузка"
+                            android:textColor="@color/lf_text_muted"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <!-- Upload speed -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/tv_speed_up"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="↑ 0 Б/с"
+                            android:textColor="@color/lf_speed_up"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Отдача"
+                            android:textColor="@color/lf_text_muted"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Speed Sparkline Graph (full width) -->
+                <io.nekohasekai.sagernet.widget.SpeedSparklineView
+                    android:id="@+id/speed_sparkline"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:visibility="gone" />
+
+                <!-- ──── Routing Path: You → LvovFlow → World ──── -->
+                <FrameLayout
+                    android:id="@+id/routing_path"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="35dp"
+                    android:paddingStart="40dp"
+                    android:paddingEnd="40dp">
+
+                    <!-- Route line background -->
+                    <View
+                        android:id="@+id/route_line_bg"
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:layout_gravity="top"
+                        android:layout_marginTop="17dp"
+                        android:layout_marginStart="18dp"
+                        android:layout_marginEnd="18dp"
+                        android:background="@drawable/bg_route_line_bg" />
+
+                    <!-- Route line fill (gradient) -->
+                    <View
+                        android:id="@+id/route_line_fill"
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:layout_gravity="top"
+                        android:layout_marginTop="17dp"
+                        android:layout_marginStart="18dp"
+                        android:layout_marginEnd="18dp"
+                        android:background="@drawable/bg_route_line" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <!-- Node: Вы -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <FrameLayout
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:background="@drawable/bg_route_node_active">
+                                <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_map_phone"
+                                    app:tint="@color/lf_secondary_mint" />
+                            </FrameLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Вы"
+                                android:textColor="@color/lf_text_main"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <!-- Node: LvovFlow -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <FrameLayout
+                                android:id="@+id/node_lf"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:background="@drawable/bg_route_node_brand">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="LF"
+                                    android:textColor="@color/lf_primary_cyan"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </FrameLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="LvovFlow"
+                                android:textColor="@color/lf_text_main"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <!-- Node: Мир -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <FrameLayout
+                                android:id="@+id/node_world"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:background="@drawable/bg_route_node_active">
+                                <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_map_globe"
+                                    app:tint="@color/lf_secondary_mint" />
+                            </FrameLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Мир"
+                                android:textColor="@color/lf_text_main"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <!-- Anchor for bottom nav spacing -->
+            <View
+                android:id="@+id/bottom_nav_anchor"
+                android:layout_width="0dp"
+                android:layout_height="85dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <!-- Old home_banner (hidden, kept for backward compat with MainActivity.kt) -->
+            <LinearLayout
+                android:id="@+id/home_banner"
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+                <TextView
+                    android:id="@+id/tv_subscription_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+                <TextView
+                    android:id="@+id/tv_admin_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+            </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Connection Route Map (replaces server button) -->
+        <!-- Connection Route Map (legacy, hidden — replaced by routing_path in layout) -->
         <io.nekohasekai.sagernet.widget.ConnectionMapView
             android:id="@+id/connection_map"
             android:layout_width="match_parent"
@@ -278,28 +558,21 @@
             android:layout_marginEnd="24dp"
             android:visibility="gone" />
 
-    <!-- Removed legacy server info card and speed row for premium UI -->
-
-        <!-- StatsBar (bottom) - hidden, speed shown in custom speed_row -->
-    <!-- Removed StatsBar for premium UI -->
-
         <!-- Bottom Navigation Bar -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_nav"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="85dp"
             android:layout_gravity="bottom"
             android:elevation="16dp"
-            android:paddingBottom="4dp"
-            app:backgroundTint="#0D1626"
+            android:paddingBottom="15dp"
+            app:backgroundTint="@color/lf_nav_bg"
             app:itemIconTint="@color/bottom_nav_icon"
             app:itemTextColor="@color/bottom_nav_icon"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_nav_menu" />
 
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
