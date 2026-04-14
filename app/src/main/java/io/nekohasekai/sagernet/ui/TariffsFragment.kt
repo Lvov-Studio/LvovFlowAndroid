@@ -1,32 +1,32 @@
 package io.nekohasekai.sagernet.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.*
-import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import io.nekohasekai.sagernet.R
+import java.net.HttpURLConnection
+import java.net.URL
 
 /**
- * LvovFlow — Tariffs Tab (Server-Driven UI)
+ * LvovFlow — Tariffs Tab (Native UI, Server-Driven Pricing)
  *
- * Loads the tariffs page from the server via WebView.
- * The page is styled to look identical to native UI.
- * Benefits: prices, plans, and promotions can be updated
- * on the server without releasing a new APK.
+ * Displays tariff cards natively with glassmorphism design.
+ * Prices and payment URLs are fetched from the server so they
+ * can be updated without releasing a new APK.
  */
 class TariffsFragment : Fragment() {
-
-    private var webView: WebView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,95 +36,63 @@ class TariffsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_tariffs, container, false)
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        webView = view.findViewById(R.id.webview_tariffs)
-        val loading = view.findViewById<ProgressBar>(R.id.tariffs_loading)
-        val offline = view.findViewById<LinearLayout>(R.id.tariffs_offline)
-        val btnRetry = view.findViewById<Button>(R.id.btn_retry_tariffs)
-
-        // Get user token for personalized pricing / payment links
         val prefs = requireContext().getSharedPreferences("lvovflow", Context.MODE_PRIVATE)
         val token = prefs.getString("session_token", "") ?: ""
+        val email = prefs.getString("user_email", "") ?: ""
 
-        val url = "https://lvovflow.com/app/app_tariffs.php?token=$token"
+        val btnFlowBuy = view.findViewById<TextView>(R.id.btn_flow_buy)
+        val tvFlowPrice = view.findViewById<TextView>(R.id.tv_flow_price)
 
-        // Configure WebView to behave like native UI
-        webView?.apply {
-            setBackgroundColor(0xFF0A1628.toInt()) // Match app background — no white flash
-            settings.javaScriptEnabled = true
-            settings.domStorageEnabled = true
-            settings.cacheMode = WebSettings.LOAD_DEFAULT
-            settings.mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
+        // Default: open payment page in browser
+        btnFlowBuy.setOnClickListener {
+            val url = "https://lvovflow.com/app/app_tariffs.php?token=$token&action=buy_flow"
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        }
 
-            // Disable zoom controls
-            settings.setSupportZoom(false)
-            settings.builtInZoomControls = false
-            settings.displayZoomControls = false
-
-            webViewClient = object : WebViewClient() {
-                override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                    loading.visibility = View.VISIBLE
-                    offline.visibility = View.GONE
-                }
-
-                override fun onPageFinished(view: WebView?, url: String?) {
-                    loading.visibility = View.GONE
-                }
-
-                override fun onReceivedError(
-                    view: WebView?,
-                    request: WebResourceRequest?,
-                    error: WebResourceError?
-                ) {
-                    // Show offline fallback only for the main page load
-                    if (request?.isForMainFrame == true) {
-                        loading.visibility = View.GONE
-                        offline.visibility = View.VISIBLE
-                        view?.visibility = View.GONE
+        // Fetch dynamic pricing from server
+        if (token.isNotBlank()) {
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val conn = URL("https://lvovflow.com/api/app/tariffs_config.php")
+                        .openConnection() as HttpURLConnection
+                    conn.apply {
+                        requestMethod = "POST"
+                        setRequestProperty("Content-Type", "application/json")
+                        setRequestProperty("X-App-Client", "LvovFlow-Android")
+                        setRequestProperty("X-Session-Token", token)
+                        connectTimeout = 6_000
+                        readTimeout = 6_000
+                        doOutput = true
                     }
-                }
+                    java.io.OutputStreamWriter(conn.outputStream).use { it.write("{}") }
+                    val body = conn.inputStream.bufferedReader().readText()
+                    conn.disconnect()
+                    val json = JSONObject(body)
 
-                override fun shouldOverrideUrlLoading(
-                    view: WebView?,
-                    request: WebResourceRequest?
-                ): Boolean {
-                    val reqUrl = request?.url?.toString() ?: return false
+                    if (json.optBoolean("ok")) {
+                        val plans = json.optJSONArray("plans")
+                        if (plans != null && plans.length() > 0) {
+                            val flow = plans.getJSONObject(0)
+                            val price = flow.optString("price", "99")
+                            val payUrl = flow.optString("pay_url", "")
 
-                    // Payment links & external URLs — open in system browser
-                    if (reqUrl.contains("payment") ||
-                        reqUrl.contains("yookassa") ||
-                        reqUrl.contains("checkout") ||
-                        !reqUrl.startsWith("https://lvovflow.com/app/")
-                    ) {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(reqUrl)))
-                        return true
+                            withContext(Dispatchers.Main) {
+                                tvFlowPrice.text = "$price ₽"
+                                if (payUrl.isNotBlank()) {
+                                    btnFlowBuy.setOnClickListener {
+                                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(payUrl)))
+                                    }
+                                }
+                            }
+                        }
                     }
-
-                    return false // Let WebView handle internal navigation
+                } catch (_: Exception) {
+                    // Use default static data — no crash
                 }
             }
-
-            loadUrl(url)
         }
-
-        // Retry button for offline state
-        btnRetry.setOnClickListener {
-            offline.visibility = View.GONE
-            webView?.visibility = View.VISIBLE
-            webView?.loadUrl(url)
-        }
-    }
-
-    override fun onDestroyView() {
-        webView?.apply {
-            stopLoading()
-            removeAllViews()
-            destroy()
-        }
-        webView = null
-        super.onDestroyView()
     }
 }

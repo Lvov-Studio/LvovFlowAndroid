@@ -648,6 +648,11 @@ class MainActivity : ThemedActivity(),
     private var orbitInnerAnimator: ObjectAnimator? = null
     private var orbitOuterAnimator: ObjectAnimator? = null
 
+    // LvovFlow Concept: Session traffic totals
+    private var totalSessionRx: Long = 0L
+    private var totalSessionTx: Long = 0L
+    private var lastSpeedTimestamp: Long = 0L
+
     private fun startBreathAnimation() {
         breathAnimator?.cancel()
         val target = binding.vpnButtonCore
@@ -965,6 +970,10 @@ class MainActivity : ThemedActivity(),
 
             if (state == BaseService.State.Idle && wasConnected) {
                 clearMobileSessionStats()
+                // Reset session traffic counters
+                totalSessionRx = 0L
+                totalSessionTx = 0L
+                lastSpeedTimestamp = 0L
             }
             wasConnected = false
         }
@@ -1006,6 +1015,17 @@ class MainActivity : ThemedActivity(),
         runOnUiThread {
             binding.tvSpeedDown.text = "↓ ${formatSpeed(stats.rxRateProxy)}"
             binding.tvSpeedUp.text = "↑ ${formatSpeed(stats.txRateProxy)}"
+
+            // Accumulate session totals (callback fires ~every 1 second)
+            val now = System.currentTimeMillis()
+            val elapsed = if (lastSpeedTimestamp > 0) (now - lastSpeedTimestamp) / 1000.0 else 1.0
+            lastSpeedTimestamp = now
+            totalSessionRx += (stats.rxRateProxy * elapsed).toLong()
+            totalSessionTx += (stats.txRateProxy * elapsed).toLong()
+
+            binding.tvSessionDown.text = "Загрузка · ${formatBytes(totalSessionRx)}"
+            binding.tvSessionUp.text = "Отдача · ${formatBytes(totalSessionTx)}"
+
             // Feed sparkline with download speed
             binding.speedSparkline.addSpeed(stats.rxRateProxy)
         }
@@ -1016,6 +1036,15 @@ class MainActivity : ThemedActivity(),
             bytesPerSec >= 1_000_000L -> String.format("%.1f Мб/с", bytesPerSec / 1_000_000.0)
             bytesPerSec >= 1_000L -> String.format("%.0f Кб/с", bytesPerSec / 1_000.0)
             else -> "$bytesPerSec Б/с"
+        }
+    }
+
+    private fun formatBytes(bytes: Long): String {
+        return when {
+            bytes >= 1_000_000_000L -> String.format("%.1f ГБ", bytes / 1_000_000_000.0)
+            bytes >= 1_000_000L -> String.format("%.1f МБ", bytes / 1_000_000.0)
+            bytes >= 1_000L -> String.format("%.0f КБ", bytes / 1_000.0)
+            else -> "$bytes Б"
         }
     }
 
@@ -1073,10 +1102,11 @@ class MainActivity : ThemedActivity(),
                     val json = JSONObject(body)
                     val ip = json.optString("query", "")
                     val cc = json.optString("countryCode", "")
-                    val flag = countryCodeToFlag(cc)
                     if (ip.isNotEmpty()) {
+                        val flag = countryCodeToFlag(cc)
                         withContext(Dispatchers.Main) {
                             binding.tvIpInfo.text = "IP: $ip"
+                            binding.tvFlag.text = flag
                             binding.tvCountryCode.text = cc
                             binding.ipPill.visibility = View.VISIBLE
                         }
