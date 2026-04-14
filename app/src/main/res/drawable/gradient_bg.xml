@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  LvovFlow concept-matching background:
-  Solid #0B0E14 base with subtle green radial glow (matching vpn_concept.html)
+  LvovFlow concept background:
+  Solid #0B0E14 base with subtle green radial glow
 -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Solid dark base matching concept's --bg-dark -->
+    <!-- Solid dark base -->
     <item>
         <shape>
             <solid android:color="#0B0E14" />
         </shape>
     </item>
 
-    <!-- Subtle green radial glow near the center-top (matching concept's radial-gradient) -->
+    <!-- Subtle green radial glow near center top -->
     <item>
         <shape>
             <gradient
