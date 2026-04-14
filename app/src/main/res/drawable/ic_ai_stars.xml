@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="84dp"
+    android:height="84dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Large star -->
+    <path
+        android:pathData="M10,2L12.5,8.5L19,11L12.5,13.5L10,20L7.5,13.5L1,11L7.5,8.5L10,2Z"
+        android:fillColor="#00F0FF"/>
+    <!-- Medium star top-right -->
+    <path
+        android:pathData="M19.5,3L20.5,5.5L23,6.5L20.5,7.5L19.5,10L18.5,7.5L16,6.5L18.5,5.5L19.5,3Z"
+        android:fillColor="#00F0FF"/>
+    <!-- Small star bottom-right -->
+    <path
+        android:pathData="M18,16L18.75,17.5L20.5,18.25L18.75,19L18,20.5L17.25,19L15.5,18.25L17.25,17.5L18,16Z"
+        android:fillColor="#00F0FF"/>
+</vector>

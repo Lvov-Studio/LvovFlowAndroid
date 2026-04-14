@@ -1047,6 +1047,12 @@ class MainActivity : ThemedActivity(),
             binding.tvSessionDown.text = "Загрузка · ${formatBytes(totalSessionRx)}"
             binding.tvSessionUp.text = "Отдача · ${formatBytes(totalSessionTx)}"
 
+            // Persist totals for Profile screen stats row
+            getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE).edit()
+                .putLong("total_download", totalSessionRx)
+                .putLong("total_upload", totalSessionTx)
+                .apply()
+
             // Feed sparkline with download speed
             binding.speedSparkline.addSpeed(stats.rxRateProxy)
         }
@@ -1389,7 +1395,7 @@ class MainActivity : ThemedActivity(),
     }
 
     fun onChatClicked(v: android.view.View?) {
-        startActivity(Intent(this, NotificationsActivity::class.java))
+        NotificationsFragment().show(supportFragmentManager, "notifications_overlay")
     }
 
     private fun updateChatIconColor() {

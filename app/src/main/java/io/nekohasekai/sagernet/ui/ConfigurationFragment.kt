@@ -239,7 +239,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         // LvovFlow: Floating notification button (in layout_main.xml, not fragment)
         activity?.findViewById<android.view.View>(R.id.btn_notifications)?.setOnClickListener {
-            startActivity(android.content.Intent(requireContext(), NotificationsActivity::class.java))
+            NotificationsFragment().show(parentFragmentManager, "notifications_overlay")
         }
     }
 

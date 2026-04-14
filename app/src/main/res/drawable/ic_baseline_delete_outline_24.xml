@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Trash can: lid -->
+    <path
+        android:pathData="M3,6L21,6"
+        android:strokeWidth="2"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+    <!-- Can body -->
+    <path
+        android:pathData="M19,6L18,21C18,21.5304 17.7893,22.0391 17.4142,22.4142C17.0391,22.7893 16.5304,23 16,23L8,23C7.4696,23 6.9609,22.7893 6.5858,22.4142C6.2107,22.0391 6,21.5304 6,21L5,6"
+        android:strokeWidth="2"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+    <!-- Handle -->
+    <path
+        android:pathData="M8,6L8,4C8,3.4696 8.2107,2.9609 8.5858,2.5858C8.9609,2.2107 9.4696,2 10,2L14,2C14.5304,2 15.0391,2.2107 15.4142,2.5858C15.7893,2.9609 16,3.4696 16,4L16,6"
+        android:strokeWidth="2"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+</vector>

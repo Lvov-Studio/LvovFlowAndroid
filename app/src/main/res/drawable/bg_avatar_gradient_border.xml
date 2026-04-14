@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Gradient border ring -->
+    <item>
+        <shape android:shape="oval">
+            <gradient
+                android:type="linear"
+                android:startColor="#CC00F0FF"
+                android:endColor="#CC00E676"
+                android:angle="135" />
+            <size android:width="64dp" android:height="64dp" />
+        </shape>
+    </item>
+    <!-- Inner dark fill -->
+    <item
+        android:left="2dp"
+        android:top="2dp"
+        android:right="2dp"
+        android:bottom="2dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="linear"
+                android:startColor="#2600F0FF"
+                android:endColor="#2600E676"
+                android:angle="135" />
+            <size android:width="60dp" android:height="60dp" />
+        </shape>
+    </item>
+</layer-list>

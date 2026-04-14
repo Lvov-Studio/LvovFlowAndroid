@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_notification_card"
+    android:padding="16dp"
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Top row: dot + title + time -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <!-- Unread dot -->
+        <View
+            android:id="@+id/notif_dot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_notif_dot"
+            android:visibility="gone" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tv_notif_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Заголовок"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Time -->
+        <TextView
+            android:id="@+id/tv_notif_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Только что"
+            android:textColor="#8B949E"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <!-- Body text (2 lines clipped, full when expanded) -->
+    <TextView
+        android:id="@+id/tv_notif_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Текст уведомления"
+        android:textColor="#9A9DAE"
+        android:textSize="14sp"
+        android:lineSpacingExtra="3dp"
+        android:maxLines="2"
+        android:ellipsize="end" />
+
+    <!-- Actions row (visible only when expanded) -->
+    <LinearLayout
+        android:id="@+id/actions_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="14dp"
+        android:visibility="gone">
+
+        <!-- Delete button -->
+        <LinearLayout
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/bg_notif_delete_btn"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="6dp"
+                android:src="@drawable/ic_baseline_delete_outline_24"
+                app:tint="#EF4444" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Удалить"
+                android:textColor="#EF4444"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

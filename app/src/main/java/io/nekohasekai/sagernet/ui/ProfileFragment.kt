@@ -24,8 +24,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * LvovFlow — Profile Screen Fragment
- * Accessible via bottom navigation "Профиль" tab.
+ * LvovFlow — Profile Screen Fragment (Concept v2 Design)
+ * Matches vpn_concept.html profile tab:
+ * - Avatar + Name + Email + ID badge
+ * - Stats row (Downloaded / Uploaded)
+ * - Glassmorphism settings groups
+ * - Logout button with icon
  */
 class ProfileFragment : ToolbarFragment() {
 
@@ -46,6 +50,47 @@ class ProfileFragment : ToolbarFragment() {
         toolbar.navigationIcon = null
         toolbar.title = null
 
+        val prefs = requireContext().getSharedPreferences("lvovflow", Context.MODE_PRIVATE)
+
+        // ── Avatar + User Info ──
+        val email = prefs.getString("user_email", "") ?: ""
+        val maskedEmail = maskEmail(email)
+        val firstLetter = if (email.isNotBlank()) {
+            val firstChar = email.first().uppercaseChar()
+            // If first char is a digit, try to use something friendlier
+            if (firstChar.isLetter()) firstChar.toString() else "U"
+        } else "U"
+
+        view.findViewById<TextView>(R.id.tv_avatar_letter).text = firstLetter
+        view.findViewById<TextView>(R.id.tv_user_name)?.text = generateDisplayName(email)
+        view.findViewById<TextView>(R.id.tv_user_email)?.text = maskedEmail
+
+        // Generate a user ID from session token
+        val sessionToken = prefs.getString("session_token", "") ?: ""
+        val userId = if (sessionToken.length >= 8) {
+            val hash = sessionToken.takeLast(6).uppercase()
+            "ID: ${hash.take(4)}-${hash.takeLast(2)}X"
+        } else "ID: 0000-XXX"
+        view.findViewById<TextView>(R.id.tv_user_id)?.text = userId
+
+        // ── Stats Row ──
+        // Use session stats from SharedPreferences (written by MainActivity)
+        val totalDown = prefs.getLong("total_download", 0L)
+        val totalUp = prefs.getLong("total_upload", 0L)
+        view.findViewById<TextView>(R.id.tv_stat_download)?.text = formatBytes(totalDown)
+        view.findViewById<TextView>(R.id.tv_stat_upload)?.text = formatBytes(totalUp)
+
+        // ── Subscription status ──
+        val expireDate = prefs.getString("expire_date", "") ?: ""
+        val subStatus = view.findViewById<TextView>(R.id.tv_sub_status)
+        if (expireDate.isNotBlank()) {
+            subStatus?.text = "Активна"
+            subStatus?.setTextColor(0xFF00E676.toInt())
+        } else {
+            subStatus?.text = "—"
+            subStatus?.setTextColor(0xFF8B949E.toInt())
+        }
+
         // Version
         view.findViewById<TextView>(R.id.tv_version).text =
             "LvovFlow v${BuildConfig.VERSION_NAME}"
@@ -53,7 +98,6 @@ class ProfileFragment : ToolbarFragment() {
         // Check updates
         view.findViewById<TextView>(R.id.tv_check_update)?.setOnClickListener {
             Toast.makeText(requireContext(), "Проверка обновлений…", Toast.LENGTH_SHORT).show()
-            // Triggers the in-app update check from MainActivity
             (requireActivity() as? MainActivity)?.let { main ->
                 try {
                     val method = main.javaClass.getDeclaredMethod("checkForUpdates")
@@ -65,7 +109,7 @@ class ProfileFragment : ToolbarFragment() {
             }
         }
 
-        // Menu items
+        // ── Menu items ──
         view.findViewById<LinearLayout>(R.id.item_refresh).setOnClickListener {
             refreshSubscription()
         }
@@ -83,7 +127,7 @@ class ProfileFragment : ToolbarFragment() {
         }
 
         // Привилегии (referral + promo combined screen)
-        view.findViewById<android.widget.LinearLayout>(R.id.item_privileges).setOnClickListener {
+        view.findViewById<LinearLayout>(R.id.item_privileges).setOnClickListener {
             (requireActivity() as? MainActivity)?.displayFragment(PrivilegesFragment())
         }
 
@@ -102,6 +146,36 @@ class ProfileFragment : ToolbarFragment() {
                 .setPositiveButton("Выйти") { _, _ -> logout() }
                 .setNegativeButton("Отмена", null)
                 .show()
+        }
+    }
+
+    private fun maskEmail(email: String): String {
+        if (email.isBlank() || !email.contains("@")) return email
+        val parts = email.split("@")
+        val name = parts[0]
+        val domain = parts[1]
+        val visible = if (name.length > 3) name.take(3) else name.take(1)
+        return "$visible***@$domain"
+    }
+
+    private fun generateDisplayName(email: String): String {
+        if (email.isBlank()) return "Пользователь"
+        val name = email.substringBefore("@")
+        // If >50% of the name chars are digits, don't show it
+        val digitRatio = name.count { it.isDigit() }.toFloat() / name.length.coerceAtLeast(1)
+        return if (digitRatio > 0.5f) {
+            "Пользователь"
+        } else {
+            name.replaceFirstChar { it.uppercase() }
+        }
+    }
+
+    private fun formatBytes(bytes: Long): String {
+        return when {
+            bytes < 1024 -> "$bytes Б"
+            bytes < 1024 * 1024 -> String.format("%.1f КБ", bytes / 1024.0)
+            bytes < 1024L * 1024 * 1024 -> String.format("%.1f МБ", bytes / (1024.0 * 1024))
+            else -> String.format("%.1f ГБ", bytes / (1024.0 * 1024 * 1024))
         }
     }
 
@@ -125,8 +199,6 @@ class ProfileFragment : ToolbarFragment() {
             }
         }
     }
-
-
 
     @OptIn(kotlinx.coroutines.DelicateCoroutinesApi::class)
     private fun logout() {
