@@ -46,10 +46,10 @@ class TariffsFragment : Fragment() {
         val btnFlowBuy = view.findViewById<TextView>(R.id.btn_flow_buy)
         val tvFlowPrice = view.findViewById<TextView>(R.id.tv_flow_price)
 
-        // Default: open payment page in browser
+        // Default: open payment creation endpoint (redirects to YooKassa)
+        val paymentUrl = "https://lvovflow.com/api/payment/create.php?token=$token"
         btnFlowBuy.setOnClickListener {
-            val url = "https://lvovflow.com/app/app_tariffs.php?token=$token&action=buy_flow"
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl)))
         }
 
         // Fetch dynamic pricing from server
