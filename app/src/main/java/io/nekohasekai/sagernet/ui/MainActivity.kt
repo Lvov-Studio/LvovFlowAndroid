@@ -527,11 +527,25 @@ class MainActivity : ThemedActivity(),
     }
 
     fun displayFragmentWithId(@IdRes id: Int): Boolean {
-        // LvovFlow: hide main home UI (FAB, speed, sparkline) on non-home tabs
+        // LvovFlow: header (status pill + chat) stays visible on ALL tabs
         val isHome = id == R.id.nav_configuration
-        binding.mainHomeContainer.visibility = if (isHome) View.VISIBLE else View.GONE
+        binding.mainHomeContainer.visibility = View.VISIBLE
+        // Hide home-specific content on non-home tabs, but keep header
+        binding.headerRow.visibility = View.VISIBLE
+        binding.orbitContainer.visibility = if (isHome) View.VISIBLE else View.GONE
+        binding.statusText.visibility = if (isHome) View.VISIBLE else View.GONE
+        binding.lowerContent.visibility = if (isHome) View.VISIBLE else View.GONE
+        binding.glowBg.visibility = if (isHome && binding.glowBg.alpha > 0f) View.VISIBLE else View.GONE
+        binding.shockwave1.visibility = if (isHome) View.VISIBLE else View.GONE
+        binding.shockwave2.visibility = if (isHome) View.VISIBLE else View.GONE
         // Connection map is outside mainHomeContainer, hide separately
         if (!isHome) binding.connectionMap.visibility = View.GONE
+        // Fragment holder needs top margin on non-home tabs to not overlap header
+        val fragmentParams = binding.fragmentHolder.layoutParams as? androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
+        if (fragmentParams != null) {
+            fragmentParams.topMargin = if (isHome) 0 else (56 * resources.displayMetrics.density).toInt()
+            binding.fragmentHolder.layoutParams = fragmentParams
+        }
 
         when (id) {
             R.id.nav_configuration -> {
@@ -867,7 +881,7 @@ class MainActivity : ThemedActivity(),
         }
 
         // LvovFlow Concept: Update UI based on connection state
-        val isOnHomeTab = binding.mainHomeContainer.visibility == View.VISIBLE
+        val isOnHomeTab = binding.orbitContainer.visibility == View.VISIBLE
 
         if (state == BaseService.State.Connected) {
             // ── ON state: concept aesthetic ──
