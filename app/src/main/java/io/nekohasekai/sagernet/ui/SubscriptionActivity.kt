@@ -41,8 +41,8 @@ class SubscriptionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Transparent nav/status bars
-        window.statusBarColor = 0xFF0A1628.toInt()
-        window.navigationBarColor = 0xFF0A1628.toInt()
+        window.statusBarColor = 0xFF0B0E14.toInt()
+        window.navigationBarColor = 0xFF0B0E14.toInt()
 
         if (isTv) {
             setupTvLayout()
@@ -313,7 +313,7 @@ class SubscriptionActivity : AppCompatActivity() {
         badgeStatus: LinearLayout
     ) {
         if (expireDate.isNotBlank()) {
-            tvExpire.text = "Действует до $expireDate"
+            tvExpire.text = "Активна до $expireDate"
 
             try {
                 val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
@@ -323,26 +323,33 @@ class SubscriptionActivity : AppCompatActivity() {
                     val daysLeft = TimeUnit.MILLISECONDS.toDays(diff).toInt()
 
                     if (daysLeft > 0) {
-                        tvDaysLeft.text = daysLeft.toString()
+                        tvDaysLeft.text = "Осталось $daysLeft ${pluralDays(daysLeft)}"
                         tvStatusBadge.text = "Активна"
-                        tvStatusBadge.setTextColor(0xFF22C55E.toInt())
-                        dotStatus.backgroundTintList = ColorStateList.valueOf(0xFF22C55E.toInt())
-                        badgeStatus.backgroundTintList = ColorStateList.valueOf(0x1A22C55E)
+                        tvStatusBadge.setTextColor(0xFF00E676.toInt())
+                        dotStatus.backgroundTintList = ColorStateList.valueOf(0xFF00E676.toInt())
+                        badgeStatus.backgroundTintList = ColorStateList.valueOf(0x1A00E676)
                     } else {
-                        tvDaysLeft.text = "0"
+                        tvDaysLeft.text = "Подписка истекла"
                         tvStatusBadge.text = "Истекла"
                         tvStatusBadge.setTextColor(0xFFEF4444.toInt())
                         dotStatus.backgroundTintList = ColorStateList.valueOf(0xFFEF4444.toInt())
                         badgeStatus.backgroundTintList = ColorStateList.valueOf(0x1AEF4444)
+                        tvExpire.setTextColor(0xFFEF4444.toInt())
                     }
                 }
             } catch (_: Exception) {
                 tvDaysLeft.text = "—"
             }
         } else {
-            tvExpire.text = "Активная подписка"
-            tvDaysLeft.text = "∞"
+            tvExpire.text = "Подписка активна"
+            tvDaysLeft.text = ""
         }
+    }
+
+    private fun pluralDays(n: Int): String = when {
+        n % 10 == 1 && n % 100 != 11 -> "день"
+        n % 10 in 2..4 && (n % 100 < 10 || n % 100 >= 20) -> "дня"
+        else -> "дней"
     }
 
     private fun setupTvFocusAnimations(vararg views: View) {

@@ -4,16 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#0A1628"
+    android:background="#0B0E14"
     android:fitsSystemWindows="true">
 
-    <!-- AppBar -->
+    <!-- AppBar: ← Моя подписка -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="#0A1428"
         android:paddingStart="8dp"
         android:paddingEnd="16dp">
 
@@ -21,7 +20,7 @@
             android:id="@+id/btn_back"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@drawable/bg_settings_icon_concept"
             android:src="@drawable/baseline_arrow_back_24"
             android:padding="8dp"
             android:contentDescription="Назад"
@@ -42,8 +41,9 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:padding="20dp"
-        android:paddingBottom="32dp">
+        android:scrollbars="none"
+        android:padding="24dp"
+        android:paddingBottom="40dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,286 +51,310 @@
             android:orientation="vertical">
 
             <!-- ══════════════════════════════════════ -->
-            <!-- STATUS CARD                            -->
+            <!-- STATUS CARD (concept style)           -->
             <!-- ══════════════════════════════════════ -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_glass_card"
+                android:background="@drawable/bg_sub_status_card"
                 android:orientation="vertical"
                 android:padding="24dp"
-                android:elevation="4dp">
+                android:gravity="center_horizontal">
 
-                <!-- Plan name + badge -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tv_plan_name"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Flow"
-                        android:textColor="#FFFFFF"
-                        android:textSize="28sp"
-                        android:textStyle="bold" />
-
-                    <!-- Status badge -->
-                    <LinearLayout
-                        android:id="@+id/badge_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_pill_badge"
-                        android:backgroundTint="#1A22C55E"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="12dp"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp">
-
-                        <View
-                            android:id="@+id/dot_status"
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
-                            android:layout_marginEnd="6dp"
-                            android:background="@drawable/bg_circle_green" />
-
-                        <TextView
-                            android:id="@+id/tv_status_badge"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Активна"
-                            android:textColor="#22C55E"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Expire date row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
+                <!-- Shield icon in green circle -->
+                <FrameLayout
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_sub_shield_icon">
                     <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_marginEnd="10dp"
-                        android:src="@drawable/ic_clock"
-                        app:tint="#64748B" />
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_service_idle"
+                        app:tint="#00E676" />
+                </FrameLayout>
 
-                    <TextView
-                        android:id="@+id/tv_expire_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Действует до 26.07.2026"
-                        android:textColor="#94A3B8"
-                        android:textSize="14sp" />
-                </LinearLayout>
+                <!-- Plan name -->
+                <TextView
+                    android:id="@+id/tv_plan_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Flow"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
-                <!-- Days remaining -->
+                <!-- Expire date -->
+                <TextView
+                    android:id="@+id/tv_expire_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Активна до 26.07.2026"
+                    android:textColor="#00E676"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <!-- Days left -->
                 <TextView
                     android:id="@+id/tv_days_left"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:textColor="#FFFFFF"
-                    android:textSize="36sp"
-                    android:textStyle="bold"
-                    android:text="117" />
+                    android:layout_marginTop="4dp"
+                    android:text="Осталось 117 дней"
+                    android:textColor="#8B949E"
+                    android:textSize="13sp" />
+
+                <!-- Status badge -->
+                <LinearLayout
+                    android:id="@+id/badge_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_pill_badge"
+                    android:backgroundTint="#1A00E676"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="14dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
+
+                    <View
+                        android:id="@+id/dot_status"
+                        android:layout_width="6dp"
+                        android:layout_height="6dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_circle_green" />
+
+                    <TextView
+                        android:id="@+id/tv_status_badge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Активна"
+                        android:textColor="#00E676"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ══════════════════════════════════════ -->
+            <!-- ACTION GROUP                           -->
+            <!-- ══════════════════════════════════════ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_settings_group_concept"
+                android:orientation="vertical">
+
+                <!-- Продлить тариф -->
+                <LinearLayout
+                    android:id="@+id/btn_upgrade"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp">
+
+                    <FrameLayout
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/bg_settings_icon_concept">
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_clock"
+                            app:tint="#8B949E" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:text="Продлить тариф"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textColor="#8B949E"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#0DFFFFFF"
+                    android:layout_marginStart="58dp"
+                    android:layout_marginEnd="16dp" />
+
+                <!-- Ввести промокод -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp">
+
+                    <FrameLayout
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/bg_settings_icon_concept">
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_promo_lock"
+                            app:tint="#8B949E" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:text="Ввести промокод"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textColor="#8B949E"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ══════════════════════════════════════ -->
+            <!-- FEATURES                               -->
+            <!-- ══════════════════════════════════════ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_settings_group_concept"
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="дней осталось"
-                    android:textColor="#64748B"
-                    android:textSize="14sp" />
+                    android:layout_marginBottom="12dp"
+                    android:text="Что включено"
+                    android:textColor="#8B949E"
+                    android:textSize="12sp"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.08" />
 
-            </LinearLayout>
-
-            <!-- ══════════════════════════════════════ -->
-            <!-- FEATURES CARD                          -->
-            <!-- ══════════════════════════════════════ -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:layout_marginBottom="12dp"
-                android:text="Что входит в подписку"
-                android:textColor="#94A3B8"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.05" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_glass_card"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:elevation="4dp">
-
-                <!-- Feature 1 -->
+                <!-- Feature row 1 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp">
-
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="14dp"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="12dp"
                         android:src="@drawable/ic_tariff_rocket"
-                        app:tint="#10B981" />
-
+                        app:tint="#00E676" />
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="Безлимитное ускорение"
-                        android:textColor="#E2E8F0"
-                        android:textSize="15sp" />
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@drawable/ic_check_circle"
-                        app:tint="#10B981" />
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- Divider -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="34dp"
-                    android:background="#10FFFFFF" />
-
-                <!-- Feature 2 -->
+                <!-- Feature row 2 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp">
-
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="14dp"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="12dp"
                         android:src="@drawable/ic_tariff_shield"
-                        app:tint="#10B981" />
-
+                        app:tint="#00E676" />
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="Блокировка рекламы"
-                        android:textColor="#E2E8F0"
-                        android:textSize="15sp" />
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@drawable/ic_check_circle"
-                        app:tint="#10B981" />
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- Divider -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="34dp"
-                    android:background="#10FFFFFF" />
-
-                <!-- Feature 3 -->
+                <!-- Feature row 3 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp">
-
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="14dp"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="12dp"
                         android:src="@drawable/ic_tariff_devices"
-                        app:tint="#10B981" />
-
+                        app:tint="#00E676" />
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="До 2 устройств"
-                        android:textColor="#E2E8F0"
-                        android:textSize="15sp" />
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@drawable/ic_check_circle"
-                        app:tint="#10B981" />
+                        android:text="До 5 устройств"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp" />
                 </LinearLayout>
-
             </LinearLayout>
 
-            <!-- ══════════════════════════════════════ -->
-            <!-- BUTTONS                                -->
-            <!-- ══════════════════════════════════════ -->
-
-            <!-- Renew button -->
+            <!-- Renew button (green, concept style) -->
             <Button
                 android:id="@+id/btn_renew"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="28dp"
-                android:backgroundTint="#10B981"
+                android:layout_height="52dp"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="#00E676"
                 android:text="Продлить подписку"
                 android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
+                android:textColor="#000000"
+                android:textSize="15sp"
                 android:textStyle="bold"
                 app:cornerRadius="14dp" />
 
-            <!-- Upgrade button -->
-            <LinearLayout
-                android:id="@+id/btn_upgrade"
+            <!-- Disclaimer -->
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_glass_card"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true">
-
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_marginEnd="8dp"
-                    android:src="@drawable/ic_upgrade"
-                    app:tint="#0EA5E9" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Улучшить тариф"
-                    android:textColor="#0EA5E9"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="В LvovFlow нет скрытых платежей и автоматических списаний. Ваша подписка полностью под вашим контролем."
+                android:textColor="#4A5568"
+                android:textSize="12sp"
+                android:textAlignment="center"
+                android:lineSpacingExtra="3dp" />
 
         </LinearLayout>
     </ScrollView>

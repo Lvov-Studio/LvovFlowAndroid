@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#070F1E"
+    android:background="#0B0E14"
     android:fitsSystemWindows="true">
 
     <!-- AppBar -->
@@ -13,7 +13,6 @@
         android:layout_height="56dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="#0A1428"
         android:paddingStart="8dp"
         android:paddingEnd="16dp">
 
@@ -21,7 +20,7 @@
             android:id="@+id/btn_back"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@drawable/bg_settings_icon_concept"
             android:src="@drawable/baseline_arrow_back_24"
             android:padding="8dp"
             android:contentDescription="Назад"
@@ -42,7 +41,8 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:padding="16dp">
+        android:scrollbars="none"
+        android:padding="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,225 +50,182 @@
             android:orientation="vertical">
 
             <!-- ══════════════════════════════════════ -->
-            <!-- QR LOGIN CARD                          -->
+            <!-- TOP ACTIONS GRID (2 cards)             -->
             <!-- ══════════════════════════════════════ -->
             <LinearLayout
-                android:id="@+id/card_qr_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_glass_card"
                 android:orientation="horizontal"
-                android:padding="20dp"
-                android:gravity="center_vertical"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground">
+                android:baselineAligned="false">
 
-                <FrameLayout
-                    android:layout_width="48dp"
-                    android:layout_height="48dp">
-                    <View
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/bg_circle_avatar"
-                        android:backgroundTint="#1525C9EF"
-                        android:alpha="0.5" />
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_qr_code"
-                        app:tint="#25C9EF" />
-                </FrameLayout>
-
+                <!-- QR Login card -->
                 <LinearLayout
+                    android:id="@+id/card_qr_login"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/bg_device_action_cyan"
                     android:orientation="vertical"
-                    android:layout_marginStart="16dp">
+                    android:padding="16dp"
+                    android:gravity="center_horizontal"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginBottom="8dp"
+                        android:src="@drawable/ic_qr_code"
+                        app:tint="#00F0FF" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Войти по QR"
                         android:textColor="#FFFFFF"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Отсканируйте QR на ТВ или ПК"
-                        android:textColor="#64748B"
-                        android:textSize="13sp" />
+                        android:layout_marginTop="4dp"
+                        android:text="Отсканируйте код\nна ТВ или ПК"
+                        android:textColor="#8B949E"
+                        android:textSize="11sp"
+                        android:gravity="center"
+                        android:lineSpacingExtra="2dp" />
                 </LinearLayout>
 
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="#64748B" />
+                <!-- Sub Key card -->
+                <LinearLayout
+                    android:id="@+id/card_sub_key"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_device_action_green"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:gravity="center_horizontal"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginBottom="8dp"
+                        android:src="@drawable/ic_vpn_key"
+                        app:tint="#00E676" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ключ подписки"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Для настройки на\nроутерах и ПК"
+                        android:textColor="#8B949E"
+                        android:textSize="11sp"
+                        android:gravity="center"
+                        android:lineSpacingExtra="2dp" />
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- ══════════════════════════════════════ -->
-            <!-- SUBSCRIPTION KEY CARD                  -->
-            <!-- ══════════════════════════════════════ -->
+            <!-- Key details (expandable, hidden by default) -->
             <LinearLayout
-                android:id="@+id/card_sub_key"
+                android:id="@+id/key_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_glass_card"
                 android:orientation="vertical"
-                android:padding="20dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground">
+                android:visibility="gone"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_settings_group_concept"
+                android:padding="16dp">
 
+                <!-- Sub URL -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_referral_field_concept"
+                    android:padding="12dp"
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
-                    <FrameLayout
-                        android:layout_width="48dp"
-                        android:layout_height="48dp">
-                        <View
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_circle_avatar"
-                            android:backgroundTint="#1510B981"
-                            android:alpha="0.5" />
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_vpn_key"
-                            app:tint="#10B981" />
-                    </FrameLayout>
-
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/tv_sub_url"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="16dp">
+                        android:text="https://..."
+                        android:textColor="#8B949E"
+                        android:textSize="12sp"
+                        android:fontFamily="monospace"
+                        android:maxLines="2"
+                        android:ellipsize="middle" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Ключ подписки"
-                            android:textColor="#FFFFFF"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Для настройки на ПК, роутере"
-                            android:textColor="#64748B"
-                            android:textSize="13sp" />
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="#64748B" />
+                    <ImageButton
+                        android:id="@+id/btn_copy_url"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="8dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_baseline_content_copy_24"
+                        android:padding="6dp"
+                        android:contentDescription="Копировать"
+                        app:tint="#00F0FF" />
                 </LinearLayout>
 
-                <!-- Key details (expandable, hidden by default) -->
-                <LinearLayout
-                    android:id="@+id/key_details"
+                <!-- QR of subscription URL -->
+                <ImageView
+                    android:id="@+id/iv_sub_qr"
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:background="#FFFFFF"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="QR ключа подписки" />
+
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    android:layout_marginTop="16dp">
-
-                    <!-- Sub URL -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="#0AFFFFFF"
-                        android:padding="12dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <TextView
-                            android:id="@+id/tv_sub_url"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="https://..."
-                            android:textColor="#94A3B8"
-                            android:textSize="12sp"
-                            android:fontFamily="monospace"
-                            android:maxLines="2"
-                            android:ellipsize="middle" />
-
-                        <ImageButton
-                            android:id="@+id/btn_copy_url"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_marginStart="8dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:src="@drawable/ic_baseline_content_copy_24"
-                            android:padding="6dp"
-                            android:contentDescription="Копировать"
-                            app:tint="#25C9EF" />
-                    </LinearLayout>
-
-                    <!-- QR of subscription URL -->
-                    <ImageView
-                        android:id="@+id/iv_sub_qr"
-                        android:layout_width="180dp"
-                        android:layout_height="180dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="16dp"
-                        android:background="#FFFFFF"
-                        android:padding="8dp"
-                        android:scaleType="fitCenter"
-                        android:contentDescription="QR ключа подписки" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Отсканируйте в V2rayN, Nekoray или другом клиенте"
-                        android:textColor="#475569"
-                        android:textSize="12sp"
-                        android:gravity="center" />
-                </LinearLayout>
+                    android:layout_marginTop="8dp"
+                    android:text="Отсканируйте в V2rayN, Nekoray или другом клиенте"
+                    android:textColor="#4A5568"
+                    android:textSize="12sp"
+                    android:gravity="center" />
             </LinearLayout>
 
             <!-- ══════════════════════════════════════ -->
-            <!-- ACTIVE SESSIONS CARD                   -->
+            <!-- ACTIVE SESSIONS                        -->
             <!-- ══════════════════════════════════════ -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="4dp"
-                android:text="Активные сессии"
-                android:textColor="#64748B"
-                android:textSize="13sp"
+                android:layout_marginBottom="12dp"
+                android:text="АКТИВНЫЕ СЕССИИ"
+                android:textColor="#8B949E"
+                android:textSize="12sp"
                 android:textStyle="bold"
-                android:letterSpacing="0.05" />
+                android:letterSpacing="0.08" />
 
             <LinearLayout
                 android:id="@+id/sessions_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_glass_card"
-                android:orientation="vertical"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:orientation="vertical">
 
                 <!-- Sessions loaded dynamically -->
                 <LinearLayout
@@ -276,17 +233,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:background="@drawable/bg_settings_group_concept"
+                    android:padding="16dp">
                     <ProgressBar
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:indeterminateTint="#25C9EF" />
+                        android:indeterminateTint="#00F0FF" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:text="Загрузка..."
-                        android:textColor="#64748B"
+                        android:textColor="#8B949E"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -316,11 +275,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
                 android:padding="12dp"
                 android:text="Завершить все другие сессии"
-                android:textColor="#EF4444"
-                android:textSize="13sp"
+                android:textColor="#FF5252"
+                android:textSize="14sp"
+                android:textStyle="bold"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:visibility="gone" />
 

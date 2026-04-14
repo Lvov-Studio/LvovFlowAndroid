@@ -47,8 +47,8 @@ class DevicesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_devices)
 
-        window.statusBarColor = 0xFF070F1E.toInt()
-        window.navigationBarColor = 0xFF070F1E.toInt()
+        window.statusBarColor = 0xFF0B0E14.toInt()
+        window.navigationBarColor = 0xFF0B0E14.toInt()
         supportActionBar?.hide()
 
         val prefs = getSharedPreferences("lvovflow", MODE_PRIVATE)
@@ -228,7 +228,7 @@ class DevicesActivity : AppCompatActivity() {
                                         marginStart = 16.dp()
                                         marginEnd = 16.dp()
                                     }
-                                    setBackgroundColor(0xFF1A2C46.toInt())
+                                    setBackgroundColor(0x0DFFFFFF.toInt())
                                 }
                                 list.addView(divider)
                             }
@@ -293,14 +293,14 @@ class DevicesActivity : AppCompatActivity() {
                 "tv" -> "📺 Android TV"
                 else -> "📱 Телефон"
             } + if (isCurrent) " (это устройство)" else ""
-            setTextColor(if (isCurrent) 0xFF25C9EF.toInt() else 0xFFE2E8F0.toInt())
+            setTextColor(if (isCurrent) 0xFF00F0FF.toInt() else 0xFFFFFFFF.toInt())
             textSize = 14f
         }
         infoCol.addView(deviceName)
 
         val details = TextView(this).apply {
             text = "$ip • $createdAt"
-            setTextColor(0xFF475569.toInt())
+            setTextColor(0xFF8B949E.toInt())
             textSize = 12f
         }
         infoCol.addView(details)
@@ -311,7 +311,7 @@ class DevicesActivity : AppCompatActivity() {
         if (!isCurrent) {
             val revokeBtn = TextView(this).apply {
                 text = "✕"
-                setTextColor(0xFFEF4444.toInt())
+                setTextColor(0xFFFF5252.toInt())
                 textSize = 18f
                 setPadding(12.dp(), 8.dp(), 4.dp(), 8.dp())
                 setOnClickListener {
@@ -379,8 +379,8 @@ class DevicesActivity : AppCompatActivity() {
     }
 
     private fun styleDialogButtons(dialog: AlertDialog) {
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(0xFF25C9EF.toInt())
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(0xFF94A3B8.toInt())
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(0xFF00F0FF.toInt())
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(0xFF8B949E.toInt())
     }
 
     // ═══════════════════════════════════════════════════════════════════
