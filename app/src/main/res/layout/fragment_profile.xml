@@ -144,7 +144,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="baseline"
+                        android:gravity="center_vertical"
                         android:layout_marginStart="10dp">
 
                         <TextView
@@ -195,7 +195,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="baseline"
+                        android:gravity="center_vertical"
                         android:layout_marginStart="10dp">
 
                         <TextView
