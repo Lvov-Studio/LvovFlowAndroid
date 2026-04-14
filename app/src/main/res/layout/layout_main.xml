@@ -251,6 +251,7 @@
                 android:layout_height="0dp"
                 android:orientation="vertical"
                 android:gravity="center_horizontal"
+                android:alpha="0.3"
                 android:layout_marginTop="12dp"
                 app:layout_constraintTop_toBottomOf="@id/status_text"
                 app:layout_constraintBottom_toTopOf="@id/bottom_nav_anchor"
@@ -268,14 +269,13 @@
                     android:paddingStart="18dp"
                     android:paddingEnd="18dp"
                     android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:visibility="gone">
+                    android:paddingBottom="8dp">
 
                     <TextView
                         android:id="@+id/tv_ip_info"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="IP: 138.124.101.255"
+                        android:text="IP: —"
                         android:textColor="@color/lf_text_muted"
                         android:textSize="15sp" />
 
@@ -299,7 +299,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
-                        android:text="NL"
+                        android:text="—"
                         android:textColor="@color/lf_text_muted"
                         android:textSize="15sp" />
                 </LinearLayout>
@@ -313,8 +313,7 @@
                     android:gravity="center"
                     android:layout_marginTop="40dp"
                     android:paddingStart="32dp"
-                    android:paddingEnd="32dp"
-                    android:visibility="gone">
+                    android:paddingEnd="32dp">
 
                     <!-- Download speed -->
                     <LinearLayout

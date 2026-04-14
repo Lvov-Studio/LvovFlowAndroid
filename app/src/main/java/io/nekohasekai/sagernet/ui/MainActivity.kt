@@ -932,22 +932,29 @@ class MainActivity : ThemedActivity(),
                 binding.vpnButtonCore.setBackgroundResource(R.drawable.bg_vpn_button_idle)
                 binding.shieldIcon.setColorFilter(0xFF8B949E.toInt())
 
-                // Hide speed & stats
-                binding.speedRow.visibility = View.GONE
-                binding.speedSparkline.visibility = View.GONE
+                // Speed & stats: keep visible but show idle data
+                binding.speedRow.visibility = View.VISIBLE
+                binding.speedSparkline.visibility = View.VISIBLE
                 binding.speedSparkline.clear()
-                binding.ipPill.visibility = View.GONE
+                binding.ipPill.visibility = View.VISIBLE
+                binding.tvSpeedDown.text = "↓ 0 Б/с"
+                binding.tvSpeedUp.text = "↑ 0 Б/с"
+                binding.tvSessionDown.text = "Загрузка · 0 Б"
+                binding.tvSessionUp.text = "Отдача · 0 Б"
+                binding.tvIpInfo.text = "IP: —"
+                binding.tvFlag.text = ""
+                binding.tvCountryCode.text = "—"
 
-                // Routing path dim
+                // Routing path stays visible, line fill hidden
                 binding.routingPath.visibility = View.VISIBLE
                 binding.routeLineFill.visibility = View.GONE
 
                 // Glow off
                 binding.glowBg.visibility = View.GONE
 
-                // Lower content faded
+                // Lower content dimmed (like concept — visible but faded)
                 binding.lowerContent.animate()
-                    .alpha(0.15f)
+                    .alpha(0.3f)
                     .setDuration(400)
                     .start()
 
