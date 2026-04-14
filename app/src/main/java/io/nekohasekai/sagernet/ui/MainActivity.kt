@@ -532,7 +532,7 @@ class MainActivity : ThemedActivity(),
         binding.mainHomeContainer.visibility = View.VISIBLE
         // Hide home-specific content on non-home tabs, but keep header
         binding.headerRow.visibility = View.VISIBLE
-        binding.orbitContainer.visibility = if (isHome) View.VISIBLE else View.GONE
+        binding.buttonContainer.visibility = if (isHome) View.VISIBLE else View.GONE
         binding.statusText.visibility = if (isHome) View.VISIBLE else View.GONE
         binding.lowerContent.visibility = if (isHome) View.VISIBLE else View.GONE
         binding.glowBg.visibility = if (isHome && binding.glowBg.alpha > 0f) View.VISIBLE else View.GONE
@@ -881,7 +881,7 @@ class MainActivity : ThemedActivity(),
         }
 
         // LvovFlow Concept: Update UI based on connection state
-        val isOnHomeTab = binding.orbitContainer.visibility == View.VISIBLE
+        val isOnHomeTab = binding.buttonContainer.visibility == View.VISIBLE
 
         if (state == BaseService.State.Connected) {
             // ── ON state: concept aesthetic ──
