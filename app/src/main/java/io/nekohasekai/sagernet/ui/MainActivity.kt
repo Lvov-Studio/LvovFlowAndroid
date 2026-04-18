@@ -541,6 +541,7 @@ class MainActivity : ThemedActivity(),
         binding.headerRow.visibility = View.VISIBLE
         binding.buttonContainer.visibility = if (isHome) View.VISIBLE else View.GONE
         binding.statusText.visibility = if (isHome) View.VISIBLE else View.GONE
+        binding.lowerContentScroll.visibility = if (isHome) View.VISIBLE else View.GONE
         binding.lowerContent.visibility = if (isHome) View.VISIBLE else View.GONE
         binding.glowBg.visibility = if (isHome && binding.glowBg.alpha > 0f) View.VISIBLE else View.GONE
         binding.shockwave1.visibility = if (isHome) View.VISIBLE else View.GONE
