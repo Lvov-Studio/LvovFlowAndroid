@@ -6,9 +6,9 @@
         <item name="colorButtonNormal">?colorAccent</item>
         <item name="android:navigationBarColor">#0B0E14</item>
         <item name="android:statusBarColor">#0B0E14</item>
-        <item name="colorPrimary">@color/material_pink_500</item>
+        <item name="colorPrimary">@color/lf_primary_cyan</item>
         <item name="colorPrimaryDark">#0B0E14</item>
-        <item name="colorAccent">@color/material_pink_accent_200</item>
+        <item name="colorAccent">@color/lf_primary_cyan</item>
 
         <item name="colorMaterial100">@color/material_pink_100</item>
         <item name="colorMaterial300">@color/material_pink_300</item>
