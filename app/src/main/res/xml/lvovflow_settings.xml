@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <PreferenceCategory app:title="Умный обход">
         <SwitchPreference
             app:defaultValue="true"
@@ -9,4 +10,13 @@
             app:summary="@string/smart_bypass_ru_summary"
             app:title="@string/smart_bypass_ru" />
     </PreferenceCategory>
+
+    <PreferenceCategory app:title="Управление приложениями">
+        <Preference
+            app:icon="@drawable/ic_baseline_view_list_24"
+            app:key="bypass_apps_screen"
+            app:summary="@string/bypass_apps_summary"
+            app:title="@string/bypass_apps_title" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

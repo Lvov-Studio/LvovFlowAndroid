@@ -309,6 +309,15 @@
             android:label="@string/proxied_apps"
             android:launchMode="singleTask"
             android:parentActivityName=".ui.MainActivity" />
+
+        <!-- LvovFlow: Split-Tunneling (bypass apps screen) -->
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.BypassAppsActivity"
+            android:configChanges="uiMode"
+            android:excludeFromRecents="true"
+            android:label="@string/bypass_apps_title"
+            android:launchMode="singleTask"
+            android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.ScannerActivity"
             android:configChanges="uiMode"

@@ -1,5 +1,6 @@
 package io.nekohasekai.sagernet.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.preference.*
@@ -10,8 +11,7 @@ import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ktx.FixedLinearLayoutManager
 
 /**
- * LvovFlow: Simplified settings fragment — only Smart Bypass toggle.
- * Replaces the original SettingsPreferenceFragment for the in-app Settings screen.
+ * LvovFlow: Simplified settings fragment — Smart Bypass toggle + Bypass Apps screen.
  */
 class LvovFlowSettingsFragment : PreferenceFragmentCompat() {
 
@@ -32,5 +32,12 @@ class LvovFlowSettingsFragment : PreferenceFragmentCompat() {
 
         val smartBypassRu = findPreference<SwitchPreference>(Key.SMART_BYPASS_RU)!!
         smartBypassRu.onPreferenceChangeListener = reloadListener
+
+        val bypassAppsScreen = findPreference<Preference>("bypass_apps_screen")!!
+        bypassAppsScreen.setOnPreferenceClickListener {
+            startActivity(Intent(requireContext(), BypassAppsActivity::class.java))
+            true
+        }
     }
 }
+
