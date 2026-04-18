@@ -192,45 +192,82 @@ class VpnService : BaseVpnService(),
         // from the VPN tunnel entirely — so they don't detect VPN at the OS level.
         if (DataStore.smartBypassRu && !DataStore.proxyApps) {
             val ruBypassPackages = listOf(
+                // ═══════════════════════════════════════
+                // Маркетплейсы (детектируют VPN!)
+                // ═══════════════════════════════════════
+                "ru.wildberries",              // Wildberries / MAX
+                "ru.wildberries.app",          // Wildberries (alt package)
+                "ru.wb.partner.android",       // Wildberries Partner
+                "ru.ozon.app.android",         // OZON
+                "ru.ozon.seller",              // OZON seller
+                "ru.avito.android",            // Авито
+                "com.avito.android",           // Авито (alt)
+                "com.lamoda.lite",             // Lamoda
+                "ru.perekrestok.twa",          // Перекрёсток
+                "ru.samokat.app",              // Самокат
+                "ru.sbermarket",               // СберМаркет
+                "ru.magnit.magnitdelivery",    // Магнит Доставка
+
+                // ═══════════════════════════════════════
+                // Мессенджеры и соцсети (блокируют при VPN!)
+                // ═══════════════════════════════════════
+                "com.viber.voip",              // Viber
+                "com.vkontakte.android",       // ВКонтакте (VK)
+                "ru.vk.superapp",              // VK (SuperApp)
+                "ru.ok.android",              // Одноклассники
+                "ru.mail.mailapp",             // Mail.ru
+                "ru.mail.cloud",               // Облако Mail.ru
+
+                // ═══════════════════════════════════════
+                // Яндекс-экосистема
+                // ═══════════════════════════════════════
+                "com.yandex.searchapp",        // Яндекс
+                "ru.yandex.yandexmaps",        // Яндекс.Карты
+                "com.yandex.market",           // Яндекс.Маркет
+                "ru.yandex.taxi",              // Яндекс.Такси
+                "com.yandex.music",            // Яндекс.Музыка
+                "ru.yandex.disk",              // Яндекс.Диск
+                "ru.yandex.food",              // Яндекс.Еда
+                "ru.yandex.kinopoisk",         // Кинопоиск
+                "ru.yandex.lavka",             // Яндекс.Лавка
+                "ru.yandex.autoru",            // Авто.ру
+
+                // ═══════════════════════════════════════
+                // Карты и навигация
+                // ═══════════════════════════════════════
+                "ru.dublgis.dgismobile",       // 2ГИС
+
+                // ═══════════════════════════════════════
                 // Госуслуги
+                // ═══════════════════════════════════════
                 "ru.rostel",
                 "ru.gosuslugi.pos",
-                // Сбербанк
+
+                // ═══════════════════════════════════════
+                // Банки
+                // ═══════════════════════════════════════
                 "ru.sberbankmobile",
                 "ru.sberbank.sbbol",
-                // Тинькофф
-                "com.idamob.tinkoff.android",
-                // ВТБ
+                "com.idamob.tinkoff.android",  // Тинькофф / Т-Банк
                 "ru.vtb24.mobilebank.android",
-                // Альфа-Банк
                 "ru.alfabank.mobile.android",
-                // Райффайзен
-                "com.bm.android",
-                // Газпромбанк
+                "com.bm.android",              // Райффайзен
                 "ru.gazprombank.android",
-                // Открытие
                 "ru.openbank.app",
-                // Почта Банк
-                "ru.ftc.faktura.multibank",
-                // Россельхозбанк
-                "ru.rshb.mbank",
-                // Совкомбанк
+                "ru.ftc.faktura.multibank",    // Почта Банк
+                "ru.rshb.mbank",              // Россельхозбанк
                 "ru.sovcomcard.halva.v1",
-                // МТС Банк
-                "ru.mts.mtsmon",
-                // Промсвязьбанк
-                "ru.simpls.brs2.mobbank",
-                // Ак Барс
-                "com.akbars.android",
-                // ЮMoney (Yandex Money)
-                "ru.yandex.money",
-                // Т2 (Tele2)
+                "ru.mts.mtsmon",              // МТС Банк
+                "ru.simpls.brs2.mobbank",     // Промсвязьбанк
+                "com.akbars.android",          // Ак Барс
+                "ru.yandex.money",             // ЮMoney
+
+                // ═══════════════════════════════════════
+                // Телеком операторы
+                // ═══════════════════════════════════════
                 "ru.tele2.mytele2",
-                // Мегафон
                 "ru.megafon.mlk",
-                // Билайн
                 "ru.beeline.services",
-                // МТС
                 "ru.mts.pay"
             )
 

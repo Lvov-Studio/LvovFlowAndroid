@@ -107,6 +107,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var bypassLan by configurationStore.boolean(Key.BYPASS_LAN)
     var bypassLanInCore by configurationStore.boolean(Key.BYPASS_LAN_IN_CORE)
     var smartBypassRu by configurationStore.boolean(Key.SMART_BYPASS_RU) { true }
+    var dynamicBypassDomains by configurationStore.string("dynamicBypassDomains") { "" }
 
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
     var speedInterval by configurationStore.stringToInt(Key.SPEED_INTERVAL) { 500 }

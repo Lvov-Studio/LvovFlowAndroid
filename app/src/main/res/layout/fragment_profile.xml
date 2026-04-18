@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="40dp">
+            android:paddingBottom="90dp">
 
             <!-- ═══════════════════════════════════════════════════ -->
             <!-- PROFILE HEADER: Avatar + Name + Email + ID         -->
@@ -595,7 +595,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="LvovFlow v1.0.0"
-                android:textColor="#1A2E45"
+                android:textColor="#4A5568"
                 android:textSize="12sp"
                 android:gravity="center" />
 

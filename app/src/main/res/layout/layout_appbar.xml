@@ -4,19 +4,20 @@
     android:id="@+id/appbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="?attr/colorPrimary"
+    android:background="#0B0E14"
     android:elevation="4dp">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorPrimary"
+        android:background="#0B0E14"
         android:theme="?actionBarTheme"
         android:touchscreenBlocksFocus="false"
         app:logo="@drawable/ic_toolbar_logo"
         app:logoDescription="LvovFlow"
         app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
+        app:titleTextColor="#FFFFFF"
         app:title="@string/app_name" />
 
 

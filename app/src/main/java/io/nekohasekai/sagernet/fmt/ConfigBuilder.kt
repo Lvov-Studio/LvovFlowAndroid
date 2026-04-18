@@ -605,7 +605,7 @@ fun buildConfig(
 
         // Smart Bypass RU: route Russian domains and IPs directly (bypass VPN)
         if (DataStore.smartBypassRu && !forTest) {
-            val ruDomains = listOf(
+            val defaultRuDomains = listOf(
                 // Банки
                 "domain:sberbank.ru", "domain:online.sberbank.ru",
                 "domain:tinkoff.ru", "domain:tbank.ru",
@@ -621,7 +621,7 @@ fun buildConfig(
                 "domain:government.ru", "domain:pfr.gov.ru",
                 "domain:fss.ru",
                 // Маркетплейсы и сервисы
-                "domain:ozon.ru", "domain:wildberries.ru",
+                "domain:ozon.ru", "domain:wildberries.ru", "domain:wb.ru", "domain:wbstatic.net",
                 "domain:avito.ru", "domain:dns-shop.ru",
                 "domain:mvideo.ru", "domain:eldorado.ru",
                 "domain:citilink.ru", "domain:lamoda.ru",
@@ -640,6 +640,14 @@ fun buildConfig(
                 "domain:cdek.ru", "domain:pochta.ru",
                 "domain:rzd.ru"
             )
+            
+            val dynamicDomains = DataStore.dynamicBypassDomains
+                .split(",")
+                .map { it.trim() }
+                .filter { it.isNotEmpty() }
+                
+            val ruDomains = defaultRuDomains + dynamicDomains
+            
             val ruRuleSets = mutableListOf<RuleSet>()
 
             // Rule 1: Russian domains → bypass

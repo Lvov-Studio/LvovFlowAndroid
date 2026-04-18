@@ -179,6 +179,7 @@ class MainActivity : ThemedActivity(),
 
         // Check for updates silently
         checkAppUpdate()
+        fetchDynamicBypassRules()
 
         // LvovFlow: Force-stop stale VPN service after app update
         // If the app was updated while VPN was running, the service is dead but
@@ -859,6 +860,38 @@ class MainActivity : ThemedActivity(),
         }
     }
 
+    // LvovFlow: Fetch dynamic smart bypass domains from server
+    private fun fetchDynamicBypassRules() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val conn = URL("https://lvovflow.com/api/app/bypass_config.json")
+                    .openConnection() as HttpURLConnection
+                conn.connectTimeout = 5000
+                conn.readTimeout = 5000
+                if (conn.responseCode in 200..299) {
+                    val body = conn.inputStream.bufferedReader().readText()
+                    val json = JSONObject(body)
+                    val domainsArray = json.optJSONArray("domains")
+                    if (domainsArray != null) {
+                        val lst = mutableListOf<String>()
+                        for (i in 0 until domainsArray.length()) {
+                            lst.add(domainsArray.getString(i))
+                        }
+                        if (lst.isNotEmpty()) {
+                            val domainsStr = lst.joinToString(",")
+                            withContext(Dispatchers.Main) {
+                                DataStore.dynamicBypassDomains = domainsStr
+                            }
+                        }
+                    }
+                }
+                conn.disconnect()
+            } catch (e: Exception) {
+                // Ignore networking errors, fallback to old list
+            }
+        }
+    }
+
     private fun pluralDays(n: Int): String = when {
         n % 10 == 1 && n % 100 != 11 -> "день"
         n % 10 in 2..4 && (n % 100 < 10 || n % 100 >= 20) -> "дня"
@@ -990,6 +1023,16 @@ class MainActivity : ThemedActivity(),
             stopOrbitAnimation()
 
             if (state == BaseService.State.Idle && wasConnected) {
+                // Save final session totals into persistent base before resetting
+                val statsPrefs = getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
+                val oldBaseRx = statsPrefs.getLong("total_download_base", 0L)
+                val oldBaseTx = statsPrefs.getLong("total_upload_base", 0L)
+                statsPrefs.edit()
+                    .putLong("total_download_base", oldBaseRx + totalSessionRx)
+                    .putLong("total_upload_base",   oldBaseTx + totalSessionTx)
+                    .putLong("total_download",       oldBaseRx + totalSessionRx)
+                    .putLong("total_upload",         oldBaseTx + totalSessionTx)
+                    .apply()
                 clearMobileSessionStats()
                 // Reset session traffic counters
                 totalSessionRx = 0L
@@ -1047,10 +1090,13 @@ class MainActivity : ThemedActivity(),
             binding.tvSessionDown.text = "Загрузка · ${formatBytes(totalSessionRx)}"
             binding.tvSessionUp.text = "Отдача · ${formatBytes(totalSessionTx)}"
 
-            // Persist totals for Profile screen stats row
-            getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE).edit()
-                .putLong("total_download", totalSessionRx)
-                .putLong("total_upload", totalSessionTx)
+            // Persist totals for Profile screen stats row (cumulative across ALL sessions)
+            val prefs = getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
+            val baseRx = prefs.getLong("total_download_base", 0L)
+            val baseTx = prefs.getLong("total_upload_base", 0L)
+            prefs.edit()
+                .putLong("total_download", baseRx + totalSessionRx)
+                .putLong("total_upload", baseTx + totalSessionTx)
                 .apply()
 
             // Feed sparkline with download speed

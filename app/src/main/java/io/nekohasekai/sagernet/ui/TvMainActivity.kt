@@ -205,6 +205,7 @@ class TvMainActivity : ThemedActivity(),
 
         // Background checks
         checkAppUpdate()
+        fetchDynamicBypassRules()
         refreshSubscriptionStatus()
     }
 
@@ -616,8 +617,39 @@ class TvMainActivity : ThemedActivity(),
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // App update & sync
+    // App update, bypass rules & sync
     // ─────────────────────────────────────────────────────────────────────────
+
+    private fun fetchDynamicBypassRules() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val conn = URL("https://lvovflow.com/api/app/bypass_config.json")
+                    .openConnection() as HttpURLConnection
+                conn.connectTimeout = 5000
+                conn.readTimeout = 5000
+                if (conn.responseCode in 200..299) {
+                    val body = conn.inputStream.bufferedReader().readText()
+                    val json = JSONObject(body)
+                    val domainsArray = json.optJSONArray("domains")
+                    if (domainsArray != null) {
+                        val lst = mutableListOf<String>()
+                        for (i in 0 until domainsArray.length()) {
+                            lst.add(domainsArray.getString(i))
+                        }
+                        if (lst.isNotEmpty()) {
+                            val domainsStr = lst.joinToString(",")
+                            withContext(Dispatchers.Main) {
+                                DataStore.dynamicBypassDomains = domainsStr
+                            }
+                        }
+                    }
+                }
+                conn.disconnect()
+            } catch (e: Exception) {
+                // Ignore networking errors
+            }
+        }
+    }
 
     private fun checkAppUpdate() {
         runOnDefaultDispatcher {

@@ -311,7 +311,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="16dp"
                     android:paddingStart="32dp"
                     android:paddingEnd="32dp">
 
@@ -387,7 +387,7 @@
                     android:id="@+id/routing_path"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="35dp"
+                    android:layout_marginTop="12dp"
                     android:paddingStart="40dp"
                     android:paddingEnd="40dp">
 
@@ -521,7 +521,7 @@
             <View
                 android:id="@+id/bottom_nav_anchor"
                 android:layout_width="0dp"
-                android:layout_height="70dp"
+                android:layout_height="85dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
