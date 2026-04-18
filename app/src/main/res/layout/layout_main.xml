@@ -579,6 +579,8 @@
             app:backgroundTint="@color/lf_nav_bg"
             app:itemIconTint="@color/bottom_nav_icon"
             app:itemTextColor="@color/bottom_nav_icon"
+            app:itemActiveIndicatorStyle="@null"
+            app:itemRippleColor="@color/lf_primary_cyan"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_nav_menu" />
 
