@@ -274,54 +274,67 @@ class BypassAppsActivity : ThemedActivity() {
             when (val item = filteredItems[position]) {
                 is ListItem.Header -> {
                     val b = (holder as HeaderVH).binding
+                    // Полный сброс состояния (против recycling-артефактов)
                     b.appSwitch.visibility = View.GONE
+                    b.appSwitch.setOnCheckedChangeListener(null)
                     b.sectionLabel.visibility = View.GONE
                     b.appIcon.visibility = View.GONE
                     b.appName.text = getString(item.titleResId)
                     b.appName.textSize = 13f
                     b.appName.alpha = 0.6f
                     b.appPackage.text = if (item.subtitleResId != null) getString(item.subtitleResId) else ""
+                    b.appPackage.visibility = if (item.subtitleResId != null) View.VISIBLE else View.GONE
+                    b.root.setOnClickListener(null)
                     b.root.isClickable = false
                     b.root.isFocusable = false
                 }
                 is ListItem.AppItem -> {
                     val b = (holder as AppVH).binding
+                    // Полный сброс состояния
                     b.appIcon.visibility = View.VISIBLE
                     b.appName.textSize = 15f
                     b.appName.alpha = 1f
                     b.appName.text = item.appName
                     b.appPackage.text = item.packageName
+                    b.appPackage.visibility = View.VISIBLE
                     b.appIcon.setImageDrawable(item.icon)
                     b.sectionLabel.visibility = View.GONE
 
+                    // ВАЖНО: всегда очистить listener ДО изменения isChecked
+                    b.appSwitch.setOnCheckedChangeListener(null)
+                    b.appSwitch.visibility = View.VISIBLE
+
                     if (item.isAutoBypass) {
-                        // Авто-список: Switch залочен в ON
-                        b.appSwitch.visibility = View.VISIBLE
+                        // Авто-список: Switch залочен в ON, нельзя нажать
                         b.appSwitch.isChecked = true
                         b.appSwitch.isEnabled = false
+                        b.appSwitch.isClickable = false
+                        b.appSwitch.isFocusable = false
+                        b.root.setOnClickListener(null)
                         b.root.isClickable = false
                         b.root.isFocusable = false
                     } else {
                         // Ручной: Switch интерактивный
-                        b.appSwitch.visibility = View.VISIBLE
                         b.appSwitch.isEnabled = true
-                        // Отключаем собственную обработку кликов у Switch —
-                        // иначе Switch поглощает все касания и root.setOnClickListener не срабатывает
-                        b.appSwitch.isClickable = false
-                        b.appSwitch.isFocusable = false
-                        // Сначала убрать listener, потом установить значение
-                        b.appSwitch.setOnCheckedChangeListener(null)
-                        b.root.setOnClickListener(null)
+                        b.appSwitch.isClickable = true
+                        b.appSwitch.isFocusable = true
                         b.appSwitch.isChecked = item.isChecked
+
+                        // Listener на сам switch — стандартный паттерн
+                        b.appSwitch.setOnCheckedChangeListener { _, isChecked ->
+                            if (item.isChecked != isChecked) {
+                                item.isChecked = isChecked
+                                if (isChecked) manualBypassSet.add(item.packageName)
+                                else manualBypassSet.remove(item.packageName)
+                                saveManualList()
+                            }
+                        }
+
+                        // Клик по строке тоже переключает switch
                         b.root.isClickable = true
                         b.root.isFocusable = true
                         b.root.setOnClickListener {
-                            val newState = !item.isChecked
-                            item.isChecked = newState
-                            b.appSwitch.isChecked = newState
-                            if (newState) manualBypassSet.add(item.packageName)
-                            else manualBypassSet.remove(item.packageName)
-                            saveManualList()
+                            b.appSwitch.toggle()
                         }
                     }
                 }
