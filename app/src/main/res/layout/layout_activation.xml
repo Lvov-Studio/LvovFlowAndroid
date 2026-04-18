@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_activation_gradient"
+    android:background="#0B0E14"
     android:fillViewport="true"
     android:overScrollMode="never">
 
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             android:text="Вход в личный кабинет"
-            android:textColor="#7099C0"
+            android:textColor="#8B949E"
             android:textSize="13sp" />
 
         <!-- Trial badge -->
@@ -94,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:text="Введите email — пришлём 6-значный код."
-                    android:textColor="#7099C0"
+                    android:textColor="#8B949E"
                     android:textSize="13sp"
                     android:gravity="center" />
 
@@ -129,10 +129,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:text="Получить код →"
-                    android:textColor="#0A1628"
+                    android:textColor="#0B0E14"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    app:backgroundTint="#25C9EF"
+                    app:backgroundTint="#00F0FF"
                     app:cornerRadius="12dp"
                     android:elevation="4dp" />
 
@@ -148,13 +148,13 @@
                     <ProgressBar
                         android:layout_width="22dp"
                         android:layout_height="22dp"
-                        android:indeterminateTint="#25C9EF"
+                        android:indeterminateTint="#00F0FF"
                         android:layout_marginEnd="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Отправляем код..."
-                        android:textColor="#7099C0"
+                        android:textColor="#8B949E"
                         android:textSize="13sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -178,7 +178,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="← "
-                        android:textColor="#25C9EF"
+                        android:textColor="#00F0FF"
                         android:textSize="22sp"
                         android:padding="4dp" />
                     <TextView
@@ -197,7 +197,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:text="Код отправлен на you@example.com"
-                    android:textColor="#7099C0"
+                    android:textColor="#8B949E"
                     android:textSize="12sp"
                     android:gravity="center" />
 
@@ -218,7 +218,7 @@
                         android:textColorHint="#30FFFFFF"
                         android:inputType="numberPassword"
                         android:imeOptions="actionDone"
-                        android:textColor="#25C9EF"
+                        android:textColor="#00F0FF"
                         android:textSize="28sp"
                         android:textStyle="bold"
                         android:letterSpacing="0.35"
@@ -232,10 +232,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:text="Войти →"
-                    android:textColor="#0A1628"
+                    android:textColor="#0B0E14"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    app:backgroundTint="#25C9EF"
+                    app:backgroundTint="#00F0FF"
                     app:cornerRadius="12dp"
                     android:elevation="4dp" />
 
@@ -256,7 +256,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Отправить ещё раз"
-                        android:textColor="#25C9EF"
+                        android:textColor="#00F0FF"
                         android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -272,13 +272,13 @@
                     <ProgressBar
                         android:layout_width="22dp"
                         android:layout_height="22dp"
-                        android:indeterminateTint="#25C9EF"
+                        android:indeterminateTint="#00F0FF"
                         android:layout_marginEnd="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Проверяем код..."
-                        android:textColor="#7099C0"
+                        android:textColor="#8B949E"
                         android:textSize="13sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -313,134 +313,139 @@
             android:letterSpacing="0.12"
             android:gravity="center" />
 
-        <!-- Stats row — fixed 100dp so all 4 cards are perfectly identical height -->
+        <!-- Stats rows (Chips) -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
             android:layout_marginBottom="24dp">
 
-            <!-- 10G Speed -->
+            <!-- Row 1 -->
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginEnd="5dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="@drawable/bg_stat_card"
-                android:padding="10dp">
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/ic_stat_speed"
-                    android:layout_marginBottom="6dp" />
-                <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <!-- 10G Speed -->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="10G"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-                <TextView
+                    android:background="@drawable/bg_chip_airy"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="8dp">
+                    
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_stat_speed"
+                        app:tint="#00F0FF"
+                        android:layout_marginEnd="6dp" />
+                        
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10G скорость"
+                        android:textColor="#E2E8F0"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- 0 logs -->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="СКОРОСТЬ"
-                    android:textColor="#55FFFFFF"
-                    android:textSize="9sp"
-                    android:singleLine="true" />
+                    android:background="@drawable/bg_chip_airy"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_stat_shield"
+                        app:tint="#00F0FF"
+                        android:layout_marginEnd="6dp" />
+                        
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Без логов"
+                        android:textColor="#E2E8F0"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
             </LinearLayout>
 
-            <!-- 0 logs -->
+            <!-- Row 2 -->
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginEnd="5dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="@drawable/bg_stat_card"
-                android:padding="10dp">
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/ic_stat_shield"
-                    android:layout_marginBottom="6dp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0 лог"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="АНОНИМНО"
-                    android:textColor="#55FFFFFF"
-                    android:textSize="9sp"
-                    android:singleLine="true" />
-            </LinearLayout>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <!-- 24ms ping -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginEnd="5dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="@drawable/bg_stat_card"
-                android:padding="10dp">
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/ic_stat_ping"
-                    android:layout_marginBottom="6dp" />
-                <TextView
+                <!-- 24ms ping -->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="24ms"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ПИНГ"
-                    android:textColor="#55FFFFFF"
-                    android:textSize="9sp"
-                    android:singleLine="true" />
-            </LinearLayout>
+                    android:background="@drawable/bg_chip_airy"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="8dp">
+                    
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_stat_ping"
+                        app:tint="#00F0FF"
+                        android:layout_marginEnd="6dp" />
+                        
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Пинг 24ms"
+                        android:textColor="#E2E8F0"
+                        android:textSize="12sp" />
+                </LinearLayout>
 
-            <!-- 99.9% uptime -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="@drawable/bg_stat_card"
-                android:padding="10dp">
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/ic_stat_uptime"
-                    android:layout_marginBottom="6dp" />
-                <TextView
+                <!-- 99.9% uptime -->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="99.9%"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="UPTIME"
-                    android:textColor="#55FFFFFF"
-                    android:textSize="9sp"
-                    android:singleLine="true" />
+                    android:background="@drawable/bg_chip_airy"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_stat_uptime"
+                        app:tint="#00F0FF"
+                        android:layout_marginEnd="6dp" />
+                        
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uptime 99.9%"
+                        android:textColor="#E2E8F0"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>

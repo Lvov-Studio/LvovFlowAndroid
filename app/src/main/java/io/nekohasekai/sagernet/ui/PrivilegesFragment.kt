@@ -49,6 +49,11 @@ class PrivilegesFragment : ToolbarFragment() {
         toolbar.navigationIcon = null
         toolbar.title = null
 
+        // ── Back Button ──
+        view.findViewById<View>(R.id.btn_back)?.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
         val prefs = requireContext().getSharedPreferences("lvovflow", Context.MODE_PRIVATE)
         val token = prefs.getString("session_token", "") ?: ""
         val email = prefs.getString("user_email", "") ?: ""

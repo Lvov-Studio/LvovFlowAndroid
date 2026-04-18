@@ -119,14 +119,33 @@ class MainActivity : ThemedActivity(),
         // LvovFlow: completely lock the navigation drawer — all nav is via bottom bar
         binding.drawerLayout.setDrawerLockMode(androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
+        // LvovFlow: Pre-restore session stats immediately so early callbacks don't overwrite them with 0
+        val statsPrefs = getSharedPreferences("lvovflow_stats", android.content.Context.MODE_PRIVATE)
+        totalSessionRx = statsPrefs.getLong("session_rx", 0L)
+        totalSessionTx = statsPrefs.getLong("session_tx", 0L)
+
         if (savedInstanceState == null) {
             displayFragmentWithId(R.id.nav_configuration)
         }
         onBackPressedDispatcher.addCallback {
-            if (supportFragmentManager.findFragmentById(R.id.fragment_holder) is ConfigurationFragment) {
+            if (supportFragmentManager.backStackEntryCount > 0) {
+                supportFragmentManager.popBackStack()
+            } else if (supportFragmentManager.findFragmentById(R.id.fragment_holder) is ConfigurationFragment) {
                 moveTaskToBack(true)
             } else {
                 displayFragmentWithId(R.id.nav_configuration)
+            }
+        }
+
+        supportFragmentManager.addOnBackStackChangedListener {
+            if (supportFragmentManager.backStackEntryCount == 0) {
+                binding.headerRow.visibility = View.VISIBLE
+                val isHome = binding.bottomNav.selectedItemId == R.id.nav_configuration
+                val params = binding.fragmentHolder.layoutParams as? androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
+                if (params != null) {
+                    params.topMargin = if (isHome) 0 else (86 * resources.displayMetrics.density).toInt()
+                    binding.fragmentHolder.layoutParams = params
+                }
             }
         }
 
@@ -186,6 +205,7 @@ class MainActivity : ThemedActivity(),
         // Check for updates silently
         checkAppUpdate()
         fetchDynamicBypassRules()
+        startChevronBreathingAnimation()
 
         // LvovFlow: Force-stop stale VPN service after app update
         // If the app was updated while VPN was running, the service is dead but
@@ -501,7 +521,7 @@ class MainActivity : ThemedActivity(),
 
 
     @SuppressLint("CommitTransaction")
-    fun displayFragment(fragment: androidx.fragment.app.Fragment) {
+    fun displayFragment(fragment: androidx.fragment.app.Fragment, addToBackStack: Boolean = false, hideHeader: Boolean = false) {
         val isMain = fragment is ConfigurationFragment
         val isConnected = DataStore.serviceState == BaseService.State.Connected
 
@@ -527,9 +547,27 @@ class MainActivity : ThemedActivity(),
             stopBreathAnimation()
         }
 
-        supportFragmentManager.beginTransaction()
+        val transaction = supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_holder, fragment)
-            .commitAllowingStateLoss()
+        if (addToBackStack) {
+            transaction.addToBackStack(null)
+        }
+        transaction.commitAllowingStateLoss()
+
+        if (hideHeader) {
+            binding.headerRow.visibility = View.GONE
+            val params = binding.fragmentHolder.layoutParams as? androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
+            if (params != null) {
+                var statusBarHeight = 0
+                val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+                if (resourceId > 0) {
+                    statusBarHeight = resources.getDimensionPixelSize(resourceId)
+                }
+                if (statusBarHeight == 0) statusBarHeight = (28 * resources.displayMetrics.density).toInt()
+                params.topMargin = statusBarHeight
+                binding.fragmentHolder.layoutParams = params
+            }
+        }
         // LvovFlow: drawer disabled, no need to close
     }
 
@@ -563,7 +601,7 @@ class MainActivity : ThemedActivity(),
         // Fragment holder needs top margin on non-home tabs to not overlap header
         val fragmentParams = binding.fragmentHolder.layoutParams as? androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
         if (fragmentParams != null) {
-            fragmentParams.topMargin = if (isHome) 0 else (56 * resources.displayMetrics.density).toInt()
+            fragmentParams.topMargin = if (isHome) 0 else (86 * resources.displayMetrics.density).toInt()
             binding.fragmentHolder.layoutParams = fragmentParams
         }
 
@@ -961,7 +999,8 @@ class MainActivity : ThemedActivity(),
                 binding.glowBg.alpha = 0.30f
 
                 // Lower content fully visible
-                binding.lowerContent.alpha = 1f
+                binding.lowerContent.animate().cancel()
+                binding.lowerContent.animate().alpha(1f).setDuration(400).start()
 
                 // Background gradient (green radial)
                 binding.coordinator.setBackgroundResource(R.drawable.bg_app_gradient_on)
@@ -1315,10 +1354,31 @@ class MainActivity : ThemedActivity(),
             wasConnected = true
         }
     }
+    private fun startChevronBreathingAnimation() {
+        val chevron = findViewById<android.widget.ImageView>(R.id.iv_chevron) ?: return
+        val animator = android.animation.ObjectAnimator.ofFloat(chevron, "alpha", 0.2f, 1.0f)
+        animator.duration = 1500
+        animator.repeatCount = android.animation.ObjectAnimator.INFINITE
+        animator.repeatMode = android.animation.ObjectAnimator.REVERSE
+        animator.start()
+    }
 
     private fun clearMobileSessionStats() {
         connectTime = 0L
         getSharedPreferences("lvovflow_mobile_session", MODE_PRIVATE).edit().clear().apply()
+    }
+
+    private var lastSyncTime = 0L
+
+    override fun onResume() {
+        super.onResume()
+        // Sync notifications and updates every 30 seconds max when resuming
+        val now = System.currentTimeMillis()
+        if (now - lastSyncTime > 30_000) {
+            lastSyncTime = now
+            checkAppUpdate()
+        }
+        updateChatIconColor()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -1412,10 +1472,12 @@ class MainActivity : ThemedActivity(),
                     val deviceAbi = android.os.Build.SUPPORTED_ABIS.firstOrNull() ?: "arm64-v8a"
                     val releaseUrl = rawUrl.replace("{abi}", deviceAbi)
                     val changelog = updateObj.optString("changelog", "Оптимизация скорости и повышение стабильности работы.")
+                    val serverVersionCode = updateObj.optInt("versionCode", 0)
+                    val forceUpdate = updateObj.optBoolean("force", false)
                     
-                    if (serverVersionName.isNotBlank() && serverVersionName != BuildConfig.VERSION_NAME) {
+                    if (serverVersionCode > BuildConfig.VERSION_CODE) {
                         onMainDispatcher {
-                            showUpdateDialog(serverVersionName, changelog, releaseUrl)
+                            showUpdateDialog(serverVersionName, changelog, releaseUrl, forceUpdate)
                         }
                         return@runOnDefaultDispatcher // Don't stack notifications with update dialog
                     }
@@ -1448,7 +1510,7 @@ class MainActivity : ThemedActivity(),
         }
     }
 
-    private fun showUpdateDialog(version: String, changelog: String, url: String) {
+    private fun showUpdateDialog(version: String, changelog: String, url: String, forceUpdate: Boolean = false) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_update, null)
         val titleView = dialogView.findViewById<android.widget.TextView>(R.id.update_title)
         val descView = dialogView.findViewById<android.widget.TextView>(R.id.update_desc)
@@ -1480,17 +1542,19 @@ class MainActivity : ThemedActivity(),
             }
         }
 
-        btnCancel.setOnClickListener {
-            dialog.dismiss()
+        if (forceUpdate) {
+            btnCancel.visibility = android.view.View.GONE
+        } else {
+            btnCancel.visibility = android.view.View.VISIBLE
+            btnCancel.setOnClickListener {
+                dialog.dismiss()
+            }
         }
 
         dialog.show()
     }
 
-    override fun onResume() {
-        super.onResume()
-        updateChatIconColor()
-    }
+
 
     fun onChatClicked(v: android.view.View?) {
         NotificationsFragment().show(supportFragmentManager, "notifications_overlay")

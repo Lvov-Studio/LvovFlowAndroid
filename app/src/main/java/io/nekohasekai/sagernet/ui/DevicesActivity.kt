@@ -235,9 +235,7 @@ class DevicesActivity : AppCompatActivity() {
                             list.addView(createSessionRow(s))
                         }
 
-                        if (sessions.length() > 1) {
-                            btnTermAll.visibility = View.VISIBLE
-                        }
+                        btnTermAll.visibility = View.VISIBLE
                     }
                 } else {
                     withContext(Dispatchers.Main) {
@@ -306,37 +304,39 @@ class DevicesActivity : AppCompatActivity() {
 
         row.addView(infoCol)
 
-        // Revoke button — soft icon, no aggressive red X
-        if (!isCurrent) {
-            val revokeBtn = ImageView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(36.dp(), 36.dp()).apply {
-                    marginStart = 8.dp()
-                }
-                setImageResource(R.drawable.ic_navigation_close)
-                setColorFilter(0xFF64748B.toInt())   // subtle grey, not red
-                // subtle dark circle background
-                setBackgroundResource(android.R.drawable.btn_default)
-                background = android.graphics.drawable.GradientDrawable().apply {
-                    shape = android.graphics.drawable.GradientDrawable.OVAL
-                    setColor(0x14FFFFFF.toInt())
-                }
-                setPadding(8.dp(), 8.dp(), 8.dp(), 8.dp())
-                isClickable = true
-                isFocusable = true
-                setOnClickListener { revokeSession(id) }
+        // Revoke / Logout button — soft icon, no aggressive red X
+        val revokeBtn = ImageView(this).apply {
+            layoutParams = LinearLayout.LayoutParams(36.dp(), 36.dp()).apply {
+                marginStart = 8.dp()
             }
-            row.addView(revokeBtn)
+            setImageResource(if (isCurrent) R.drawable.ic_baseline_logout_24 else R.drawable.ic_navigation_close)
+            setColorFilter(if (isCurrent) 0xFFEF4444.toInt() else 0xFF64748B.toInt())   // Red for exit, grey for close
+            // subtle dark circle background
+            setBackgroundResource(android.R.drawable.btn_default)
+            background = android.graphics.drawable.GradientDrawable().apply {
+                shape = android.graphics.drawable.GradientDrawable.OVAL
+                setColor(0x14FFFFFF.toInt())
+            }
+            setPadding(8.dp(), 8.dp(), 8.dp(), 8.dp())
+            isClickable = true
+            isFocusable = true
+            setOnClickListener { revokeSession(id, isCurrent) }
         }
+        row.addView(revokeBtn)
 
         return row
     }
 
 
-    private fun revokeSession(sessionId: Int) {
+    private fun revokeSession(sessionId: Int, isCurrent: Boolean) {
+        val title = if (isCurrent) "Выйти из аккаунта?" else "Завершить сессию?"
+        val msg = if (isCurrent) "Вы будете отключены от LvovFlow на этом устройстве." else "Устройство будет отключено от вашего аккаунта."
+        val btnText = if (isCurrent) "Выйти" else "Завершить"
+
         AlertDialog.Builder(this)
-            .setTitle("Завершить сессию?")
-            .setMessage("Устройство будет отключено от вашего аккаунта.")
-            .setPositiveButton("Завершить") { _, _ ->
+            .setTitle(title)
+            .setMessage(msg)
+            .setPositiveButton(btnText) { _, _ ->
                 lifecycleScope.launch {
                     try {
                         postJson("$API_BASE/sessions.php", JSONObject().apply {
@@ -345,8 +345,12 @@ class DevicesActivity : AppCompatActivity() {
                             put("session_token", sessionToken)
                         })
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(this@DevicesActivity, "Сессия завершена", Toast.LENGTH_SHORT).show()
-                            loadSessions()
+                            if (isCurrent) {
+                                performLocalLogout()
+                            } else {
+                                Toast.makeText(this@DevicesActivity, "Сессия завершена", Toast.LENGTH_SHORT).show()
+                                loadSessions()
+                            }
                         }
                     } catch (e: Exception) {
                         withContext(Dispatchers.Main) {
@@ -361,9 +365,9 @@ class DevicesActivity : AppCompatActivity() {
 
     private fun confirmTerminateAll() {
         AlertDialog.Builder(this)
-            .setTitle("Завершить все сессии?")
-            .setMessage("Все устройства кроме текущего будут отключены.")
-            .setPositiveButton("Завершить все") { _, _ ->
+            .setTitle("Выйти со всех устройств?")
+            .setMessage("Все сессии будут завершены, и вы выйдете из аккаунта везде, включая это устройство.")
+            .setPositiveButton("Выйти везде") { _, _ ->
                 lifecycleScope.launch {
                     try {
                         val result = postJson("$API_BASE/sessions.php", JSONObject().apply {
@@ -373,7 +377,7 @@ class DevicesActivity : AppCompatActivity() {
                         val count = result.optInt("revoked", 0)
                         withContext(Dispatchers.Main) {
                             Toast.makeText(this@DevicesActivity, "Завершено сессий: $count", Toast.LENGTH_SHORT).show()
-                            loadSessions()
+                            performLocalLogout()
                         }
                     } catch (e: Exception) {
                         withContext(Dispatchers.Main) {
@@ -384,6 +388,23 @@ class DevicesActivity : AppCompatActivity() {
             }
             .setNegativeButton("Отмена", null)
             .create().also { it.show(); styleDialogButtons(it) }
+    }
+
+    private fun performLocalLogout() {
+        // Clear all session data locally and go to activation screen
+        val prefs = getSharedPreferences("lvovflow", MODE_PRIVATE)
+        prefs.edit().clear().apply()
+        
+        getSharedPreferences("lvovflow_stats", MODE_PRIVATE).edit().clear().apply()
+        getSharedPreferences("lvovflow_mobile_session", MODE_PRIVATE).edit().clear().apply()
+        
+        // Stop VPN
+        io.nekohasekai.sagernet.SagerNet.stopService()
+        
+        val intent = Intent(this, ActivationActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 
     private fun styleDialogButtons(dialog: AlertDialog) {

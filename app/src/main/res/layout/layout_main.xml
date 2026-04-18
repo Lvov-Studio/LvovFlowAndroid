@@ -16,7 +16,8 @@
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/fragment_holder"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true" />
 
         <!-- ═════════════════════════════════════════════════════ -->
         <!-- MAIN HOME CONTAINER — concept vpn_concept.html       -->
@@ -25,9 +26,7 @@
             android:id="@+id/main_home_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            android:clipChildren="false"
-            android:clipToPadding="false">
+            android:fitsSystemWindows="true">
 
             <!-- ──── HEADER: Status Pill + Chat Button ──── -->
             <LinearLayout
@@ -116,38 +115,38 @@
             <!-- ──── VPN BUTTON with Orbit Rings ──── -->
             <FrameLayout
                 android:id="@+id/button_container"
-                android:layout_width="320dp"
-                android:layout_height="320dp"
+                android:layout_width="280dp"
+                android:layout_height="280dp"
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 app:layout_constraintTop_toBottomOf="@id/header_row"
                 app:layout_constraintBottom_toTopOf="@id/status_text"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintVertical_bias="0.15"
+                app:layout_constraintVertical_bias="0.05"
                 app:layout_constraintVertical_chainStyle="packed">
 
                 <!-- Outer orbit ring (135% of button wrapper, rotates reverse) -->
                 <View
                     android:id="@+id/orbit_outer"
-                    android:layout_width="320dp"
-                    android:layout_height="320dp"
+                    android:layout_width="280dp"
+                    android:layout_height="280dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_orbit_ring_solid" />
 
                 <!-- Inner orbit ring (100% of button wrapper, dashed, rotates) -->
                 <View
                     android:id="@+id/orbit_inner"
-                    android:layout_width="240dp"
-                    android:layout_height="240dp"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_orbit_ring_dashed" />
 
                 <!-- Glow behind button (reused from existing, updated color) -->
                 <View
                     android:id="@+id/glow_bg"
-                    android:layout_width="240dp"
-                    android:layout_height="240dp"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_glow_circle"
                     android:alpha="0.25" />
@@ -155,8 +154,8 @@
                 <!-- VPN Button Core -->
                 <FrameLayout
                     android:id="@+id/vpn_button_core"
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_vpn_button_active"
                     android:elevation="8dp"
@@ -165,8 +164,8 @@
 
                     <ImageView
                         android:id="@+id/shield_icon"
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_service_idle"
                         app:tint="@color/lf_text_main" />
@@ -191,15 +190,15 @@
                     android:max="1"
                     android:visibility="invisible"
                     app:indicatorColor="@color/lf_secondary_mint"
-                    app:indicatorSize="156dp"
+                    app:indicatorSize="136dp"
                     app:trackCornerRadius="@dimen/mtrl_progress_track_thickness"
                     app:trackThickness="4dp" />
 
                 <!-- Shockwave rings for connection animation -->
                 <View
                     android:id="@+id/shockwave_1"
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_shockwave_ring"
                     android:alpha="0"
@@ -207,8 +206,8 @@
 
                 <View
                     android:id="@+id/shockwave_2"
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_shockwave_ring"
                     android:alpha="0"
@@ -252,6 +251,7 @@
                 android:layout_marginTop="12dp"
                 android:fillViewport="true"
                 android:scrollbars="none"
+                android:overScrollMode="never"
                 app:layout_constraintTop_toBottomOf="@id/status_text"
                 app:layout_constraintBottom_toTopOf="@id/bottom_nav_anchor"
                 app:layout_constraintStart_toStartOf="parent"
@@ -309,6 +309,15 @@
                         android:text="—"
                         android:textColor="@color/lf_text_muted"
                         android:textSize="15sp" />
+
+                    <!-- Chevron indicator -->
+                    <ImageView
+                        android:id="@+id/iv_chevron"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginStart="6dp"
+                        android:src="@drawable/ic_chevron_down"
+                        app:tint="@color/lf_text_muted" />
                 </LinearLayout>
 
                 <!-- Speed Section — compact 2-card row -->

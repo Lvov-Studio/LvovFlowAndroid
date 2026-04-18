@@ -322,8 +322,12 @@ class SubscriptionActivity : AppCompatActivity() {
                     val diff = expDate.time - System.currentTimeMillis()
                     val daysLeft = TimeUnit.MILLISECONDS.toDays(diff).toInt()
 
-                    if (daysLeft > 0) {
-                        tvDaysLeft.text = "Осталось $daysLeft ${pluralDays(daysLeft)}"
+                    if (daysLeft >= 0) {
+                        if (daysLeft == 0) {
+                            tvDaysLeft.text = "Истекает сегодня"
+                        } else {
+                            tvDaysLeft.text = "Осталось $daysLeft ${pluralDays(daysLeft)}"
+                        }
                         tvStatusBadge.text = "Активна"
                         tvStatusBadge.setTextColor(0xFF00E676.toInt())
                         dotStatus.backgroundTintList = ColorStateList.valueOf(0xFF00E676.toInt())

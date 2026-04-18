@@ -14,6 +14,13 @@ class SettingsFragment : ToolbarFragment(R.layout.layout_config_settings) {
         ViewCompat.setOnApplyWindowInsetsListener(view, ListListener)
         toolbar.setTitle(R.string.settings)
         toolbar.logo = null
+        toolbar.navigationIcon = null
+        toolbar.title = null
+
+        // ── Back Button ──
+        view.findViewById<View>(R.id.btn_back)?.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.settings, LvovFlowSettingsFragment())

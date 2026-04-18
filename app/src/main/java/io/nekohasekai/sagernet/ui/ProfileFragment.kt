@@ -128,7 +128,7 @@ class ProfileFragment : ToolbarFragment() {
 
         // Привилегии (referral + promo combined screen)
         view.findViewById<LinearLayout>(R.id.item_privileges).setOnClickListener {
-            (requireActivity() as? MainActivity)?.displayFragment(PrivilegesFragment())
+            (requireActivity() as? MainActivity)?.displayFragment(PrivilegesFragment(), addToBackStack = true, hideHeader = true)
         }
 
         view.findViewById<LinearLayout>(R.id.item_devices).setOnClickListener {
@@ -136,7 +136,7 @@ class ProfileFragment : ToolbarFragment() {
         }
 
         view.findViewById<LinearLayout>(R.id.item_settings).setOnClickListener {
-            (requireActivity() as? MainActivity)?.displayFragmentWithId(R.id.nav_settings)
+            (requireActivity() as? MainActivity)?.displayFragment(SettingsFragment(), addToBackStack = true, hideHeader = true)
         }
 
         view.findViewById<View>(R.id.item_logout).setOnClickListener {

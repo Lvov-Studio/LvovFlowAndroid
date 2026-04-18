@@ -278,7 +278,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
                 android:padding="12dp"
-                android:text="Завершить все другие сессии"
+                android:text="Выйти со всех устройств"
                 android:textColor="#FF5252"
                 android:textSize="14sp"
                 android:textStyle="bold"

@@ -226,10 +226,14 @@ class TvMainActivity : ThemedActivity(),
 
 
 
-            if (daysLeft > 0) {
+            if (daysLeft >= 0) {
                 subBadge.text = "● Активна"
                 subBadge.setTextColor(0xFF22C55E.toInt())
-                subExpiry.text = "до $expireDate ($daysLeft дн.)"
+                if (daysLeft == 0) {
+                    subExpiry.text = "до $expireDate (сегодня)"
+                } else {
+                    subExpiry.text = "до $expireDate ($daysLeft дн.)"
+                }
                 subExpiry.setTextColor(if (daysLeft <= 7) 0xFFEF4444.toInt() else 0xFF64748B.toInt())
             } else {
                 subBadge.text = "● Истекла"
@@ -721,10 +725,12 @@ class TvMainActivity : ThemedActivity(),
                     val deviceAbi = android.os.Build.SUPPORTED_ABIS.firstOrNull() ?: "armeabi-v7a"
                     val releaseUrl = rawUrl.replace("{abi}", deviceAbi)
                     val changelog = updateObj.optString("changelog", "Оптимизация и стабильность.")
+                    val serverVersionCode = updateObj.optInt("versionCode", 0)
+                    val forceUpdate = updateObj.optBoolean("force", false)
 
-                    if (serverVersion.isNotBlank() && serverVersion != BuildConfig.VERSION_NAME) {
+                    if (serverVersionCode > BuildConfig.VERSION_CODE) {
                         onMainDispatcher {
-                            showTvUpdateDialog(serverVersion, releaseUrl, changelog)
+                            showTvUpdateDialog(serverVersion, releaseUrl, changelog, forceUpdate)
                         }
                     }
                 }
@@ -732,7 +738,7 @@ class TvMainActivity : ThemedActivity(),
         }
     }
 
-    private fun showTvUpdateDialog(version: String, apkUrl: String, changelog: String) {
+    private fun showTvUpdateDialog(version: String, apkUrl: String, changelog: String, forceUpdate: Boolean = false) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_tv_update, null)
         val dialog = android.app.Dialog(this, android.R.style.Theme_Translucent_NoTitleBar).apply {
             setContentView(dialogView)
@@ -768,7 +774,13 @@ class TvMainActivity : ThemedActivity(),
             requestFocus()
         }
 
-        btnLater.setOnClickListener { dialog.dismiss() }
+        if (forceUpdate) {
+            btnLater.visibility = View.GONE
+        } else {
+            btnLater.visibility = View.VISIBLE
+            btnLater.setOnClickListener { dialog.dismiss() }
+        }
+        
         dialog.show()
     }
 
