@@ -545,7 +545,7 @@ class MainActivity : ThemedActivity(),
         binding.lowerContent.visibility = if (isHome) View.VISIBLE else View.GONE
         // Restore correct alpha: fully visible when VPN connected, dimmed when off
         if (isHome) {
-            val vpnConnected = serviceStarted
+            val vpnConnected = DataStore.serviceState.canStop
             binding.lowerContent.alpha = if (vpnConnected) 1f else 0.3f
         }
         binding.glowBg.visibility = if (isHome && binding.glowBg.alpha > 0f) View.VISIBLE else View.GONE
