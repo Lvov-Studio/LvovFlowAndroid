@@ -128,7 +128,7 @@ class VpnService : BaseVpnService(),
 
         // app route
         val packageName = packageName
-        var proxyApps = DataStore.proxyApps
+        val proxyApps = DataStore.proxyApps
         var bypass = DataStore.bypass
         val workaroundSYSTEM = false /* DataStore.tunImplementation == TunImplementation.SYSTEM */
         val needBypassRootUid = workaroundSYSTEM || data.proxy!!.config.trafficMap.values.any {
@@ -148,7 +148,7 @@ class VpnService : BaseVpnService(),
                 "ru.tele2.mytele2", "ru.megafon.mlk", "ru.beeline.services", "ru.mts.pay"
         )
 
-        if (proxyApps || needBypassRootUid || smartBypassRu) {
+        if (proxyApps || needBypassRootUid) {
             val individual = mutableSetOf<String>()
             val allApps by lazy {
                 packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS).filter {
@@ -164,8 +164,10 @@ class VpnService : BaseVpnService(),
                 individual.addAll(DataStore.individual.split('\n').filter { it.isNotBlank() })
                 if (smartBypassRu) {
                     if (bypass) {
+                        // User has Bypass selected apps. We add RU apps to the bypass list.
                         individual.addAll(ruBypassPackages)
                     } else {
+                        // User has Route selected apps. We remove RU apps from the route list.
                         individual.removeAll(ruBypassPackages.toSet())
                     }
                 }
@@ -177,10 +179,6 @@ class VpnService : BaseVpnService(),
                     bypass = false
                 }
             } else {
-                // If not proxyApps, we MUST use addAllowedApplication (bypass = false) 
-                // and explicitly ALLOW all apps EXCEPT the RU ones. 
-                // Using addDisallowedApplication makes VPN the default network,
-                // which Wildberries detects via ConnectivityManager!
                 individual.addAll(allApps)
                 bypass = false
                 if (smartBypassRu) {
@@ -211,6 +209,22 @@ class VpnService : BaseVpnService(),
                 Logs.d("Add bypass: ${added.joinToString(", ")}")
             } else {
                 Logs.d("Add allow: ${added.joinToString(", ")}")
+            }
+        } else if (smartBypassRu) {
+            // If we are here, proxyApps = false AND needBypassRootUid = false.
+            // SagerNet is routing ALL apps via an empty rule set.
+            // We use addDisallowedApplication to punch holes for the RU apps!
+            val bypassed = mutableListOf<String>()
+            for (pkg in ruBypassPackages) {
+                try {
+                    builder.addDisallowedApplication(pkg)
+                    bypassed.add(pkg)
+                } catch (ex: PackageManager.NameNotFoundException) {
+                    // ignore if not installed
+                }
+            }
+            if (bypassed.isNotEmpty()) {
+                Logs.d("LvovFlow Smart Bypass: excluded ${bypassed.size} RU apps")
             }
         }
 
