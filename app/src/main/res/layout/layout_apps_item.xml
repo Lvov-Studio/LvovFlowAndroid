@@ -65,6 +65,8 @@
             android:clickable="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
+            android:textOn=""
+            android:textOff=""
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
