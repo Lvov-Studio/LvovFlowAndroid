@@ -543,10 +543,17 @@ class MainActivity : ThemedActivity(),
         binding.statusText.visibility = if (isHome) View.VISIBLE else View.GONE
         binding.lowerContentScroll.visibility = if (isHome) View.VISIBLE else View.GONE
         binding.lowerContent.visibility = if (isHome) View.VISIBLE else View.GONE
-        // Restore correct alpha: fully visible when VPN connected, dimmed when off
+        // Restore correct alpha and background: fully visible and green gradient when VPN connected on Home
+        val vpnConnected = DataStore.serviceState == BaseService.State.Connected
         if (isHome) {
-            val vpnConnected = DataStore.serviceState.canStop
             binding.lowerContent.alpha = if (vpnConnected) 1f else 0.3f
+            if (vpnConnected) {
+                binding.coordinator.setBackgroundResource(R.drawable.bg_app_gradient_on)
+            } else {
+                binding.coordinator.setBackgroundColor(0xFF0B0E14.toInt())
+            }
+        } else {
+            binding.coordinator.setBackgroundColor(0xFF0B0E14.toInt())
         }
         binding.glowBg.visibility = if (isHome && binding.glowBg.alpha > 0f) View.VISIBLE else View.GONE
         binding.shockwave1.visibility = if (isHome) View.VISIBLE else View.GONE
