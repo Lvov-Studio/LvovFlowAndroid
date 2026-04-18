@@ -312,7 +312,7 @@ class BypassAppsActivity : ThemedActivity() {
                         b.root.isFocusable = true
                         b.root.setOnClickListener {
                             val pos = holder.bindingAdapterPosition
-                            if (pos == RecyclerView.NO_ID.toInt()) return@setOnClickListener
+                            if (pos == RecyclerView.NO_POSITION) return@setOnClickListener
                             val newState = !item.isChecked
                             item.isChecked = newState
                             b.appSwitch.isChecked = newState
