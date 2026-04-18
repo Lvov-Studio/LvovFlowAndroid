@@ -258,7 +258,6 @@ class DevicesActivity : AppCompatActivity() {
     private fun createSessionRow(session: JSONObject): LinearLayout {
         val id = session.optInt("id")
         val device = session.optString("device", "phone")
-        val ip = session.optString("ip", "")
         val createdAt = session.optString("created_at", "")
         val isCurrent = session.optBoolean("is_current", false)
 
@@ -269,14 +268,14 @@ class DevicesActivity : AppCompatActivity() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            setPadding(16.dp(), 14.dp(), 16.dp(), 14.dp())
+            setPadding(20.dp(), 14.dp(), 16.dp(), 14.dp())
         }
 
-        // Device icon
+        // Device icon (Material, no emoji)
         val icon = ImageView(this).apply {
-            layoutParams = LinearLayout.LayoutParams(24.dp(), 24.dp())
+            layoutParams = LinearLayout.LayoutParams(22.dp(), 22.dp())
             setImageResource(if (device == "tv") R.drawable.ic_devices else R.drawable.ic_navigation_apps)
-            setColorFilter(0xFF64748B.toInt())
+            setColorFilter(if (isCurrent) 0xFF00F0FF.toInt() else 0xFF64748B.toInt())
         }
         row.addView(icon)
 
@@ -290,39 +289,48 @@ class DevicesActivity : AppCompatActivity() {
 
         val deviceName = TextView(this).apply {
             text = when (device) {
-                "tv" -> "📺 Android TV"
-                else -> "📱 Телефон"
-            } + if (isCurrent) " (это устройство)" else ""
-            setTextColor(if (isCurrent) 0xFF00F0FF.toInt() else 0xFFFFFFFF.toInt())
+                "tv" -> "Android TV"
+                else -> "Телефон"
+            } + if (isCurrent) " · это устройство" else ""
+            setTextColor(if (isCurrent) 0xFF00F0FF.toInt() else 0xFFE2E8F0.toInt())
             textSize = 14f
         }
         infoCol.addView(deviceName)
 
         val details = TextView(this).apply {
-            text = "$ip • $createdAt"
-            setTextColor(0xFF8B949E.toInt())
+            text = createdAt   // IP убран — всегда 127.0.0.1, не информативен
+            setTextColor(0xFF64748B.toInt())
             textSize = 12f
         }
         infoCol.addView(details)
 
         row.addView(infoCol)
 
-        // Revoke button (not for current session)
+        // Revoke button — soft icon, no aggressive red X
         if (!isCurrent) {
-            val revokeBtn = TextView(this).apply {
-                text = "✕"
-                setTextColor(0xFFFF5252.toInt())
-                textSize = 18f
-                setPadding(12.dp(), 8.dp(), 4.dp(), 8.dp())
-                setOnClickListener {
-                    revokeSession(id)
+            val revokeBtn = ImageView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(36.dp(), 36.dp()).apply {
+                    marginStart = 8.dp()
                 }
+                setImageResource(R.drawable.ic_navigation_close)
+                setColorFilter(0xFF64748B.toInt())   // subtle grey, not red
+                // subtle dark circle background
+                setBackgroundResource(android.R.drawable.btn_default)
+                background = android.graphics.drawable.GradientDrawable().apply {
+                    shape = android.graphics.drawable.GradientDrawable.OVAL
+                    setColor(0x14FFFFFF.toInt())
+                }
+                setPadding(8.dp(), 8.dp(), 8.dp(), 8.dp())
+                isClickable = true
+                isFocusable = true
+                setOnClickListener { revokeSession(id) }
             }
             row.addView(revokeBtn)
         }
 
         return row
     }
+
 
     private fun revokeSession(sessionId: Int) {
         AlertDialog.Builder(this)

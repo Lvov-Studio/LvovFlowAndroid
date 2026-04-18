@@ -990,8 +990,8 @@ class MainActivity : ThemedActivity(),
                     totalSessionRx = savedRx
                     totalSessionTx = savedTx
                     // Immediately show restored values
-                    binding.tvSessionDown.text = "Загрузка · ${formatBytes(totalSessionRx)}"
-                    binding.tvSessionUp.text = "Отдача · ${formatBytes(totalSessionTx)}"
+                    binding.tvSessionDown.text = formatBytes(totalSessionRx)
+                    binding.tvSessionUp.text   = formatBytes(totalSessionTx)
                 }
             }
             wasConnected = true
@@ -1016,8 +1016,12 @@ class MainActivity : ThemedActivity(),
                 binding.ipPill.visibility = View.VISIBLE
                 binding.tvSpeedDown.text = "↓ 0 Б/с"
                 binding.tvSpeedUp.text = "↑ 0 Б/с"
-                binding.tvSessionDown.text = "Загрузка · 0 Б"
-                binding.tvSessionUp.text = "Отдача · 0 Б"
+                // Show persisted stats instead of resetting to 0
+                val _statsPrefs = getSharedPreferences("lvovflow_stats", android.content.Context.MODE_PRIVATE)
+                val _savedRx = _statsPrefs.getLong("session_rx", 0L)
+                val _savedTx = _statsPrefs.getLong("session_tx", 0L)
+                binding.tvSessionDown.text = if (_savedRx > 0) formatBytes(_savedRx) else "0 Б"
+                binding.tvSessionUp.text   = if (_savedTx > 0) formatBytes(_savedTx) else "0 Б"
                 binding.tvIpInfo.text = "IP: —"
                 binding.tvFlag.text = ""
                 binding.tvCountryCode.text = "—"
@@ -1120,8 +1124,8 @@ class MainActivity : ThemedActivity(),
             totalSessionRx += (stats.rxRateProxy * elapsed).toLong()
             totalSessionTx += (stats.txRateProxy * elapsed).toLong()
 
-            binding.tvSessionDown.text = "Загрузка · ${formatBytes(totalSessionRx)}"
-            binding.tvSessionUp.text = "Отдача · ${formatBytes(totalSessionTx)}"
+            binding.tvSessionDown.text = formatBytes(totalSessionRx)
+            binding.tvSessionUp.text   = formatBytes(totalSessionTx)
 
             // Persist totals for Profile screen stats row (cumulative across ALL sessions)
             val prefs = getSharedPreferences("lvovflow", android.content.Context.MODE_PRIVATE)
@@ -1420,8 +1424,16 @@ class MainActivity : ThemedActivity(),
                 // 2. Process Notifications Array
                 if (response.has("notifications")) {
                     val notifsArr = response.getJSONArray("notifications")
-                    prefs.edit().putString("notifications_json", notifsArr.toString()).apply()
-                    
+                    // Merge server list with locally-deleted IDs so deleted items don't reappear
+                    val deletedIds = prefs.getStringSet("deleted_notif_ids", emptySet()) ?: emptySet()
+                    val filteredArr = org.json.JSONArray()
+                    for (i in 0 until notifsArr.length()) {
+                        val obj = notifsArr.getJSONObject(i)
+                        val id = obj.optInt("id", -1).toString()
+                        if (id !in deletedIds) filteredArr.put(obj)
+                    }
+                    prefs.edit().putString("notifications_json", filteredArr.toString()).apply()
+
                     if (notifsArr.length() > 0) {
                         val latestId = notifsArr.getJSONObject(0).optInt("id", 0)
                         prefs.edit().putInt("pending_notif_id", latestId).apply()

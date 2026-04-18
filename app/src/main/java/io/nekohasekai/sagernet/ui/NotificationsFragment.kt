@@ -187,9 +187,30 @@ class NotificationsFragment : DialogFragment() {
 
                 holder.itemView.postDelayed({
                     if (pos < items.size) {
+                        val deletedItem = items[pos]
                         items.removeAt(pos)
                         notifyItemRemoved(pos)
                         notifyItemRangeChanged(pos, items.size)
+
+                        val sp = requireContext().getSharedPreferences("lvovflow", Context.MODE_PRIVATE)
+
+                        // 1. Mark ID as deleted so server sync won't restore it
+                        val deletedIds = sp.getStringSet("deleted_notif_ids", mutableSetOf())
+                            ?.toMutableSet() ?: mutableSetOf()
+                        deletedIds.add(deletedItem.id.toString())
+                        sp.edit().putStringSet("deleted_notif_ids", deletedIds).apply()
+
+                        // 2. Persist the updated list
+                        val updatedArr = JSONArray()
+                        for (n in items) {
+                            updatedArr.put(JSONObject().apply {
+                                put("id", n.id)
+                                put("title", n.title)
+                                put("message", n.message)
+                                put("date", n.date)
+                            })
+                        }
+                        sp.edit().putString("notifications_json", updatedArr.toString()).apply()
 
                         // Check if empty
                         if (items.isEmpty()) {

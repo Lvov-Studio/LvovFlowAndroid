@@ -311,7 +311,7 @@
                         android:textSize="15sp" />
                 </LinearLayout>
 
-                <!-- Speed Section -->
+                <!-- Speed Section — compact 2-card row -->
                 <LinearLayout
                     android:id="@+id/speed_row"
                     android:layout_width="match_parent"
@@ -319,65 +319,131 @@
                     android:orientation="horizontal"
                     android:gravity="center"
                     android:layout_marginTop="16dp"
-                    android:paddingStart="32dp"
-                    android:paddingEnd="32dp">
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
+                    android:baselineAligned="false">
 
-                    <!-- Download speed -->
+                    <!-- Download card -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
                         android:orientation="vertical"
-                        android:gravity="center">
+                        android:background="@drawable/bg_speed_card"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
 
-                        <TextView
-                            android:id="@+id/tv_speed_down"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="↓ 0 Б/с"
-                            android:textColor="@color/lf_speed_down"
-                            android:textSize="17sp"
-                            android:textStyle="bold"
-                            android:fontFamily="sans-serif-medium" />
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:src="@drawable/ic_arrow_down"
+                                app:tint="@color/lf_speed_down" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:text="Скачано"
+                                android:textColor="@color/lf_text_muted"
+                                android:textSize="11sp"
+                                android:maxLines="1" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_session_down"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="Загрузка · 0 Б"
-                            android:textColor="@color/lf_text_muted"
-                            android:textSize="13sp" />
+                            android:layout_marginTop="2dp"
+                            android:text="0 Б"
+                            android:textColor="@color/lf_text_main"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:maxLines="1"
+                            android:ellipsize="none"
+                            android:fontFamily="sans-serif-medium" />
+
+                        <TextView
+                            android:id="@+id/tv_speed_down"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="↓ 0 Б/с"
+                            android:textColor="@color/lf_speed_down"
+                            android:textSize="11sp"
+                            android:maxLines="1"
+                            android:ellipsize="none" />
                     </LinearLayout>
 
-                    <!-- Upload speed -->
+                    <!-- Upload card -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginStart="6dp"
                         android:orientation="vertical"
-                        android:gravity="center">
+                        android:background="@drawable/bg_speed_card"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
 
-                        <TextView
-                            android:id="@+id/tv_speed_up"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="↑ 0 Б/с"
-                            android:textColor="@color/lf_speed_up"
-                            android:textSize="17sp"
-                            android:textStyle="bold"
-                            android:fontFamily="sans-serif-medium" />
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:src="@drawable/ic_arrow_up"
+                                app:tint="@color/lf_speed_up" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:text="Отдано"
+                                android:textColor="@color/lf_text_muted"
+                                android:textSize="11sp"
+                                android:maxLines="1" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_session_up"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="Отдача · 0 Б"
-                            android:textColor="@color/lf_text_muted"
-                            android:textSize="13sp" />
+                            android:layout_marginTop="2dp"
+                            android:text="0 Б"
+                            android:textColor="@color/lf_text_main"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:maxLines="1"
+                            android:ellipsize="none"
+                            android:fontFamily="sans-serif-medium" />
+
+                        <TextView
+                            android:id="@+id/tv_speed_up"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="↑ 0 Б/с"
+                            android:textColor="@color/lf_speed_up"
+                            android:textSize="11sp"
+                            android:maxLines="1"
+                            android:ellipsize="none" />
                     </LinearLayout>
                 </LinearLayout>
+
 
                 <!-- Speed Sparkline Graph (full width) -->
                 <io.nekohasekai.sagernet.widget.SpeedSparklineView

@@ -305,20 +305,19 @@ class BypassAppsActivity : ThemedActivity() {
                         // Ручной: Switch интерактивный
                         b.appSwitch.visibility = View.VISIBLE
                         b.appSwitch.isEnabled = true
-                        // ВАЖНО: сначала убрать listener, потом установить значение —
-                        // иначе setChecked вызовет старый listener и испортит состояние
+                        // Отключаем собственную обработку кликов у Switch —
+                        // иначе Switch поглощает все касания и root.setOnClickListener не срабатывает
+                        b.appSwitch.isClickable = false
+                        b.appSwitch.isFocusable = false
+                        // Сначала убрать listener, потом установить значение
                         b.appSwitch.setOnCheckedChangeListener(null)
                         b.root.setOnClickListener(null)
                         b.appSwitch.isChecked = item.isChecked
                         b.root.isClickable = true
                         b.root.isFocusable = true
                         b.root.setOnClickListener {
-                            val pos = holder.bindingAdapterPosition
-                            if (pos == RecyclerView.NO_POSITION) return@setOnClickListener
                             val newState = !item.isChecked
                             item.isChecked = newState
-                            // Убираем listener перед программным изменением чтобы не было двойного срабатывания
-                            b.appSwitch.setOnCheckedChangeListener(null)
                             b.appSwitch.isChecked = newState
                             if (newState) manualBypassSet.add(item.packageName)
                             else manualBypassSet.remove(item.packageName)
