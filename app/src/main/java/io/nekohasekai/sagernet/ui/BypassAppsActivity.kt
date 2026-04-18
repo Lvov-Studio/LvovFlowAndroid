@@ -200,6 +200,7 @@ class BypassAppsActivity : ThemedActivity() {
                 )
             )
         }
+        Logs.d("BypassApps buildItemList done: total=${allItems.size}, manualApps=${installedApps.size}")
     }
 
     // --- Filter ---
@@ -271,6 +272,7 @@ class BypassAppsActivity : ThemedActivity() {
 
         @SuppressLint("SetTextI18n")
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            Logs.d("BypassApps onBind pos=$position type=${getItemViewType(position)} total=${filteredItems.size}")
             when (val item = filteredItems[position]) {
                 is ListItem.Header -> {
                     val b = (holder as HeaderVH).binding
@@ -303,6 +305,7 @@ class BypassAppsActivity : ThemedActivity() {
                     // ВАЖНО: всегда очистить listener ДО изменения isChecked
                     b.appSwitch.setOnCheckedChangeListener(null)
                     b.appSwitch.visibility = View.VISIBLE
+                    Logs.d("BypassApps switch VISIBLE for ${item.appName}, auto=${item.isAutoBypass}, switchW=${b.appSwitch.width}, switchH=${b.appSwitch.height}")
 
                     if (item.isAutoBypass) {
                         // Авто-список: Switch залочен в ON, нельзя нажать
