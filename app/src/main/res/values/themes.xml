@@ -10,8 +10,8 @@
         <item name="colorPrimaryDark">#0B0E14</item>
         <item name="colorAccent">@color/lf_primary_cyan</item>
 
-        <item name="colorMaterial100">@color/material_pink_100</item>
-        <item name="colorMaterial300">@color/material_pink_300</item>
+        <item name="colorMaterial100">#B2F5FF</item>
+        <item name="colorMaterial300">#00D4E8</item>
 
         <item name="accentOrTextSecondary">?colorAccent</item>
         <item name="accentOrTextPrimary">?colorAccent</item>
