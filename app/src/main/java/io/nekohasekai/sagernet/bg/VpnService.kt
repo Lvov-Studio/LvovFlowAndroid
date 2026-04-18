@@ -141,6 +141,7 @@ class VpnService : BaseVpnService(),
                 "ru.ozon.app.android", "ru.ozon.seller", "ru.avito.android", "com.avito.android", 
                 "com.lamoda.lite", "ru.perekrestok.twa", "ru.samokat.app", "ru.sbermarket", "ru.magnit.magnitdelivery", 
                 "com.viber.voip", "com.vkontakte.android", "ru.vk.superapp", "ru.ok.android", "ru.mail.mailapp", "ru.mail.cloud", 
+                "ru.oneme.app", // MAX Messenger
                 "com.yandex.searchapp", "ru.yandex.yandexmaps", "com.yandex.market", "ru.yandex.taxi", "com.yandex.music", "ru.yandex.disk", "ru.yandex.food", "ru.yandex.kinopoisk", "ru.yandex.lavka", "ru.yandex.autoru", 
                 "ru.dublgis.dgismobile", "ru.rostel", "ru.gosuslugi.pos", 
                 "ru.sberbankmobile", "ru.sberbank.sbbol", "com.idamob.tinkoff.android", "ru.vtb24.mobilebank.android", "ru.alfabank.mobile.android", "com.bm.android", "ru.gazprombank.android", "ru.openbank.app", "ru.ftc.faktura.multibank", "ru.rshb.mbank", "ru.sovcomcard.halva.v1", "ru.mts.mtsmon", "ru.simpls.brs2.mobbank", "com.akbars.android", "ru.yandex.money", 
@@ -175,11 +176,11 @@ class VpnService : BaseVpnService(),
                     individual.addAll(individualNew)
                     bypass = false
                 }
-            } else if (smartBypassRu && !needBypassRootUid) {
-                // Not using proxy apps, but using smart bypass RU.
-                bypass = true
-                individual.addAll(ruBypassPackages)
             } else {
+                // If not proxyApps, we MUST use addAllowedApplication (bypass = false) 
+                // and explicitly ALLOW all apps EXCEPT the RU ones. 
+                // Using addDisallowedApplication makes VPN the default network,
+                // which Wildberries detects via ConnectivityManager!
                 individual.addAll(allApps)
                 bypass = false
                 if (smartBypassRu) {
