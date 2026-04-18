@@ -128,14 +128,26 @@ class VpnService : BaseVpnService(),
 
         // app route
         val packageName = packageName
-        val proxyApps = DataStore.proxyApps
+        var proxyApps = DataStore.proxyApps
         var bypass = DataStore.bypass
         val workaroundSYSTEM = false /* DataStore.tunImplementation == TunImplementation.SYSTEM */
         val needBypassRootUid = workaroundSYSTEM || data.proxy!!.config.trafficMap.values.any {
             it[0].hysteriaBean?.protocol == HysteriaBean.PROTOCOL_FAKETCP
         }
 
-        if (proxyApps || needBypassRootUid) {
+        val smartBypassRu = DataStore.smartBypassRu
+        val ruBypassPackages = listOf(
+                "ru.wildberries", "ru.wildberries.app", "ru.wb.partner.android", "com.wildberries.ru", 
+                "ru.ozon.app.android", "ru.ozon.seller", "ru.avito.android", "com.avito.android", 
+                "com.lamoda.lite", "ru.perekrestok.twa", "ru.samokat.app", "ru.sbermarket", "ru.magnit.magnitdelivery", 
+                "com.viber.voip", "com.vkontakte.android", "ru.vk.superapp", "ru.ok.android", "ru.mail.mailapp", "ru.mail.cloud", 
+                "com.yandex.searchapp", "ru.yandex.yandexmaps", "com.yandex.market", "ru.yandex.taxi", "com.yandex.music", "ru.yandex.disk", "ru.yandex.food", "ru.yandex.kinopoisk", "ru.yandex.lavka", "ru.yandex.autoru", 
+                "ru.dublgis.dgismobile", "ru.rostel", "ru.gosuslugi.pos", 
+                "ru.sberbankmobile", "ru.sberbank.sbbol", "com.idamob.tinkoff.android", "ru.vtb24.mobilebank.android", "ru.alfabank.mobile.android", "com.bm.android", "ru.gazprombank.android", "ru.openbank.app", "ru.ftc.faktura.multibank", "ru.rshb.mbank", "ru.sovcomcard.halva.v1", "ru.mts.mtsmon", "ru.simpls.brs2.mobbank", "com.akbars.android", "ru.yandex.money", 
+                "ru.tele2.mytele2", "ru.megafon.mlk", "ru.beeline.services", "ru.mts.pay"
+        )
+
+        if (proxyApps || needBypassRootUid || smartBypassRu) {
             val individual = mutableSetOf<String>()
             val allApps by lazy {
                 packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS).filter {
@@ -144,12 +156,18 @@ class VpnService : BaseVpnService(),
                         "android" -> true
                         else -> it.requestedPermissions?.contains(Manifest.permission.INTERNET) == true
                     }
-                }.map {
-                    it.packageName
-                }
+                }.map { it.packageName }
             }
+
             if (proxyApps) {
                 individual.addAll(DataStore.individual.split('\n').filter { it.isNotBlank() })
+                if (smartBypassRu) {
+                    if (bypass) {
+                        individual.addAll(ruBypassPackages)
+                    } else {
+                        individual.removeAll(ruBypassPackages.toSet())
+                    }
+                }
                 if (bypass && needBypassRootUid) {
                     val individualNew = allApps.toMutableList()
                     individualNew.removeAll(individual)
@@ -157,9 +175,16 @@ class VpnService : BaseVpnService(),
                     individual.addAll(individualNew)
                     bypass = false
                 }
+            } else if (smartBypassRu && !needBypassRootUid) {
+                // Not using proxy apps, but using smart bypass RU.
+                bypass = true
+                individual.addAll(ruBypassPackages)
             } else {
                 individual.addAll(allApps)
                 bypass = false
+                if (smartBypassRu) {
+                    individual.removeAll(ruBypassPackages.toSet())
+                }
             }
 
             val added = mutableListOf<String>()
@@ -185,103 +210,6 @@ class VpnService : BaseVpnService(),
                 Logs.d("Add bypass: ${added.joinToString(", ")}")
             } else {
                 Logs.d("Add allow: ${added.joinToString(", ")}")
-            }
-        }
-
-        // LvovFlow: When Smart Bypass RU is enabled, exclude Russian gov/banking apps
-        // from the VPN tunnel entirely — so they don't detect VPN at the OS level.
-        if (DataStore.smartBypassRu && !DataStore.proxyApps) {
-            val ruBypassPackages = listOf(
-                // ═══════════════════════════════════════
-                // Маркетплейсы (детектируют VPN!)
-                // ═══════════════════════════════════════
-                "ru.wildberries",              // Wildberries / MAX
-                "ru.wildberries.app",          // Wildberries (alt package)
-                "ru.wb.partner.android",       // Wildberries Partner
-                "ru.ozon.app.android",         // OZON
-                "ru.ozon.seller",              // OZON seller
-                "ru.avito.android",            // Авито
-                "com.avito.android",           // Авито (alt)
-                "com.lamoda.lite",             // Lamoda
-                "ru.perekrestok.twa",          // Перекрёсток
-                "ru.samokat.app",              // Самокат
-                "ru.sbermarket",               // СберМаркет
-                "ru.magnit.magnitdelivery",    // Магнит Доставка
-
-                // ═══════════════════════════════════════
-                // Мессенджеры и соцсети (блокируют при VPN!)
-                // ═══════════════════════════════════════
-                "com.viber.voip",              // Viber
-                "com.vkontakte.android",       // ВКонтакте (VK)
-                "ru.vk.superapp",              // VK (SuperApp)
-                "ru.ok.android",              // Одноклассники
-                "ru.mail.mailapp",             // Mail.ru
-                "ru.mail.cloud",               // Облако Mail.ru
-
-                // ═══════════════════════════════════════
-                // Яндекс-экосистема
-                // ═══════════════════════════════════════
-                "com.yandex.searchapp",        // Яндекс
-                "ru.yandex.yandexmaps",        // Яндекс.Карты
-                "com.yandex.market",           // Яндекс.Маркет
-                "ru.yandex.taxi",              // Яндекс.Такси
-                "com.yandex.music",            // Яндекс.Музыка
-                "ru.yandex.disk",              // Яндекс.Диск
-                "ru.yandex.food",              // Яндекс.Еда
-                "ru.yandex.kinopoisk",         // Кинопоиск
-                "ru.yandex.lavka",             // Яндекс.Лавка
-                "ru.yandex.autoru",            // Авто.ру
-
-                // ═══════════════════════════════════════
-                // Карты и навигация
-                // ═══════════════════════════════════════
-                "ru.dublgis.dgismobile",       // 2ГИС
-
-                // ═══════════════════════════════════════
-                // Госуслуги
-                // ═══════════════════════════════════════
-                "ru.rostel",
-                "ru.gosuslugi.pos",
-
-                // ═══════════════════════════════════════
-                // Банки
-                // ═══════════════════════════════════════
-                "ru.sberbankmobile",
-                "ru.sberbank.sbbol",
-                "com.idamob.tinkoff.android",  // Тинькофф / Т-Банк
-                "ru.vtb24.mobilebank.android",
-                "ru.alfabank.mobile.android",
-                "com.bm.android",              // Райффайзен
-                "ru.gazprombank.android",
-                "ru.openbank.app",
-                "ru.ftc.faktura.multibank",    // Почта Банк
-                "ru.rshb.mbank",              // Россельхозбанк
-                "ru.sovcomcard.halva.v1",
-                "ru.mts.mtsmon",              // МТС Банк
-                "ru.simpls.brs2.mobbank",     // Промсвязьбанк
-                "com.akbars.android",          // Ак Барс
-                "ru.yandex.money",             // ЮMoney
-
-                // ═══════════════════════════════════════
-                // Телеком операторы
-                // ═══════════════════════════════════════
-                "ru.tele2.mytele2",
-                "ru.megafon.mlk",
-                "ru.beeline.services",
-                "ru.mts.pay"
-            )
-
-            val bypassed = mutableListOf<String>()
-            for (pkg in ruBypassPackages) {
-                try {
-                    builder.addDisallowedApplication(pkg)
-                    bypassed.add(pkg)
-                } catch (_: PackageManager.NameNotFoundException) {
-                    // App not installed — skip
-                }
-            }
-            if (bypassed.isNotEmpty()) {
-                Logs.d("LvovFlow Smart Bypass: excluded ${bypassed.size} RU apps from VPN tunnel")
             }
         }
 
