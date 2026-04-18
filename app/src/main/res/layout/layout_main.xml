@@ -263,7 +263,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center_horizontal"
-                    android:alpha="0.3">
+                    android:alpha="1.0">
 
                 <!-- IP Info Pill -->
                 <LinearLayout

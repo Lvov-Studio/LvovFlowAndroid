@@ -543,6 +543,11 @@ class MainActivity : ThemedActivity(),
         binding.statusText.visibility = if (isHome) View.VISIBLE else View.GONE
         binding.lowerContentScroll.visibility = if (isHome) View.VISIBLE else View.GONE
         binding.lowerContent.visibility = if (isHome) View.VISIBLE else View.GONE
+        // Restore correct alpha: fully visible when VPN connected, dimmed when off
+        if (isHome) {
+            val vpnConnected = serviceStarted
+            binding.lowerContent.alpha = if (vpnConnected) 1f else 0.3f
+        }
         binding.glowBg.visibility = if (isHome && binding.glowBg.alpha > 0f) View.VISIBLE else View.GONE
         binding.shockwave1.visibility = if (isHome) View.VISIBLE else View.GONE
         binding.shockwave2.visibility = if (isHome) View.VISIBLE else View.GONE
