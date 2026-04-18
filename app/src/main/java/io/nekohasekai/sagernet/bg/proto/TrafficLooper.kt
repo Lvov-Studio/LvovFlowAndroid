@@ -80,6 +80,8 @@ class TrafficLooper
         }
     }
 
+    private var zeroTrafficTicks = 0
+
     private suspend fun loop() {
         val delayMs = DataStore.speedInterval.toLong()
         val showDirectSpeed = DataStore.showDirectSpeed
@@ -157,6 +159,30 @@ class TrafficLooper
                 mainTx,
                 mainRx
             )
+
+            // Watchdog: Detect blackholed connections (sending data but receiving none)
+            if (data.state == BaseService.State.Connected && delayMs > 0) {
+                if (mainTxRate > 0L && mainRxRate == 0L) {
+                    zeroTrafficTicks++
+                } else if (mainRxRate > 0L) {
+                    zeroTrafficTicks = 0 // Reset if we receive any data
+                }
+
+                // If trying to send but receiving nothing for ~15 seconds, reload connection
+                val timeoutTicks = 15000 / delayMs
+                if (zeroTrafficTicks >= timeoutTicks) {
+                    Logs.w("Watchdog: TX > 0 but RX == 0 for 15s. Connection likely dead. Reloading!")
+                    zeroTrafficTicks = 0
+                    
+                    io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher {
+                        try {
+                            io.nekohasekai.sagernet.SagerNet.reloadService()
+                        } catch (e: Exception) {
+                            Logs.e("Watchdog failed to reload", e)
+                        }
+                    }
+                }
+            }
 
             // broadcast (MainActivity)
             if (data.state == BaseService.State.Connected
