@@ -56,17 +56,17 @@
         android:visibility="gone"
         android:textColor="?attr/colorPrimary" />
 
-    <!-- Toggle switch for app rows — forced cyan track/thumb colors -->
-    <com.google.android.material.materialswitch.MaterialSwitch
+    <!-- Checkbox — guaranteed visible on all themes -->
+    <CheckBox
         android:id="@+id/app_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:minWidth="52dp"
-        android:minHeight="32dp"
-        app:thumbTint="#00F0FF"
-        app:trackTint="#33FFFFFF"
-        app:trackDecorationTint="@android:color/transparent"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:buttonTint="#00F0FF"
+        android:clickable="false"
+        android:focusable="false"
         android:visibility="visible" />
 
 </LinearLayout>

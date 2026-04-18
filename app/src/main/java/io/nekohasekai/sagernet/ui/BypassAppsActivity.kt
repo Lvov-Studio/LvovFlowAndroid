@@ -317,13 +317,13 @@ class BypassAppsActivity : ThemedActivity() {
                         b.root.isClickable = false
                         b.root.isFocusable = false
                     } else {
-                        // Ручной: Switch интерактивный
+                        // Ручной: Checkbox визуально интерактивный, но кликом управляет строка
                         b.appSwitch.isEnabled = true
-                        b.appSwitch.isClickable = true
-                        b.appSwitch.isFocusable = true
+                        b.appSwitch.isClickable = false
+                        b.appSwitch.isFocusable = false
                         b.appSwitch.isChecked = item.isChecked
 
-                        // Listener на сам switch — стандартный паттерн
+                        // Listener — срабатывает при программном toggle()
                         b.appSwitch.setOnCheckedChangeListener { _, isChecked ->
                             if (item.isChecked != isChecked) {
                                 item.isChecked = isChecked
@@ -333,7 +333,7 @@ class BypassAppsActivity : ThemedActivity() {
                             }
                         }
 
-                        // Клик по строке тоже переключает switch
+                        // Клик по строке переключает checkbox
                         b.root.isClickable = true
                         b.root.isFocusable = true
                         b.root.setOnClickListener {
