@@ -245,18 +245,25 @@
             <!-- ══════════════════════════════════════════════════ -->
             <!-- LOWER CONTENT SECTION (fades/blurs when OFF)       -->
             <!-- ══════════════════════════════════════════════════ -->
-            <LinearLayout
-                android:id="@+id/lower_content"
+            <ScrollView
+                android:id="@+id/lower_content_scroll"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
-                android:alpha="0.3"
                 android:layout_marginTop="12dp"
+                android:fillViewport="true"
+                android:scrollbars="none"
                 app:layout_constraintTop_toBottomOf="@id/status_text"
                 app:layout_constraintBottom_toTopOf="@id/bottom_nav_anchor"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:id="@+id/lower_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:alpha="0.3">
 
                 <!-- IP Info Pill -->
                 <LinearLayout
@@ -389,7 +396,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:paddingStart="40dp"
-                    android:paddingEnd="40dp">
+                    android:paddingEnd="40dp"
+                    android:paddingBottom="16dp">
 
                     <!-- Route line background -->
                     <View
@@ -516,6 +524,7 @@
                 </FrameLayout>
 
             </LinearLayout>
+            </ScrollView>
 
             <!-- Anchor for bottom nav spacing -->
             <View

@@ -98,6 +98,12 @@ class MainActivity : ThemedActivity(),
         binding.vpnButtonCore.setOnClickListener {
             binding.fab.performClick()
         }
+
+        // LvovFlow: Wire global notification/chat button
+        binding.btnNotifications.setOnClickListener {
+            NotificationsFragment().show(supportFragmentManager, "notifications_overlay")
+        }
+
         if (themeResId !in intArrayOf(
                 R.style.Theme_SagerNet_Black
             )
