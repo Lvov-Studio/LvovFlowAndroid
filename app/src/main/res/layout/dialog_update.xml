@@ -1,67 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/bg_glass_card"
-    android:padding="24dp">
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:paddingTop="28dp"
+    android:paddingBottom="20dp">
 
-    <!-- Иконка или бейдж -->
-    <ImageView
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/ic_baseline_update_24"
+    <!-- Icon with cyan tinted glow background -->
+    <FrameLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_gravity="center_horizontal"
-        app:tint="#22d3ee"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="20dp">
 
-    <!-- Заголовок -->
+        <!-- Glow circle behind icon -->
+        <View
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_glow_circle"
+            android:alpha="0.35" />
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_baseline_update_24"
+            app:tint="#00F0FF" />
+    </FrameLayout>
+
+    <!-- "Новая версия" label (muted) -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="НОВАЯ ВЕРСИЯ"
+        android:textColor="#66FFFFFF"
+        android:textSize="11sp"
+        android:letterSpacing="0.12"
+        android:textAllCaps="false"
+        android:gravity="center"
+        android:layout_marginBottom="6dp" />
+
+    <!-- Version number — CYAN, big -->
     <TextView
         android:id="@+id/update_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Доступно Обновление"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
+        android:text="1.0.5"
+        android:textColor="#00F0FF"
+        android:textSize="32sp"
         android:fontFamily="sans-serif-bold"
         android:textStyle="bold"
         android:gravity="center"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="16dp" />
 
-    <!-- Описание изменений -->
+    <!-- Thin cyan divider -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="2dp"
+        android:layout_gravity="center_horizontal"
+        android:background="#00F0FF"
+        android:alpha="0.5"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Changelog text -->
     <TextView
         android:id="@+id/update_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Вышла новая версия приложения с критически важными исправлениями стабильности работы алгоритмов."
-        android:textColor="#A0A0A0"
+        android:text="Исправления стабильности, улучшен интерфейс исключений из туннеля и визуал статистики."
+        android:textColor="#B0C4CC"
         android:textSize="14sp"
-        android:lineSpacingExtra="4dp"
+        android:lineSpacingExtra="5dp"
         android:gravity="center"
         android:layout_marginBottom="24dp" />
 
-    <!-- Кнопка Скачать -->
+    <!-- Download button — filled cyan, rounded -->
     <TextView
         android:id="@+id/btn_update"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="#25C9EF"
-        android:text="Скачать Обновление"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:layout_height="52dp"
+        android:background="@drawable/bg_button_cyan"
+        android:text="Скачать обновление"
+        android:textColor="#0A0F1A"
+        android:textSize="15sp"
         android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:layout_marginBottom="12dp" />
 
-    <!-- Кнопка Позже -->
+    <!-- Remind later — subtle text link -->
     <TextView
         android:id="@+id/btn_cancel"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="44dp"
         android:text="Напомнить позже"
-        android:textColor="#A0A0A0"
-        android:textSize="14sp"
-        android:gravity="center" />
+        android:textColor="#55FFFFFF"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true" />
 
 </LinearLayout>
