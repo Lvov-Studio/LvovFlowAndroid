@@ -975,6 +975,17 @@ class MainActivity : ThemedActivity(),
 
             if (!wasConnected) {
                 connectTime = System.currentTimeMillis()
+                // LvovFlow: restore persisted session stats when app reopens
+                val statsPrefs = getSharedPreferences("lvovflow_stats", android.content.Context.MODE_PRIVATE)
+                val savedRx = statsPrefs.getLong("session_rx", 0L)
+                val savedTx = statsPrefs.getLong("session_tx", 0L)
+                if (savedRx > 0 || savedTx > 0) {
+                    totalSessionRx = savedRx
+                    totalSessionTx = savedTx
+                    // Immediately show restored values
+                    binding.tvSessionDown.text = "Загрузка · ${formatBytes(totalSessionRx)}"
+                    binding.tvSessionUp.text = "Отдача · ${formatBytes(totalSessionTx)}"
+                }
             }
             wasConnected = true
         } else {
@@ -1049,6 +1060,9 @@ class MainActivity : ThemedActivity(),
                 // Reset session traffic counters
                 totalSessionRx = 0L
                 totalSessionTx = 0L
+                // Clear persisted session so next session starts fresh
+                getSharedPreferences("lvovflow_stats", android.content.Context.MODE_PRIVATE)
+                    .edit().remove("session_rx").remove("session_tx").apply()
                 lastSpeedTimestamp = 0L
             }
             wasConnected = false
@@ -1109,6 +1123,13 @@ class MainActivity : ThemedActivity(),
             prefs.edit()
                 .putLong("total_download", baseRx + totalSessionRx)
                 .putLong("total_upload", baseTx + totalSessionTx)
+                .apply()
+
+            // Persist current session stats so they survive app close/reopen
+            getSharedPreferences("lvovflow_stats", android.content.Context.MODE_PRIVATE)
+                .edit()
+                .putLong("session_rx", totalSessionRx)
+                .putLong("session_tx", totalSessionTx)
                 .apply()
 
             // Feed sparkline with download speed
