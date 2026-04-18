@@ -31,7 +31,7 @@ object Theme {
     const val BLUE_GREY = 20
     const val BLACK = 21
 
-    private fun defaultTheme() = INDIGO
+    private fun defaultTheme() = CYAN
 
     fun apply(context: Context) {
         context.setTheme(getTheme())

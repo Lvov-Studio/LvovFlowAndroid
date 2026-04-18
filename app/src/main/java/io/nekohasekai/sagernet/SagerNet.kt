@@ -79,6 +79,12 @@ class SagerNet : Application(),
         }
 
         if (isMainProcess) {
+            // LvovFlow: one-time migration — force brand Cyan theme on first launch of v1.0.5+
+            val migPrefs = getSharedPreferences("lvovflow_migration", Context.MODE_PRIVATE)
+            if (!migPrefs.getBoolean("theme_forced_cyan_v1", false)) {
+                DataStore.appTheme = Theme.CYAN
+                migPrefs.edit().putBoolean("theme_forced_cyan_v1", true).apply()
+            }
             Theme.apply(this)
             Theme.applyNightTheme()
             runOnDefaultDispatcher {

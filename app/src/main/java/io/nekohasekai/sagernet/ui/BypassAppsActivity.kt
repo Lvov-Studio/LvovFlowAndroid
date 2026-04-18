@@ -305,9 +305,11 @@ class BypassAppsActivity : ThemedActivity() {
                         // Ручной: Switch интерактивный
                         b.appSwitch.visibility = View.VISIBLE
                         b.appSwitch.isEnabled = true
-                        b.appSwitch.isChecked = item.isChecked
-                        // Сначала убираем старый listener чтобы не было ложных срабатываний при rebind
+                        // ВАЖНО: сначала убрать listener, потом установить значение —
+                        // иначе setChecked вызовет старый listener и испортит состояние
                         b.appSwitch.setOnCheckedChangeListener(null)
+                        b.root.setOnClickListener(null)
+                        b.appSwitch.isChecked = item.isChecked
                         b.root.isClickable = true
                         b.root.isFocusable = true
                         b.root.setOnClickListener {
@@ -315,14 +317,10 @@ class BypassAppsActivity : ThemedActivity() {
                             if (pos == RecyclerView.NO_POSITION) return@setOnClickListener
                             val newState = !item.isChecked
                             item.isChecked = newState
+                            // Убираем listener перед программным изменением чтобы не было двойного срабатывания
+                            b.appSwitch.setOnCheckedChangeListener(null)
                             b.appSwitch.isChecked = newState
                             if (newState) manualBypassSet.add(item.packageName)
-                            else manualBypassSet.remove(item.packageName)
-                            saveManualList()
-                        }
-                        b.appSwitch.setOnCheckedChangeListener { _, isChecked ->
-                            item.isChecked = isChecked
-                            if (isChecked) manualBypassSet.add(item.packageName)
                             else manualBypassSet.remove(item.packageName)
                             saveManualList()
                         }
