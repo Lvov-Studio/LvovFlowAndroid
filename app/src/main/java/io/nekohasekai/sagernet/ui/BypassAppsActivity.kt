@@ -308,11 +308,12 @@ class BypassAppsActivity : ThemedActivity() {
                     Logs.d("BypassApps switch VISIBLE for ${item.appName}, auto=${item.isAutoBypass}, switchW=${b.appSwitch.width}, switchH=${b.appSwitch.height}")
 
                     if (item.isAutoBypass) {
-                        // Авто-список: Switch залочен в ON, нельзя нажать
+                        // Авто-список: галочка яркая, но залоченная (нельзя снять)
                         b.appSwitch.isChecked = true
-                        b.appSwitch.isEnabled = false
+                        b.appSwitch.isEnabled = true   // true чтобы цвет оставался ярким
                         b.appSwitch.isClickable = false
                         b.appSwitch.isFocusable = false
+                        b.appSwitch.alpha = 0.7f       // чуть приглушить — показать что залочен
                         b.root.setOnClickListener(null)
                         b.root.isClickable = false
                         b.root.isFocusable = false
@@ -321,6 +322,7 @@ class BypassAppsActivity : ThemedActivity() {
                         b.appSwitch.isEnabled = true
                         b.appSwitch.isClickable = false
                         b.appSwitch.isFocusable = false
+                        b.appSwitch.alpha = 1.0f       // сброс alpha (авто-элементы ставят 0.7)
                         b.appSwitch.isChecked = item.isChecked
 
                         // Listener — срабатывает при программном toggle()
