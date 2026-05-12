@@ -1245,18 +1245,18 @@ class MainActivity : ThemedActivity(),
             // Wait for VPN tunnel to fully initialize before making the request
             kotlinx.coroutines.delay(2000)
 
-            // List of IP detection endpoints (HTTPS only — Android 9+ blocks cleartext HTTP)
+            // ip-api.com: HTTP only on free plan (HTTPS requires paid key)
+            // ipapi.co: rate-limited via shared Cloudflare WARP IP — removed
+            // ipify.org: reliable HTTPS fallback
             data class IpEndpoint(val url: String, val parseIp: (String) -> String, val parseCc: (String) -> String)
             val endpoints = listOf(
                 IpEndpoint(
-                    "https://ip-api.com/json?fields=query,countryCode",
-                    { JSONObject(it).optString("query", "") },
+                    "http://ip-api.com/json?fields=query,countryCode",
+                    { body ->
+                        val j = JSONObject(body)
+                        if (j.optString("status") == "fail") "" else j.optString("query", "")
+                    },
                     { JSONObject(it).optString("countryCode", "") }
-                ),
-                IpEndpoint(
-                    "https://ipapi.co/json/",
-                    { JSONObject(it).optString("ip", "") },
-                    { JSONObject(it).optString("country_code", "") }
                 ),
                 IpEndpoint(
                     "https://api.ipify.org?format=json",
