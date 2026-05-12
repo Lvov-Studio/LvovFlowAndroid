@@ -1244,36 +1244,53 @@ class MainActivity : ThemedActivity(),
         lifecycleScope.launch(Dispatchers.IO) {
             // Wait for VPN tunnel to fully initialize before making the request
             kotlinx.coroutines.delay(2000)
-            
+
+            // List of IP detection endpoints (HTTPS only — Android 9+ blocks cleartext HTTP)
+            data class IpEndpoint(val url: String, val parseIp: (String) -> String, val parseCc: (String) -> String)
+            val endpoints = listOf(
+                IpEndpoint(
+                    "https://ip-api.com/json?fields=query,countryCode",
+                    { JSONObject(it).optString("query", "") },
+                    { JSONObject(it).optString("countryCode", "") }
+                ),
+                IpEndpoint(
+                    "https://ipapi.co/json/",
+                    { JSONObject(it).optString("ip", "") },
+                    { JSONObject(it).optString("country_code", "") }
+                ),
+                IpEndpoint(
+                    "https://api.ipify.org?format=json",
+                    { JSONObject(it).optString("ip", "") },
+                    { "" }
+                )
+            )
+
             var success = false
-            for (attempt in 1..2) {
-                try {
-                    val url = URL("http://ip-api.com/json?fields=query,countryCode")
-                    val conn = url.openConnection() as HttpURLConnection
-                    conn.connectTimeout = 5000
-                    conn.readTimeout = 5000
-                    conn.setRequestProperty("User-Agent", "LvovFlow-Android")
-                    val body = conn.inputStream.bufferedReader().readText()
-                    conn.disconnect()
-                    val json = JSONObject(body)
-                    val ip = json.optString("query", "")
-                    val cc = json.optString("countryCode", "")
-                    if (ip.isNotEmpty()) {
-                        val flag = countryCodeToFlag(cc)
-                        withContext(Dispatchers.Main) {
-                            binding.tvIpInfo.text = "IP: $ip"
-                            binding.tvFlag.text = flag
-                            binding.tvCountryCode.text = cc
-                            binding.ipPill.visibility = View.VISIBLE
+            for (endpoint in endpoints) {
+                if (success) break
+                for (attempt in 1..2) {
+                    try {
+                        val conn = URL(endpoint.url).openConnection() as HttpURLConnection
+                        conn.connectTimeout = 5000
+                        conn.readTimeout = 5000
+                        conn.setRequestProperty("User-Agent", "LvovFlow-Android")
+                        val body = conn.inputStream.bufferedReader().readText()
+                        conn.disconnect()
+                        val ip = endpoint.parseIp(body)
+                        val cc = endpoint.parseCc(body)
+                        if (ip.isNotEmpty()) {
+                            val flag = countryCodeToFlag(cc)
+                            withContext(Dispatchers.Main) {
+                                binding.tvIpInfo.text = "IP: $ip"
+                                binding.tvFlag.text = flag
+                                binding.tvCountryCode.text = if (cc.isNotEmpty()) cc else "VPN"
+                                binding.ipPill.visibility = View.VISIBLE
+                            }
+                            success = true
+                            break
                         }
-                        success = true
-                        break
-                    }
-                } catch (_: Exception) { }
-                
-                // If first attempt failed, wait and retry
-                if (!success && attempt < 2) {
-                    kotlinx.coroutines.delay(3000)
+                    } catch (_: Exception) { }
+                    if (!success && attempt < 2) kotlinx.coroutines.delay(2000)
                 }
             }
         }
